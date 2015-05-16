@@ -10,6 +10,17 @@
 		3F43766A1AD1A14100FFC40C /* HTTPService.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F4376691AD1A14100FFC40C /* HTTPService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3F4376701AD1A14100FFC40C /* HTTPService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F4376641AD1A14100FFC40C /* HTTPService.framework */; };
 		3F4376771AD1A14100FFC40C /* HTTPServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4376761AD1A14100FFC40C /* HTTPServiceTests.swift */; };
+		3F43769C1AD1A19300FFC40C /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43768A1AD1A19300FFC40C /* Operators.swift */; };
+		3F43769D1AD1A19300FFC40C /* HTTPService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43768B1AD1A19300FFC40C /* HTTPService.swift */; };
+		3F43769E1AD1A19300FFC40C /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43768D1AD1A19300FFC40C /* JSON.swift */; };
+		3F43769F1AD1A19300FFC40C /* JSONExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43768E1AD1A19300FFC40C /* JSONExtensions.swift */; };
+		3F4376A01AD1A19300FFC40C /* JSONSerializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43768F1AD1A19300FFC40C /* JSONSerializable.swift */; };
+		3F4376A11AD1A19300FFC40C /* HTTPObjectMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4376911AD1A19300FFC40C /* HTTPObjectMapping.swift */; };
+		3F4376A21AD1A19300FFC40C /* HTTPServiceOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4376931AD1A19300FFC40C /* HTTPServiceOperation.swift */; };
+		3F4376A31AD1A19300FFC40C /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4376951AD1A19300FFC40C /* Dictionary.swift */; };
+		3F4376A41AD1A19300FFC40C /* HTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4376971AD1A19300FFC40C /* HTTPRequest.swift */; };
+		3F4376A51AD1A19300FFC40C /* HTTPResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4376991AD1A19300FFC40C /* HTTPResponse.swift */; };
+		3F4376A61AD1A19300FFC40C /* HTTPResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43769B1AD1A19300FFC40C /* HTTPResult.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +40,17 @@
 		3F43766F1AD1A14100FFC40C /* HTTPServiceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HTTPServiceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F4376751AD1A14100FFC40C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3F4376761AD1A14100FFC40C /* HTTPServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPServiceTests.swift; sourceTree = "<group>"; };
+		3F43768A1AD1A19300FFC40C /* Operators.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Operators.swift; sourceTree = "<group>"; };
+		3F43768B1AD1A19300FFC40C /* HTTPService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPService.swift; sourceTree = "<group>"; };
+		3F43768D1AD1A19300FFC40C /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
+		3F43768E1AD1A19300FFC40C /* JSONExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONExtensions.swift; sourceTree = "<group>"; };
+		3F43768F1AD1A19300FFC40C /* JSONSerializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONSerializable.swift; sourceTree = "<group>"; };
+		3F4376911AD1A19300FFC40C /* HTTPObjectMapping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPObjectMapping.swift; sourceTree = "<group>"; };
+		3F4376931AD1A19300FFC40C /* HTTPServiceOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPServiceOperation.swift; sourceTree = "<group>"; };
+		3F4376951AD1A19300FFC40C /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
+		3F4376971AD1A19300FFC40C /* HTTPRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPRequest.swift; sourceTree = "<group>"; };
+		3F4376991AD1A19300FFC40C /* HTTPResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPResponse.swift; sourceTree = "<group>"; };
+		3F43769B1AD1A19300FFC40C /* HTTPResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPResult.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +94,15 @@
 			isa = PBXGroup;
 			children = (
 				3F4376691AD1A14100FFC40C /* HTTPService.h */,
+				3F43768B1AD1A19300FFC40C /* HTTPService.swift */,
+				3F4376891AD1A19300FFC40C /* Functional */,
+				3F43768C1AD1A19300FFC40C /* JSON */,
+				3F4376901AD1A19300FFC40C /* Mapping */,
+				3F4376921AD1A19300FFC40C /* Operations */,
+				3F4376941AD1A19300FFC40C /* Overloads */,
+				3F4376961AD1A19300FFC40C /* Request */,
+				3F4376981AD1A19300FFC40C /* Response */,
+				3F43769A1AD1A19300FFC40C /* Result */,
 				3F4376671AD1A14100FFC40C /* Supporting Files */,
 			);
 			path = HTTPService;
@@ -100,6 +131,72 @@
 				3F4376751AD1A14100FFC40C /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		3F4376891AD1A19300FFC40C /* Functional */ = {
+			isa = PBXGroup;
+			children = (
+				3F43768A1AD1A19300FFC40C /* Operators.swift */,
+			);
+			path = Functional;
+			sourceTree = "<group>";
+		};
+		3F43768C1AD1A19300FFC40C /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				3F43768D1AD1A19300FFC40C /* JSON.swift */,
+				3F43768E1AD1A19300FFC40C /* JSONExtensions.swift */,
+				3F43768F1AD1A19300FFC40C /* JSONSerializable.swift */,
+			);
+			path = JSON;
+			sourceTree = "<group>";
+		};
+		3F4376901AD1A19300FFC40C /* Mapping */ = {
+			isa = PBXGroup;
+			children = (
+				3F4376911AD1A19300FFC40C /* HTTPObjectMapping.swift */,
+			);
+			path = Mapping;
+			sourceTree = "<group>";
+		};
+		3F4376921AD1A19300FFC40C /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				3F4376931AD1A19300FFC40C /* HTTPServiceOperation.swift */,
+			);
+			path = Operations;
+			sourceTree = "<group>";
+		};
+		3F4376941AD1A19300FFC40C /* Overloads */ = {
+			isa = PBXGroup;
+			children = (
+				3F4376951AD1A19300FFC40C /* Dictionary.swift */,
+			);
+			path = Overloads;
+			sourceTree = "<group>";
+		};
+		3F4376961AD1A19300FFC40C /* Request */ = {
+			isa = PBXGroup;
+			children = (
+				3F4376971AD1A19300FFC40C /* HTTPRequest.swift */,
+			);
+			path = Request;
+			sourceTree = "<group>";
+		};
+		3F4376981AD1A19300FFC40C /* Response */ = {
+			isa = PBXGroup;
+			children = (
+				3F4376991AD1A19300FFC40C /* HTTPResponse.swift */,
+			);
+			path = Response;
+			sourceTree = "<group>";
+		};
+		3F43769A1AD1A19300FFC40C /* Result */ = {
+			isa = PBXGroup;
+			children = (
+				3F43769B1AD1A19300FFC40C /* HTTPResult.swift */,
+			);
+			path = Result;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -209,6 +306,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F43769E1AD1A19300FFC40C /* JSON.swift in Sources */,
+				3F4376A31AD1A19300FFC40C /* Dictionary.swift in Sources */,
+				3F4376A51AD1A19300FFC40C /* HTTPResponse.swift in Sources */,
+				3F43769F1AD1A19300FFC40C /* JSONExtensions.swift in Sources */,
+				3F4376A01AD1A19300FFC40C /* JSONSerializable.swift in Sources */,
+				3F43769C1AD1A19300FFC40C /* Operators.swift in Sources */,
+				3F4376A21AD1A19300FFC40C /* HTTPServiceOperation.swift in Sources */,
+				3F4376A41AD1A19300FFC40C /* HTTPRequest.swift in Sources */,
+				3F4376A61AD1A19300FFC40C /* HTTPResult.swift in Sources */,
+				3F43769D1AD1A19300FFC40C /* HTTPService.swift in Sources */,
+				3F4376A11AD1A19300FFC40C /* HTTPObjectMapping.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,6 +433,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = HTTPService/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -340,6 +449,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = HTTPService/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -395,6 +505,7 @@
 				3F43767C1AD1A14100FFC40C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3F43767D1AD1A14100FFC40C /* Build configuration list for PBXNativeTarget "HTTPServiceTests" */ = {
 			isa = XCConfigurationList;
@@ -403,6 +514,7 @@
 				3F43767F1AD1A14100FFC40C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

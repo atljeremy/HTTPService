@@ -1,6 +1,5 @@
 //
 //  HTTPService.h
-//  HTTPService
 //
 //  Created by Jeremy Fox on 4/5/15.
 //  Copyright (c) 2015 Jeremy Fox. All rights reserved.
