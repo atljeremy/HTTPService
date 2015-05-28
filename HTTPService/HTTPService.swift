@@ -55,7 +55,7 @@ public class HTTPService {
         
         :returns: The instance of HTTPServiceOperation that was constructed based on the HTTPRequest and will be enqueued for execution. If you need to cancel a request, keep a reference to this operation and call cancel() on it. Note, if the request is currently executing this will mark the operation as cancelled and will eventually be cancelled. This may not necessarilly happen instantly but will evenutally be cancelled and the completion handler will be called.
     */
-    public func enqueue<T where T: JSONSerializable, T == T.DecodedType>(request: HTTPRequest, returningObject object: T.Type, completion: ((HTTPRequest, HTTPResult<T>) -> Void)?) -> HTTPServiceOperation {
+    public func enqueue<T where T: JSONSerializable, T == T.DecodedType>(request: HTTPRequest, mapResponseToObject object: T.Type, completion: ((HTTPRequest, HTTPResult<T>) -> Void)?) -> HTTPServiceOperation {
         
         let operation = HTTPServiceOperation(request: request)
         operation.setCompletionHandlerWithSuccess({ operation, data in
@@ -73,9 +73,7 @@ public class HTTPService {
             
         }, failure: { operation, error in
             
-            if let _completionHanlder = completion {
-                _completionHanlder(request, .Failure(error))
-            }
+            completion?(request, .Failure(error))
             
         })
         _queue.addOperation(operation)
