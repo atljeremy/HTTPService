@@ -19,7 +19,8 @@ public class HTTPObjectMapping {
     */
     public class func mapResponse<T where T: JSONSerializable, T == T.DecodedType>(response: NSURLResponse!, data: NSData!, toObject object: T.Type, forRequest request: HTTPRequest) -> HTTPResult<T> {
         
-        let resultResponse = HTTPResult(HTTPResponse(data: data, urlResponse: response), nil)
+        let statusCode = (response as? NSHTTPURLResponse)?.statusCode ?? -1
+        let resultResponse = HTTPResult(HTTPResponse(data: data, urlResponse: response), statusCode, nil)
         let resultData = parseDataFromResult(resultResponse, forRequest: request)
         let resultJSON = deserializeJSON(resultData)
         let _object = deserializeObject(object, withResultJSON: resultJSON)
@@ -37,11 +38,11 @@ public class HTTPObjectMapping {
     */
     class func parseDataFromResult(result: HTTPResult<HTTPResponse>, forRequest request: HTTPRequest) -> HTTPResult<NSData> {
         switch result {
-        case let .Success(box):
-            let response = box.value
+        case let .Success(values):
+            let response = values.0.value
             let successRange = request.acceptibleStatusCodeRange
             if !contains(successRange, response.statusCode) {
-                return .Failure(NSError(domain: "HTTPObjectMappingErrorDomain", code: 8989, userInfo: [NSLocalizedDescriptionKey: "Response status code not is acceptable range"]))
+                return .Failure(NSError(domain: "HTTPObjectMappingErrorDomain", code: 8989, userInfo: [NSLocalizedDescriptionKey: "Response status code not is acceptable range"]), -1)
             }
             return .Success(Box(response.data))
         case let .Failure(error):

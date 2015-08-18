@@ -53,4 +53,8 @@ public struct HTTPRequest {
         self.imageUpload = imageUpload
     }
     
+    func statusCodeIsWithinAcceptableRange(statusCode: HTTPResponse.HTTPStatusCode) -> Bool {
+        return !contains(acceptibleStatusCodeRange, statusCode)
+    }
+    
 }

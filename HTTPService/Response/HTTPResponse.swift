@@ -6,8 +6,11 @@
 //
 
 public struct HTTPResponse {
+    
+    public typealias HTTPStatusCode = Int
+    
     public let data: NSData
-    public let statusCode: Int
+    public let statusCode: HTTPStatusCode
     
     public init(data: NSData, urlResponse: NSURLResponse) {
         self.data = data
