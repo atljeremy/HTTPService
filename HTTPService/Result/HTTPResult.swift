@@ -14,23 +14,23 @@ public final class Box<T> {
 
 public enum HTTPResult<T> {
     
-    case Failure(NSError, HTTPResponse.HTTPStatusCode)
-    case Success(Box<T>, HTTPResponse.HTTPStatusCode)
+    case Failure(NSError)
+    case Success(Box<T>)
     
-    init(_ value: T, _ statusCode: HTTPResponse.HTTPStatusCode, _ error: NSError?) {
+    init(_ value: T, _ error: NSError?) {
         if let err = error {
-            self = .Failure(err, statusCode)
+            self = .Failure(err)
         }
-        self = .Success(Box(value), statusCode)
+        self = .Success(Box(value))
     }
     
-    public static func fromOptional(optional: T?, _ statusCode: HTTPResponse.HTTPStatusCode, _ error: NSError?) -> HTTPResult<T> {
+    public static func fromOptional(optional: T?, _ error: NSError?) -> HTTPResult<T> {
         if let _optional = optional {
-            return .Success(Box(_optional), statusCode)
+            return .Success(Box(_optional))
         }
         if let _error = error {
-            return .Failure(_error, statusCode)
+            return .Failure(_error)
         }
-        return .Failure(NSError(domain: "HTTPObjectMappingErrorDomain", code: 7878, userInfo: [NSLocalizedDescriptionKey: "Unexpected error"]), 000)
+        return .Failure(NSError(domain: "HTTPObjectMappingErrorDomain", code: 7878, userInfo: [NSLocalizedDescriptionKey: "Unexpected error"]))
     }
 }

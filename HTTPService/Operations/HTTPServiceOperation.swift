@@ -122,9 +122,9 @@ public class HTTPServiceOperation: NSOperation {
             session.dataTaskWithRequest(URLRequest) { data, response, error in
                 
                 if let _response = response {
+                    self.response = _response as? NSHTTPURLResponse
                     let statusCode = (_response as! NSHTTPURLResponse).statusCode
                     if contains(self.request.acceptibleStatusCodeRange, statusCode) {
-                        self.response = response as? NSHTTPURLResponse
                         self.responseData = data
                         self.error = error
                     } else {

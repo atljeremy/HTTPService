@@ -55,7 +55,7 @@ public class HTTPService {
         
         :returns: The instance of HTTPServiceOperation that was constructed based on the HTTPRequest and will be enqueued for execution. If you need to cancel a request, keep a reference to this operation and call cancel() on it. Note, if the request is currently executing this will mark the operation as cancelled and will eventually be cancelled. This may not necessarilly happen instantly but will evenutally be cancelled and the completion handler will be called.
     */
-    public func enqueue<T where T: JSONSerializable, T == T.DecodedType>(request: HTTPRequest, mapResponseToObject object: T.Type, completion: ((HTTPRequest, HTTPResult<T>) -> Void)?) -> HTTPServiceOperation {
+    public func enqueue<T where T: JSONSerializable, T == T.DecodedType>(request: HTTPRequest, mapResponseToObject object: T.Type, completion: ((HTTPRequest, HTTPResult<T>, NSHTTPURLResponse?) -> Void)?) -> HTTPServiceOperation {
         
         let operation = HTTPServiceOperation(request: request)
         operation.setCompletionHandlerWithSuccess({ operation, data in
@@ -66,14 +66,14 @@ public class HTTPService {
             }
             
             if let _result = result {
-                completion?(request, _result)
+                completion?(request, _result, operation.response)
             } else {
-                completion?(request, HTTPResult.Failure(NSError(domain: "HTTPServiceErrorDomain", code: 1616, userInfo: [NSLocalizedDescriptionKey: "Unexpected error occurred"])))
+                completion?(request, HTTPResult.Failure(NSError(domain: "HTTPServiceErrorDomain", code: 1616, userInfo: [NSLocalizedDescriptionKey: "Unexpected error occurred"])), operation.response)
             }
             
         }, failure: { operation, error in
             
-            completion?(request, .Failure(error))
+            completion?(request, .Failure(error), operation.response)
             
         })
         _queue.addOperation(operation)
