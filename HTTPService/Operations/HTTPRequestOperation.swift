@@ -1,18 +1,18 @@
 //
-//  HTTPServiceOperation.swift
+//  HTTPRequestOperation.swift
 //
 //  Created by Jeremy Fox on 2/24/15.
 //  Copyright (c) 2015 Jeremy Fox. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
-public class HTTPServiceOperation: NSOperation {
+public class HTTPRequestOperation: NSOperation {
     
-    typealias SuccessHandler = (HTTPServiceOperation, NSData?) -> Void
-    typealias FailureHandler = (HTTPServiceOperation, NSError) -> Void
+    typealias SuccessHandler = (HTTPRequestOperation, NSData?) -> Void
+    typealias FailureHandler = (HTTPRequestOperation, NSError) -> Void
     
-    private let errorDomain = "HTTPServiceOperationErrorDomain"
+    private let errorDomain = "HTTPRequestOperationErrorDomain"
     
     private var isExecuting = false
     public private(set) override var executing: Bool {
@@ -96,15 +96,7 @@ public class HTTPServiceOperation: NSOperation {
                 return
             }
             
-            var baseURLString: String
-            if let _baseURLString = HTTPService.defaultService().baseURL.absoluteString {
-                baseURLString = _baseURLString
-            } else {
-                self.cancel()
-                self.completeOperation()
-                return
-            }
-            
+            let baseURLString = HTTPService.defaultService().baseURL.absoluteString
             var URL: NSURL
             if let _URL = NSURL(string: baseURLString + self.request.path) {
                 URL = _URL
@@ -116,7 +108,7 @@ public class HTTPServiceOperation: NSOperation {
             
             let URLRequest = self.URLRequest(URL)
             
-            var semephore = dispatch_semaphore_create(0)
+            let semephore = dispatch_semaphore_create(0)
             
             let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.currentQueue())
             session.dataTaskWithRequest(URLRequest) { data, response, error in
@@ -124,7 +116,7 @@ public class HTTPServiceOperation: NSOperation {
                 if let _response = response {
                     self.response = _response as? NSHTTPURLResponse
                     let statusCode = (_response as! NSHTTPURLResponse).statusCode
-                    if contains(self.request.acceptibleStatusCodeRange, statusCode) {
+                    if self.request.acceptibleStatusCodeRange.contains(statusCode) {
                         self.responseData = data
                         self.error = error
                     } else {
@@ -178,40 +170,41 @@ public class HTTPServiceOperation: NSOperation {
         URLRequest.HTTPMethod = request.method.rawValue
         
         if let _image = request.imageUpload?.image, _field = request.imageUpload?.field {
-            let imageData = UIImageJPEGRepresentation(_image, 1.0)
-            if imageData.length > 0 {
-                
-                let uniqueId = NSProcessInfo.processInfo().globallyUniqueString
-                
-                var postBody = NSMutableData()
-                var postData = ""
-                var boundary = "------WebKitFormBoundary\(uniqueId)"
-                
-                URLRequest.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField:"Content-Type")
-                
-                if let _params = request.body {
-                    postData += "--\(boundary)\r\n"
-                    for (key, value: AnyObject) in _params {
+            if let imageData = UIImageJPEGRepresentation(_image, 1.0) {
+                if imageData.length > 0 {
+                    
+                    let uniqueId = NSProcessInfo.processInfo().globallyUniqueString
+                    
+                    let postBody = NSMutableData()
+                    var postData = ""
+                    let boundary = "------WebKitFormBoundary\(uniqueId)"
+                    
+                    URLRequest.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField:"Content-Type")
+                    
+                    if let _params = request.body {
                         postData += "--\(boundary)\r\n"
-                        postData += "Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n"
-                        postData += "\(value)\r\n"
+                        for (key, value) in _params {
+                            postData += "--\(boundary)\r\n"
+                            postData += "Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n"
+                            postData += "\(value)\r\n"
+                        }
                     }
+                    postData += "--\(boundary)\r\n"
+                    postData += "Content-Disposition: form-data; name=\"\(_field)\"; filename=\"\(Int64(NSDate().timeIntervalSince1970*1000)).jpg\"\r\n"
+                    postData += "Content-Type: image/jpeg\r\n\r\n"
+                    postBody.appendData(postData.dataUsingEncoding(NSUTF8StringEncoding)!)
+                    postBody.appendData(imageData)
+                    postData = String()
+                    postData += "\r\n"
+                    postData += "\r\n--\(boundary)--\r\n"
+                    postBody.appendData(postData.dataUsingEncoding(NSUTF8StringEncoding)!)
+                    
+                    URLRequest.HTTPBody = NSData(data: postBody)
                 }
-                postData += "--\(boundary)\r\n"
-                postData += "Content-Disposition: form-data; name=\"\(_field)\"; filename=\"\(Int64(NSDate().timeIntervalSince1970*1000)).jpg\"\r\n"
-                postData += "Content-Type: image/jpeg\r\n\r\n"
-                postBody.appendData(postData.dataUsingEncoding(NSUTF8StringEncoding)!)
-                postBody.appendData(imageData)
-                postData = String()
-                postData += "\r\n"
-                postData += "\r\n--\(boundary)--\r\n"
-                postBody.appendData(postData.dataUsingEncoding(NSUTF8StringEncoding)!)
-                
-                URLRequest.HTTPBody = NSData(data: postBody)
             }
         } else {
             if let _body = request.body {
-                if let _bodyData = NSJSONSerialization.dataWithJSONObject(_body, options: nil, error: nil) {
+                if let _bodyData = try? NSJSONSerialization.dataWithJSONObject(_body, options: NSJSONWritingOptions(rawValue: 0)) {
                     URLRequest.HTTPBody = _bodyData
                 }
             }
@@ -228,11 +221,11 @@ public class HTTPServiceOperation: NSOperation {
     
 }
 
-extension HTTPServiceOperation: NSURLSessionDelegate {
+extension HTTPRequestOperation: NSURLSessionDelegate {
     
     public func URLSession(session: NSURLSession, didBecomeInvalidWithError error: NSError?) {
         
-        println("\(__FILE__): \(__FUNCTION__)")
+        print("\(__FILE__): \(__FUNCTION__)")
         
     }
     
@@ -244,22 +237,22 @@ extension HTTPServiceOperation: NSURLSessionDelegate {
     
 }
 
-extension HTTPServiceOperation: NSURLSessionDataDelegate {
+extension HTTPRequestOperation: NSURLSessionDataDelegate {
     
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
         
-        println("\(__FILE__): \(__FUNCTION__)")
+        print("\(__FILE__): \(__FUNCTION__)")
         
     }
     
-    public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, willCacheResponse proposedResponse: NSCachedURLResponse, completionHandler: (NSCachedURLResponse!) -> Void) {
+    public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, willCacheResponse proposedResponse: NSCachedURLResponse, completionHandler: (NSCachedURLResponse?) -> Void) {
         
-        println("\(__FILE__): \(__FUNCTION__)")
+        print("\(__FILE__): \(__FUNCTION__)")
         
     }
 }
 
-extension HTTPServiceOperation: NSURLSessionTaskDelegate {
+extension HTTPRequestOperation: NSURLSessionTaskDelegate {
     
     //    public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
     //
@@ -267,21 +260,21 @@ extension HTTPServiceOperation: NSURLSessionTaskDelegate {
     //
     //    }
     
-    public func URLSession(session: NSURLSession, task: NSURLSessionTask, needNewBodyStream completionHandler: (NSInputStream!) -> Void) {
+    public func URLSession(session: NSURLSession, task: NSURLSessionTask, needNewBodyStream completionHandler: (NSInputStream?) -> Void) {
         
-        println("\(__FILE__): \(__FUNCTION__)")
+        print("\(__FILE__): \(__FUNCTION__)")
         
     }
     
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         
-        println("\(__FILE__): \(__FUNCTION__)")
+        print("\(__FILE__): \(__FUNCTION__)")
         
     }
     
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
         
-        println("\(__FILE__): \(__FUNCTION__)")
+        print("\(__FILE__): \(__FUNCTION__)")
         
     }
 }

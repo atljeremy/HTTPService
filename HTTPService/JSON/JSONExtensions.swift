@@ -109,7 +109,7 @@ func deserializeArray<T where T: JSONSerializable, T == T.DecodedType>(json: JSO
         switch _json {
         case let .Array(a):
             var array = [T]()
-            for (index, json) in enumerate(a) {
+            for (_, json) in a.enumerate() {
                 if let val = T.fromJSON(json) {
                     array.append(val)
                 }

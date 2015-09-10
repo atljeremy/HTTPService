@@ -5,6 +5,8 @@
 //  Copyright (c) 2015 Jeremy Fox. All rights reserved.
 //
 
+import Foundation
+
 public struct HTTPResponse {
     
     public let data: NSData

@@ -5,6 +5,8 @@
 //  Copyright (c) 2015 Jeremy Fox. All rights reserved.
 //
 
+import UIKit
+
 public struct ImageUpload {
     
     public let image: UIImage
@@ -31,13 +33,13 @@ public struct HTTPRequest {
     
     public let path: String
     public let method: Method
-    public let headers: Headers?
+    public var headers: Headers?
     public let body: Params?
     public let imageUpload: ImageUpload?
     public let timeout: NSTimeInterval = 30
     public let acceptibleStatusCodeRange = 200..<300
     
-    public init(path: String, method: Method, headers: Headers?, body: Params?) {
+    public init(path: String, method: Method, headers: Headers? = nil, body: Params? = nil) {
         self.path        = path
         self.method      = method
         self.headers     = headers
@@ -45,12 +47,44 @@ public struct HTTPRequest {
         self.imageUpload = nil
     }
     
-    public init(path: String, method: Method, headers: Headers?, body: Params?, imageUpload: ImageUpload) {
+    public init(path: String, method: Method, headers: Headers? = nil, body: Params? = nil, imageUpload: ImageUpload) {
         self.path        = path
         self.method      = method
         self.headers     = headers
         self.body        = body
         self.imageUpload = imageUpload
+    }
+    
+    public mutating func addHeaders(_headers: Headers) -> HTTPRequest {
+        if headers == nil {
+            headers = HTTPRequest.Headers()
+        }
+        
+        for (key, value) in _headers {
+            headers?.updateValue(value, forKey: key)
+        }
+        
+        return self
+    }
+    
+    public mutating func removeHeaders(_headers: Headers) -> HTTPRequest {
+        for (key, value) in _headers {
+            if let containsHeader = headers?.contains({ $0.1 == value }) {
+                if containsHeader {
+                    headers?.removeValueForKey(key)
+                }
+            }
+        }
+        
+        return self
+    }
+    
+    public func executeMappingResponseToObject<T where T: JSONSerializable, T == T.DecodedType>(object: T.Type, completion: ((HTTPRequest, HTTPResult<T>, NSHTTPURLResponse?) -> Void)?) -> HTTPRequestOperation? {
+        return HTTPService.defaultService().enqueue(self, mapResponseToObject: object, completion: completion)
+    }
+    
+    public func execute(completion: ((HTTPRequest, HTTPResult<AnyObject>, NSHTTPURLResponse?) -> Void)?) -> HTTPRequestOperation? {
+        return HTTPService.defaultService().enqueue(self, completion: completion)
     }
     
 }

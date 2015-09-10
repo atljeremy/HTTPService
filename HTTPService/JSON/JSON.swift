@@ -5,6 +5,8 @@
 //  Copyright (c) 2015 Jeremy Fox. All rights reserved.
 //
 
+import Foundation
+
 /**
     A JSON enum used to wrap up each valid JSON type into for easier parsing and object serialization.
 
@@ -40,13 +42,13 @@ extension JSON {
         case let array as [AnyObject]: return .Array(array.map { self.parse($0) })
             
         case let object as [Swift.String: AnyObject]:
-            return .Object(reduce(object.keys, [:]) { accum, key in
+            return .Object(object.keys.reduce([:]) { accum, key in
                 var parsedValue = JSON.Empty
                 if let value: AnyObject = object[key] {
                     parsedValue = self.parse(value)
                 }
                 return accum += [key: parsedValue]
-                })
+            })
             
         case let string as Swift.String: return .String(string)
         case let number as NSNumber:     return .Number(number)

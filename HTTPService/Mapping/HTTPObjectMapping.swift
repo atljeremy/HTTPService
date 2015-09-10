@@ -5,6 +5,8 @@
 //  Copyright (c) 2015 Jeremy Fox. All rights reserved.
 //
 
+import Foundation
+
 /// Used by the HTTPService to map a response to a JSONSerializable model
 public class HTTPObjectMapping {
     
@@ -40,7 +42,7 @@ public class HTTPObjectMapping {
         case let .Success(box):
             let response = box.value
             let successRange = request.acceptibleStatusCodeRange
-            if !contains(successRange, response.statusCode) {
+            if !successRange.contains(response.statusCode) {
                 return .Failure(NSError(domain: "HTTPObjectMappingErrorDomain", code: 8989, userInfo: [NSLocalizedDescriptionKey: "Response status code not is acceptable range"]))
             }
             return .Success(Box(response.data))
@@ -59,10 +61,9 @@ public class HTTPObjectMapping {
     class func deserializeJSON(resultData: HTTPResult<NSData>) -> HTTPResult<AnyObject> {
         switch resultData {
         case let .Success(box):
-            var error: NSError?
             let data = box.value
-            let jsonOptional: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: nil, error: &error)
-            return HTTPResult.fromOptional(jsonOptional, error)
+            let jsonOptional: AnyObject? = try? NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(rawValue: 0))
+            return HTTPResult.fromOptional(jsonOptional, nil)
         case let .Failure(resultError):
             return .Failure(resultError)
         }

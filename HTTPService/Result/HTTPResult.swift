@@ -5,6 +5,8 @@
 //  Copyright (c) 2015 Jeremy Fox. All rights reserved.
 //
 
+import Foundation
+
 public final class Box<T> {
     public let value: T
     public init(_ value: T) {
