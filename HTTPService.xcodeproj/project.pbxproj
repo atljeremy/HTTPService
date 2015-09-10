@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		19AA9F461BA23A2900BEFCDC /* HTTPRequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AA9F451BA23A2900BEFCDC /* HTTPRequestOperation.swift */; settings = {ASSET_TAGS = (); }; };
 		3F43766A1AD1A14100FFC40C /* HTTPService.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F4376691AD1A14100FFC40C /* HTTPService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3F4376701AD1A14100FFC40C /* HTTPService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F4376641AD1A14100FFC40C /* HTTPService.framework */; };
 		3F43769C1AD1A19300FFC40C /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43768A1AD1A19300FFC40C /* Operators.swift */; };
@@ -15,7 +16,6 @@
 		3F43769F1AD1A19300FFC40C /* JSONExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43768E1AD1A19300FFC40C /* JSONExtensions.swift */; };
 		3F4376A01AD1A19300FFC40C /* JSONSerializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43768F1AD1A19300FFC40C /* JSONSerializable.swift */; };
 		3F4376A11AD1A19300FFC40C /* HTTPObjectMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4376911AD1A19300FFC40C /* HTTPObjectMapping.swift */; };
-		3F4376A21AD1A19300FFC40C /* HTTPServiceOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4376931AD1A19300FFC40C /* HTTPServiceOperation.swift */; };
 		3F4376A31AD1A19300FFC40C /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4376951AD1A19300FFC40C /* Dictionary.swift */; };
 		3F4376A41AD1A19300FFC40C /* HTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4376971AD1A19300FFC40C /* HTTPRequest.swift */; };
 		3F4376A51AD1A19300FFC40C /* HTTPResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4376991AD1A19300FFC40C /* HTTPResponse.swift */; };
@@ -37,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		19AA9F451BA23A2900BEFCDC /* HTTPRequestOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPRequestOperation.swift; sourceTree = "<group>"; };
 		3F4376641AD1A14100FFC40C /* HTTPService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HTTPService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F4376681AD1A14100FFC40C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3F4376691AD1A14100FFC40C /* HTTPService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTTPService.h; sourceTree = "<group>"; };
@@ -48,7 +49,6 @@
 		3F43768E1AD1A19300FFC40C /* JSONExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONExtensions.swift; sourceTree = "<group>"; };
 		3F43768F1AD1A19300FFC40C /* JSONSerializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONSerializable.swift; sourceTree = "<group>"; };
 		3F4376911AD1A19300FFC40C /* HTTPObjectMapping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPObjectMapping.swift; sourceTree = "<group>"; };
-		3F4376931AD1A19300FFC40C /* HTTPServiceOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPServiceOperation.swift; sourceTree = "<group>"; };
 		3F4376951AD1A19300FFC40C /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
 		3F4376971AD1A19300FFC40C /* HTTPRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPRequest.swift; sourceTree = "<group>"; };
 		3F4376991AD1A19300FFC40C /* HTTPResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPResponse.swift; sourceTree = "<group>"; };
@@ -171,7 +171,7 @@
 		3F4376921AD1A19300FFC40C /* Operations */ = {
 			isa = PBXGroup;
 			children = (
-				3F4376931AD1A19300FFC40C /* HTTPServiceOperation.swift */,
+				19AA9F451BA23A2900BEFCDC /* HTTPRequestOperation.swift */,
 			);
 			path = Operations;
 			sourceTree = "<group>";
@@ -331,7 +331,7 @@
 				3F43769F1AD1A19300FFC40C /* JSONExtensions.swift in Sources */,
 				3F4376A01AD1A19300FFC40C /* JSONSerializable.swift in Sources */,
 				3F43769C1AD1A19300FFC40C /* Operators.swift in Sources */,
-				3F4376A21AD1A19300FFC40C /* HTTPServiceOperation.swift in Sources */,
+				19AA9F461BA23A2900BEFCDC /* HTTPRequestOperation.swift in Sources */,
 				3F4376A41AD1A19300FFC40C /* HTTPRequest.swift in Sources */,
 				3F4376A61AD1A19300FFC40C /* HTTPResult.swift in Sources */,
 				3F43769D1AD1A19300FFC40C /* HTTPService.swift in Sources */,
