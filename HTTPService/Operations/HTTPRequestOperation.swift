@@ -231,7 +231,7 @@ extension HTTPRequestOperation: NSURLSessionDelegate {
     
     //    public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
     //
-    //        println("\(__FILE__): \(__FUNCTION__)")
+    //        print("\(__FILE__): \(__FUNCTION__)")
     //
     //    }
     
@@ -256,7 +256,7 @@ extension HTTPRequestOperation: NSURLSessionTaskDelegate {
     
     //    public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
     //
-    //        println("\(__FILE__): \(__FUNCTION__)")
+    //        print("\(__FILE__): \(__FUNCTION__)")
     //
     //    }
     

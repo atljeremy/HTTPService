@@ -10,6 +10,10 @@ import Foundation
 /// Used by the HTTPService to map a response to a JSONSerializable model
 public class HTTPObjectMapping {
     
+    public enum Errors: Int {
+        case DeserializationFailure = 2828
+    }
+    
     /**
         The main endpoint for mapping a response to a JSONSerializable model. If the response's status code is within the acceptable range and the data received can be parsed into a JSON object this function will parse the JSON object into an instance of the JSONSerializable model. After this is complete, an instance of HTTPResult with a .Success containing the Box'ed JSONSerializable model instance will be returned. If the response was not within the acceptable status code range or the data couldn't be parsed into a valid JSON object this will return an HTTPResult with a .Failure that contains an NSError that can be used to help determine was went wrong.
     

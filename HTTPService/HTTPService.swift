@@ -11,8 +11,8 @@ import Foundation.NSOperation
 /// The main class used for all Jeremy Fox API networking.
 public class HTTPService {
     
-    /// A private queue used to schedule all incoming HTTPRequest's
-    private let _queue = NSOperationQueue()
+    /// The queue used to schedule all incoming HTTPRequest's
+    public let _queue = NSOperationQueue()
     
     /// The baseURL that should be prefixed to all HTTPRequest.path's
     public var baseURL: NSURL!
@@ -124,6 +124,13 @@ public class HTTPService {
         _queue.addOperation(operation)
         
         return operation
+    }
+    
+    /**
+        Use this to suspend the internal operation queue. Once suspended, no further operations will be executed until un-suspended.
+    */
+    public func suspend(suspend: Bool) {
+        _queue.suspended = suspend
     }
     
 }
