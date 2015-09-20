@@ -90,63 +90,70 @@ public class HTTPRequestOperation: NSOperation {
     //MARK: ----------------------
     
     public override func main() {
-        autoreleasepool {
-            if self.cancelled {
-                self.completeOperation()
-                return
-            }
+        if cancelled {
+            completeOperation()
+            return
+        }
+        
+        if !Reachability.requestReachability() {
+            error = NSError(domain: errorDomain, code: 1414, userInfo: [NSLocalizedDescriptionKey: "No internet connection currently available."])
+            cancel()
+            completeOperation()
+            return
+        }
+        
+        if cancelled {
+            completeOperation()
+            return
+        }
+        
+        let URLRequest: NSMutableURLRequest
+        if let _request = request.mutableURLRequest() {
+            URLRequest = _request
+        } else {
+            cancel()
+            completeOperation()
+            return
+        }
+        
+        let semephore = dispatch_semaphore_create(0)
+        
+        let session = NSURLSession(configuration: NSURLSessionConfiguration.ephemeralSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.currentQueue())
+        session.dataTaskWithRequest(URLRequest) { data, response, error in
             
-            let baseURLString = HTTPService.defaultService().baseURL.absoluteString
-            var URL: NSURL
-            if let _URL = NSURL(string: baseURLString + self.request.path) {
-                URL = _URL
-            } else {
-                self.cancel()
-                self.completeOperation()
-                return
-            }
-            
-            let URLRequest = self.URLRequest(URL)
-            
-            let semephore = dispatch_semaphore_create(0)
-            
-            let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.currentQueue())
-            session.dataTaskWithRequest(URLRequest) { data, response, error in
-                
-                if let _response = response {
-                    self.response = _response as? NSHTTPURLResponse
-                    let statusCode = (_response as! NSHTTPURLResponse).statusCode
-                    if self.request.acceptibleStatusCodeRange.contains(statusCode) {
-                        self.responseData = data
-                        self.error = error
-                    } else {
-                        self.error = NSError(domain: self.errorDomain, code: 3333, userInfo: [NSLocalizedDescriptionKey: "Status code received (\(statusCode)) was not within acceptable range (\(self.request.acceptibleStatusCodeRange.startIndex))-(\(self.request.acceptibleStatusCodeRange.endIndex))"])
-                        self.cancel()
-                    }
-                } else {
+            if let _response = response {
+                let statusCode = (_response as! NSHTTPURLResponse).statusCode
+                if self.request.acceptibleStatusCodeRange.contains(statusCode) {
+                    self.response = response as? NSHTTPURLResponse
+                    self.responseData = data
                     self.error = error
+                } else {
+                    self.error = NSError(domain: self.errorDomain, code: 3333, userInfo: [NSLocalizedDescriptionKey: "Status code received (\(statusCode)) was not within acceptable range (\(self.request.acceptibleStatusCodeRange.startIndex))-(\(self.request.acceptibleStatusCodeRange.endIndex))"])
                     self.cancel()
                 }
-                
-                dispatch_semaphore_signal(semephore)
-                }.resume()
-            
-            dispatch_semaphore_wait(semephore, DISPATCH_TIME_FOREVER)
-            
-            if self.cancelled {
-                self.completeOperation()
-                return
+            } else {
+                self.error = error
+                self.cancel()
             }
             
-            if self.responseData == nil {
-                let userInfo = [NSLocalizedDescriptionKey: "Received empty response"]
-                self.error = NSError(domain: self.errorDomain, code: NSURLErrorResourceUnavailable, userInfo: userInfo)
-                self.completeOperation()
-                return
-            }
-            
-            self.completeOperation()
+            dispatch_semaphore_signal(semephore)
+        }.resume()
+        
+        dispatch_semaphore_wait(semephore, dispatch_time(DISPATCH_TIME_NOW, Int64(UInt64(request.timeout + 1) * NSEC_PER_SEC)))
+        
+        if cancelled {
+            completeOperation()
+            return
         }
+        
+        if responseData == nil {
+            let userInfo = [NSLocalizedDescriptionKey: "Received empty response"]
+            error = NSError(domain: errorDomain, code: NSURLErrorResourceUnavailable, userInfo: userInfo)
+            completeOperation()
+            return
+        }
+        
+        completeOperation()
     }
     
     public override func start() {
@@ -154,69 +161,13 @@ public class HTTPRequestOperation: NSOperation {
             finished = true
             return
         }
-        
-        main()
         executing = true
+        main()
     }
     
     func completeOperation() {
         executing = false
         finished = true
-    }
-    
-    func URLRequest(URL: NSURL) -> NSMutableURLRequest {
-        
-        let URLRequest = NSMutableURLRequest(URL: URL, cachePolicy: NSURLRequestCachePolicy.UseProtocolCachePolicy, timeoutInterval: request.timeout)
-        URLRequest.HTTPMethod = request.method.rawValue
-        
-        if let _image = request.imageUpload?.image, _field = request.imageUpload?.field {
-            if let imageData = UIImageJPEGRepresentation(_image, 1.0) {
-                if imageData.length > 0 {
-                    
-                    let uniqueId = NSProcessInfo.processInfo().globallyUniqueString
-                    
-                    let postBody = NSMutableData()
-                    var postData = ""
-                    let boundary = "------WebKitFormBoundary\(uniqueId)"
-                    
-                    URLRequest.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField:"Content-Type")
-                    
-                    if let _params = request.body {
-                        postData += "--\(boundary)\r\n"
-                        for (key, value) in _params {
-                            postData += "--\(boundary)\r\n"
-                            postData += "Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n"
-                            postData += "\(value)\r\n"
-                        }
-                    }
-                    postData += "--\(boundary)\r\n"
-                    postData += "Content-Disposition: form-data; name=\"\(_field)\"; filename=\"\(Int64(NSDate().timeIntervalSince1970*1000)).jpg\"\r\n"
-                    postData += "Content-Type: image/jpeg\r\n\r\n"
-                    postBody.appendData(postData.dataUsingEncoding(NSUTF8StringEncoding)!)
-                    postBody.appendData(imageData)
-                    postData = String()
-                    postData += "\r\n"
-                    postData += "\r\n--\(boundary)--\r\n"
-                    postBody.appendData(postData.dataUsingEncoding(NSUTF8StringEncoding)!)
-                    
-                    URLRequest.HTTPBody = NSData(data: postBody)
-                }
-            }
-        } else {
-            if let _body = request.body {
-                if let _bodyData = try? NSJSONSerialization.dataWithJSONObject(_body, options: NSJSONWritingOptions(rawValue: 0)) {
-                    URLRequest.HTTPBody = _bodyData
-                }
-            }
-        }
-        
-        if let _headers = self.request.headers {
-            for (headerFeld, value) in _headers {
-                URLRequest.addValue(value, forHTTPHeaderField: headerFeld)
-            }
-        }
-        
-        return URLRequest
     }
     
 }
