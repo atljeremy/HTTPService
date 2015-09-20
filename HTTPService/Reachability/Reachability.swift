@@ -8,12 +8,12 @@
 
 import SystemConfiguration
 
-class Reachability {
+public class Reachability {
     
     static var reachabilityRefs = [String: SCNetworkReachability]()
     static let reachabilityQueue = dispatch_queue_create("Operations.Reachability", DISPATCH_QUEUE_SERIAL)
     
-    static func requestReachability(url: NSURL? = nil) -> Bool {
+    public static func requestReachability(url: NSURL? = nil) -> Bool {
         
         var isReachable = false
         
