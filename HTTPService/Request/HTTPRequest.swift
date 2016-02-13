@@ -28,7 +28,7 @@ public struct HTTPRequest {
         case PUT = "PUT"
         case POST = "POST"
         case PATCH = "PATCH"
-        case DELETE = "DELTE"
+        case DELETE = "DELETE"
     }
     
     public let path: String
