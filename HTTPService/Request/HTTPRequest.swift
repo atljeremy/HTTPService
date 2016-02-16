@@ -36,8 +36,8 @@ public struct HTTPRequest {
     public var headers: Headers?
     public let body: Params?
     public let imageUpload: ImageUpload?
-    public let timeout: NSTimeInterval = 30
-    public let acceptibleStatusCodeRange = 200..<300
+    public var timeout: NSTimeInterval = 30
+    public var acceptibleStatusCodeRange = 200..<300
     
     public init(path: String, method: Method, headers: Headers? = nil, body: Params? = nil) {
         self.path        = path
