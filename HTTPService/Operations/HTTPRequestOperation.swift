@@ -176,7 +176,7 @@ extension HTTPRequestOperation: NSURLSessionDelegate {
     
     public func URLSession(session: NSURLSession, didBecomeInvalidWithError error: NSError?) {
         
-        print("\(__FILE__): \(__FUNCTION__)")
+        print("\(#file): \(#function)")
         
     }
     
@@ -192,13 +192,13 @@ extension HTTPRequestOperation: NSURLSessionDataDelegate {
     
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
         
-        print("\(__FILE__): \(__FUNCTION__)")
+        print("\(#file): \(#function)")
         
     }
     
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, willCacheResponse proposedResponse: NSCachedURLResponse, completionHandler: (NSCachedURLResponse?) -> Void) {
         
-        print("\(__FILE__): \(__FUNCTION__)")
+        print("\(#file): \(#function)")
         
     }
 }
@@ -213,19 +213,19 @@ extension HTTPRequestOperation: NSURLSessionTaskDelegate {
     
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, needNewBodyStream completionHandler: (NSInputStream?) -> Void) {
         
-        print("\(__FILE__): \(__FUNCTION__)")
+        print("\(#file): \(#function)")
         
     }
     
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         
-        print("\(__FILE__): \(__FUNCTION__)")
+        print("\(#file): \(#function)")
         
     }
     
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
         
-        print("\(__FILE__): \(__FUNCTION__)")
+        print("\(#file): \(#function)")
         
     }
 }

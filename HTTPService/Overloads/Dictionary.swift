@@ -7,9 +7,10 @@
 //
 
 /// Use to combine two Dictionaries
-func +=<K, V>(var left: [K: V], right: [K: V]) -> [K: V] {
+func +=<K, V>(left: [K: V], right: [K: V]) -> [K: V] {
+    var _left = left
     for (key, val) in right {
-        left.updateValue(val, forKey: key)
+        _left.updateValue(val, forKey: key)
     }
-    return left
+    return _left
 }

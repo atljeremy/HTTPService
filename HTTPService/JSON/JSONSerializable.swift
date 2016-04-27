@@ -6,7 +6,7 @@
 //
 
 public protocol JSONSerializable {
-    typealias DecodedType = Self
+    associatedtype DecodedType = Self
     static func fromJSON(json: JSON) -> DecodedType?
     func toJSON() -> [String: AnyObject]?
 }
