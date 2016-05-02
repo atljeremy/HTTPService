@@ -99,15 +99,26 @@ public class HTTPService {
             
             var result: HTTPResult<AnyObject>?
             if let _data = data {
-                var _json: AnyObject? = nil
-                var _error: NSError? = nil
-                do {
-                    _json = try NSJSONSerialization.JSONObjectWithData(_data, options: NSJSONReadingOptions(rawValue: 0))
-                } catch let error as NSError {
-                    _error = error
+                
+                // A DELETE request should return a 204 stats code indicating "No Content".
+                if operation.response?.statusCode == 204 {
+                    
+                    result = HTTPResult.fromOptional("", nil)
+                    
+                } else {
+                    
+                    var _json: AnyObject? = nil
+                    var _error: NSError? = nil
+                    do {
+                        _json = try NSJSONSerialization.JSONObjectWithData(_data, options: NSJSONReadingOptions(rawValue: 0))
+                    } catch let error as NSError {
+                        _error = error
+                    }
+                    
+                    result = HTTPResult.fromOptional(_json, _error)
+                    
                 }
                 
-                result = HTTPResult.fromOptional(_json, _error)
             }
             
             if let _result = result {
