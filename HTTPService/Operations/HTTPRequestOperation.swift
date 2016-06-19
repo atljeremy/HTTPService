@@ -128,7 +128,27 @@ public class HTTPRequestOperation: NSOperation {
                     self.responseData = data
                     self.error = error
                 } else {
-                    self.error = NSError(domain: self.errorDomain, code: 3333, userInfo: [NSLocalizedDescriptionKey: "Status code received (\(statusCode)) was not within acceptable range (\(self.request.acceptibleStatusCodeRange.startIndex))-(\(self.request.acceptibleStatusCodeRange.endIndex))"])
+                    
+                    guard let _data = data else {
+                        self.error = self.invlaidStatusCodeError(statusCode)
+                        self.cancel()
+                        return
+                    }
+                    
+                    do {
+                        let errorJSON = try NSJSONSerialization.JSONObjectWithData(_data, options: NSJSONReadingOptions(rawValue: 0))
+                        guard let _error = errorJSON["error"] as? String else {
+                            self.error = self.invlaidStatusCodeError(statusCode)
+                            self.cancel()
+                            return
+                        }
+                        
+                        self.error = NSError(domain: self.errorDomain, code: 9393, userInfo: [NSLocalizedDescriptionKey: _error])
+                        
+                    } catch _ {
+                        self.error = self.invlaidStatusCodeError(statusCode)
+                    }
+                
                     self.cancel()
                 }
             } else {
@@ -168,6 +188,10 @@ public class HTTPRequestOperation: NSOperation {
     func completeOperation() {
         executing = false
         finished = true
+    }
+    
+    func invlaidStatusCodeError(statusCode: Int) -> NSError {
+        return NSError(domain: self.errorDomain, code: 3333, userInfo: [NSLocalizedDescriptionKey: "Status code received (\(statusCode)) was not within acceptable range (\(self.request.acceptibleStatusCodeRange.startIndex))-(\(self.request.acceptibleStatusCodeRange.endIndex))"])
     }
     
 }

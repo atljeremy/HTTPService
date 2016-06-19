@@ -47,7 +47,7 @@ public class HTTPObjectMapping {
             let response = box.value
             let successRange = request.acceptibleStatusCodeRange
             if !successRange.contains(response.statusCode) {
-                return .Failure(NSError(domain: "HTTPObjectMappingErrorDomain", code: 8989, userInfo: [NSLocalizedDescriptionKey: "Response status code not is acceptable range"]))
+                return .Failure(NSError(domain: "HTTPObjectMappingErrorDomain", code: 8989, userInfo: [NSLocalizedDescriptionKey: "Response status code not in acceptable range"]))
             }
             return .Success(Box(response.data))
         case let .Failure(error):
