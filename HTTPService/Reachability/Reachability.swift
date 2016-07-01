@@ -3,7 +3,7 @@
 //  merchcat
 //
 //  Created by Jeremy Fox on 6/15/15.
-//  Copyright (c) 2015 Randy Arrowood. All rights reserved.
+//  Copyright (c) 2015 Jeremy Fox. All rights reserved.
 //
 
 import SystemConfiguration
