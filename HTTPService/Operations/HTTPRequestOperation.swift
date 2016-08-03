@@ -121,12 +121,15 @@ public class HTTPRequestOperation: NSOperation {
         let session = NSURLSession(configuration: NSURLSessionConfiguration.ephemeralSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.currentQueue())
         session.dataTaskWithRequest(URLRequest) { data, response, error in
             
-            if let _response = response {
-                let statusCode = (_response as! NSHTTPURLResponse).statusCode
+            if let _response = response as? NSHTTPURLResponse {
+                let statusCode = _response.statusCode
+                self.response = _response
+                
                 if self.request.acceptibleStatusCodeRange.contains(statusCode) {
-                    self.response = response as? NSHTTPURLResponse
+                    
                     self.responseData = data
                     self.error = error
+                    
                 } else {
                     
                     guard let _data = data else {

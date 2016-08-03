@@ -60,6 +60,8 @@ public class HTTPService {
         let operation = HTTPRequestOperation(request: request)
         operation.setCompletionHandlerWithSuccess({ operation, data in
             
+            self.verifyAuthStatusFromResponse(operation.response)
+            
             var result: HTTPResult<T>?
             if let _data = data {
                 result = HTTPObjectMapping.mapResponse(operation.response, data: _data, toObject: object, forRequest: request)
@@ -72,6 +74,8 @@ public class HTTPService {
             }
             
         }, failure: { operation, error in
+            
+            self.verifyAuthStatusFromResponse(operation.response)
             
             completion?(request, .Failure(error), operation.response)
             
@@ -96,6 +100,8 @@ public class HTTPService {
         
         let operation = HTTPRequestOperation(request: request)
         operation.setCompletionHandlerWithSuccess({ operation, data in
+            
+            self.verifyAuthStatusFromResponse(operation.response)
             
             var result: HTTPResult<AnyObject>?
             if let _data = data {
@@ -128,8 +134,10 @@ public class HTTPService {
             }
             
         }, failure: { operation, error in
+            
+            self.verifyAuthStatusFromResponse(operation.response)
                 
-                completion?(request, .Failure(error), operation.response)
+            completion?(request, .Failure(error), operation.response)
                 
         })
         _queue.addOperation(operation)
@@ -142,6 +150,26 @@ public class HTTPService {
     */
     public func suspend(suspend: Bool) {
         _queue.suspended = suspend
+    }
+    
+    private func verifyAuthStatusFromResponse(response: NSHTTPURLResponse?) {
+        if let _statusCode = response?.statusCode where _statusCode == 401 {
+            NSNotificationCenter.defaultCenter().postNotificationName(Notifications.UnauthorizedRequest, object: nil)
+        }
+    }
+    
+}
+
+extension HTTPService {
+    
+    public struct Notifications {
+        
+        public static var UnauthorizedRequest: String {
+            get {
+                return "UnauthorizedRequest"
+            }
+        }
+        
     }
     
 }
