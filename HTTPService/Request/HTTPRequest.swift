@@ -79,11 +79,11 @@ public struct HTTPRequest {
         return self
     }
     
-    public func executeMappingResponseToObject<T where T: JSONSerializable, T == T.DecodedType>(object: T.Type, completion: ((HTTPRequest, HTTPResult<T>, NSHTTPURLResponse?) -> Void)?) -> HTTPRequestOperation? {
+    public func executeMappingResponseToObject<T where T: JSONSerializable, T == T.DecodedType>(object: T.Type, completion: ((HTTPRequestOperation, HTTPResult<T>) -> Void)?) -> HTTPRequestOperation? {
         return HTTPService.defaultService().enqueue(self, mapResponseToObject: object, completion: completion)
     }
     
-    public func execute(completion: ((HTTPRequest, HTTPResult<AnyObject>, NSHTTPURLResponse?) -> Void)?) -> HTTPRequestOperation? {
+    public func execute(completion: ((HTTPRequestOperation, HTTPResult<AnyObject>) -> Void)?) -> HTTPRequestOperation? {
         return HTTPService.defaultService().enqueue(self, completion: completion)
     }
     
