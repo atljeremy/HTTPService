@@ -9,6 +9,7 @@
 import UIKit
 import XCTest
 import HTTPService
+import Atlas
 
 class JSONSerializableTests: XCTestCase {
     
@@ -19,12 +20,12 @@ class JSONSerializableTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // When
-        listing = Listing.fromJSON(json)
+        listing = try! Listing.init(json: json)
     }
     
     func testJSONParsingPerformance() {
         self.measureBlock {
-            Listing.fromJSON(self.json)
+            let _ = try! Listing.init(json: self.json)
         }
     }
     
@@ -63,14 +64,14 @@ class JSONSerializableTests: XCTestCase {
         XCTAssert(floorplan.available == true, "Expected floorplan.available to equal true but got \(floorplan.available)")
         XCTAssert(floorplan.baths == 3, "Expected floorplan.baths to equal 3 but got \(floorplan.baths)")
         XCTAssert(floorplan.beds == 2, "Expected floorplan.beds to equal 2 but got \(floorplan.beds)")
-        XCTAssert(floorplan.create_date == "2/2/2015", "Expected floorplan.create_date to equal 2/2/2015 but got \(floorplan.create_date)")
+        XCTAssert(floorplan.createDate == "2/2/2015", "Expected floorplan.create_date to equal 2/2/2015 but got \(floorplan.createDate)")
         XCTAssert(floorplan.id == 55, "Expected floorplan.id to equal 55 but got \(floorplan.id)")
         XCTAssert(floorplan.photos![0] == "/imgr/34505d862c70474b99042cbc8a168e04/800-", "Expected floorplan.photos![0] to equal (/imgr/34505d862c70474b99042cbc8a168e04/800-) but got (\(floorplan.photos![0]))")
     }
     
     func testCustomObjectIsConvertedToJSONObject() {
         // When
-        let listingDictionary = listing.toJSON()!
+        let listingDictionary = listing.toJSON() as! [String: AnyObject]
         let listingID = listingDictionary["id"] as! NSNumber
         XCTAssert(listingID == 123, "Expected listingDictionary[\"id\"] to equal 123 but got \(listingID)")
     }
@@ -78,22 +79,29 @@ class JSONSerializableTests: XCTestCase {
 
 extension JSONSerializableTests {
     static func listingJSON() -> JSON {
-        return JSON.Object([
-            "id": JSON.Number(123),
-            "title": JSON.String("Some Property Title"),
-            "latitude": JSON.Number(12.4444),
-            "longitude": JSON.Number(23.5555),
-            "pets_allowed": JSON.Number(true),
-            "address": JSON.Object(["number":JSON.Number(42), "street":JSON.String("Main St")]),
-            "expired": JSON.Number(false),
-            "floorplan_set": JSON.Array([JSON.Object([
-                "available": JSON.Number(true),
-                "baths": JSON.Number(3),
-                "beds": JSON.Number(2),
-                "create_date": JSON.String("2/2/2015"),
-                "id": JSON.Number(55),
-                "photos": JSON.Array([JSON.String("/imgr/34505d862c70474b99042cbc8a168e04/800-")])
-                ])])
-            ])
+        let json: [String: AnyObject] = [
+            "id": 123,
+            "title": "Some Property Title",
+            "latitude": 12.4444,
+            "longitude": 23.5555,
+            "pets_allowed": true,
+            "address": [
+                "number": 42,
+                "street": "Main St"
+            ],
+            "expired": false,
+            "floorplan_set": [
+                [
+                "available": true,
+                "baths": 3,
+                "beds": 2,
+                "create_date": "2/2/2015",
+                "id": 55,
+                "photos": ["/imgr/34505d862c70474b99042cbc8a168e04/800-"]
+                ]
+            ]
+        ]
+        
+        return json
     }
 }

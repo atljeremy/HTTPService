@@ -5,7 +5,7 @@
 //  Copyright (c) 2015 Jeremy Fox. All rights reserved.
 //
 
-import HTTPService
+import Atlas
 
 struct FloorPlan {
     var id: Int
@@ -13,18 +13,12 @@ struct FloorPlan {
     var baths: Int?
     var beds: Int?
     var photos: [String]?
-    var create_date: String?
+    var createDate: String?
 }
 
-extension FloorPlan: JSONSerializable {
+extension FloorPlan: AtlasMap {
     
-    typealias DecodedType = FloorPlan
-    
-    static func create(id: Int)(available: Bool)(baths: Int?)(beds: Int?)(photos: [String]?)(create_date: String?) -> FloorPlan {
-        return FloorPlan(id: id, available: available, baths: baths, beds: beds, photos: photos, create_date: create_date)
-    }
-    
-    func toJSON() -> [String : AnyObject]? {
+    func toJSON() -> JSON? {
         var floorPlanDictionary: [String : AnyObject] = [
             "id": id,
             "available": available
@@ -42,21 +36,24 @@ extension FloorPlan: JSONSerializable {
             floorPlanDictionary["photos"] = _photos
         }
         
-        if let _create_date = create_date {
-            floorPlanDictionary["create_date"] = _create_date
+        if let _createDate = createDate {
+            floorPlanDictionary["create_date"] = _createDate
         }
         
         return floorPlanDictionary
     }
     
-    static func fromJSON(j: JSON) -> DecodedType? {
-        let floorPlan = FloorPlan.create
-            <<! "id" => j
-            <<& "available" => j
-            <<& "baths" =>? j
-            <<& "beds" =>? j
-            <<& "photos" =>>? j
-            <<& "create_date" =>? j
-        return floorPlan
+    init?(json: JSON) throws {
+        do {
+            let map = try Atlas(json)
+            id = try map.objectFromKey("id")
+            available = try map.objectFromKey("available")
+            baths = try map.objectFromOptionalKey("baths")
+            beds = try map.objectFromOptionalKey("beds")
+            photos = try map.arrayFromOptionalKey("photos")
+            createDate = try map.objectFromOptionalKey("create_date")
+        } catch let e {
+            throw e
+        }
     }
 }

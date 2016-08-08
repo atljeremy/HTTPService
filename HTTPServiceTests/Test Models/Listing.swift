@@ -5,7 +5,7 @@
 //  Copyright (c) 2015 Jeremy Fox. All rights reserved.
 //
 
-import HTTPService
+import Atlas
 
 struct Listing {
     var id: Int64
@@ -18,15 +18,9 @@ struct Listing {
     var floorPlans: [FloorPlan]?
 }
 
-extension Listing: JSONSerializable {
+extension Listing: AtlasMap {
     
-    typealias DecodedType = Listing
-    
-    static func create(id: Int64)(title: String)(latitude: Double)(longitude: Double)(petsAllowed: Bool)(address: Address?)(expired: Bool)(floorPlans: [FloorPlan]?) -> DecodedType {
-        return Listing(id: id, title: title, latitude: latitude, longitude: longitude, petsAllowed: petsAllowed, address: address, expired: expired, floorPlans: floorPlans)
-    }
-    
-    func toJSON() -> [String : AnyObject]? {
+    func toJSON() -> JSON? {
         var listingDictionary: [String : AnyObject] = [
             "id": NSNumber(longLong: id),
             "title": title,
@@ -47,17 +41,20 @@ extension Listing: JSONSerializable {
         return listingDictionary
     }
     
-    static func fromJSON(j: JSON) -> DecodedType? {
-        let listing = Listing.create
-            <<! "id" => j
-            <<& "title" => j
-            <<& "latitude" => j
-            <<& "longitude" => j
-            <<& "pets_allowed" => j
-            <<& "address" =>? j
-            <<& "expired" => j
-            <<& "floorplan_set" =>>? j
-        return listing
+    init?(json: JSON) throws {
+        do {
+            let map = try Atlas(json)
+            id = try map.objectFromKey("id")
+            title = try map.objectFromKey("title")
+            latitude = try map.objectFromKey("latitude")
+            longitude = try map.objectFromKey("longitude")
+            petsAllowed = try map.objectFromKey("pets_allowed")
+            address = try map.objectFromOptionalKey("address")
+            expired = try map.objectFromKey("expired")
+            floorPlans = try map.arrayFromOptionalKey("floorplan_set")
+        } catch let e {
+            throw e
+        }
     }
     
 }

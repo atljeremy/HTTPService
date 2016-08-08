@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Atlas
 
 public struct ImageUpload {
     
@@ -79,8 +80,8 @@ public struct HTTPRequest {
         return self
     }
     
-    public func executeMappingResponseToObject<T where T: JSONSerializable, T == T.DecodedType>(object: T.Type, completion: ((HTTPRequestOperation, HTTPResult<T>) -> Void)?) -> HTTPRequestOperation? {
-        return HTTPService.defaultService().enqueue(self, mapResponseToObject: object, completion: completion)
+    public func executeMappingResponseToObject<T: AtlasMap>(completion: ((HTTPRequestOperation, HTTPResult<T>) -> Void)?) -> HTTPRequestOperation? {
+        return HTTPService.defaultService().enqueue(self, completion: completion)
     }
     
     public func execute(completion: ((HTTPRequestOperation, HTTPResult<AnyObject>) -> Void)?) -> HTTPRequestOperation? {

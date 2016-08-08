@@ -1,0 +1,3 @@
+[submodule "Vendor/Atlas"]
+	path = Vendor/Atlas
+	url = git@github.com:rentpath/Atlas

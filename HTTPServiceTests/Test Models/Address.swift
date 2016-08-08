@@ -5,32 +5,29 @@
 //  Copyright (c) 2015 Jeremy Fox. All rights reserved.
 //
 
-import HTTPService
+import Atlas
 
 struct Address {
     var number: Int
     var street: String
 }
 
-extension Address: JSONSerializable {
+extension Address: AtlasMap {
     
-    typealias DecodedType = Address
-    
-    static func create(number: Int)(street: String) -> Address {
-        return Address(number: number, street: street)
-    }
-    
-    func toJSON() -> [String : AnyObject]? {
+    func toJSON() -> JSON? {
         return [
             "number": number,
             "street": street
         ]
     }
     
-    static func fromJSON(j: JSON) -> DecodedType? {
-        let address = Address.create
-            <<! "number" => j
-            <<& "street" => j
-        return address
+    init?(json: JSON) throws {
+        do {
+            let map = try Atlas(json)
+            number = try map.objectFromKey("number")
+            street = try map.objectFromKey("street")
+        } catch let e {
+            throw e
+        }
     }
 }

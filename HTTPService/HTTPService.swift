@@ -7,6 +7,7 @@
 //
 
 import Foundation.NSOperation
+import Atlas
 
 /// The main class used for all Jeremy Fox API networking.
 public class HTTPService {
@@ -49,13 +50,13 @@ public class HTTPService {
         `HTTPService.defaultService().enqueue(searchRequest, mapResponseToObject: SearchResult.self) { operation, result in
         }`
     
-        :param: request The HTTPRequest to enqueue for execution
-        :param: object The object conforming to JSONSerializable that will be used to map the JSON response to and returned in the completion handler
-        :param: completion The completion handler that will be called when the request execution has completed. This will be called on the main thread.
+        - Parameters: 
+            - request: The HTTPRequest to enqueue for execution
+            - completion: The completion handler that will be called when the request execution has completed. This will be called on the main thread.
         
-        :returns: The instance of HTTPRequestOperation that was constructed based on the HTTPRequest and will be enqueued for execution. If you need to cancel a request, keep a reference to this operation and call cancel() on it. Note, if the request is currently executing this will mark the operation as cancelled and will eventually be cancelled. This may not necessarilly happen instantly but will evenutally be cancelled and the completion handler will be called.
+        - Returns: The instance of HTTPRequestOperation that was constructed based on the HTTPRequest and will be enqueued for execution. If you need to cancel a request, keep a reference to this operation and call cancel() on it. Note, if the request is currently executing this will mark the operation as cancelled and will eventually be cancelled. This may not necessarilly happen instantly but will evenutally be cancelled and the completion handler will be called.
     */
-    public func enqueue<T where T: JSONSerializable, T == T.DecodedType>(request: HTTPRequest, mapResponseToObject object: T.Type, completion: ((HTTPRequestOperation, HTTPResult<T>) -> Void)?) -> HTTPRequestOperation {
+    public func enqueue<T: AtlasMap>(request: HTTPRequest, completion: ((HTTPRequestOperation, HTTPResult<T>) -> Void)?) -> HTTPRequestOperation {
         
         let operation = HTTPRequestOperation(request: request)
         operation.setCompletionHandlerWithSuccess({ operation, data in
@@ -64,7 +65,7 @@ public class HTTPService {
             
             var result: HTTPResult<T>?
             if let _data = data {
-                result = HTTPObjectMapping.mapResponse(operation.response, data: _data, toObject: object, forRequest: request)
+                result = HTTPObjectMapping.mapResponse(operation.response, data: _data, forRequest: request)
             }
             
             if let _result = result {
@@ -91,10 +92,11 @@ public class HTTPService {
         `HTTPService.defaultService().enqueue(searchRequest) { operation, result in
         }`
         
-        :param: request The HTTPRequest to enqueue for execution
-        :param: completion The completion handler that will be called when the request execution has completed. This will be called on the main thread.
-        
-        :returns: The instance of HTTPRequestOperation that was constructed based on the HTTPRequest and will be enqueued for execution. If you need to cancel a request, keep a reference to this operation and call cancel() on it. Note, if the request is currently executing this will mark the operation as cancelled and will eventually be cancelled. This may not necessarilly happen instantly but will evenutally be cancelled and the completion handler will be called.
+        - Parameters:
+            - request: The HTTPRequest to enqueue for execution
+            - completion: The completion handler that will be called when the request execution has completed. This will be called on the main thread.
+     
+        - Returns: The instance of HTTPRequestOperation that was constructed based on the HTTPRequest and will be enqueued for execution. If you need to cancel a request, keep a reference to this operation and call cancel() on it. Note, if the request is currently executing this will mark the operation as cancelled and will eventually be cancelled. This may not necessarilly happen instantly but will evenutally be cancelled and the completion handler will be called.
     */
     public func enqueue(request: HTTPRequest, completion: ((HTTPRequestOperation, HTTPResult<AnyObject>) -> Void)?) -> HTTPRequestOperation {
         

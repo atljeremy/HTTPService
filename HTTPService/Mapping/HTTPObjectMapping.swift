@@ -5,7 +5,7 @@
 //  Copyright (c) 2015 Jeremy Fox. All rights reserved.
 //
 
-import Foundation
+import Atlas
 
 /// Used by the HTTPService to map a response to a JSONSerializable model
 public class HTTPObjectMapping {
@@ -17,29 +17,30 @@ public class HTTPObjectMapping {
     /**
         The main endpoint for mapping a response to a JSONSerializable model. If the response's status code is within the acceptable range and the data received can be parsed into a JSON object this function will parse the JSON object into an instance of the JSONSerializable model. After this is complete, an instance of HTTPResult with a .Success containing the Box'ed JSONSerializable model instance will be returned. If the response was not within the acceptable status code range or the data couldn't be parsed into a valid JSON object this will return an HTTPResult with a .Failure that contains an NSError that can be used to help determine was went wrong.
     
-        :param: response The NSURLResponse of the request. Used to get information like statusCode to determine if the request was executed successfuly of not.
-        :param: data The NSData containing the response body that will be mapped to the JSONSerializable model
-        :param: object The model conforming to JSONSerializable that will be used to map the response JOSN to and returned within the HTTPResult
+        - Parameters:
+            - response: The NSURLResponse of the request. Used to get information like statusCode to determine if the request was executed successfuly of not.
+            - data: The NSData containing the response body that will be mapped to the JSONSerializable model
     
-        :returns: An instance of HTTPResult which will have either a .Success containg a Box'ed JSONSerializable model instance of a .Failure containg an NSError.
+        - Returns: An instance of HTTPResult which will have either a .Success containg a Box'ed JSONSerializable model instance of a .Failure containg an NSError.
     */
-    public class func mapResponse<T where T: JSONSerializable, T == T.DecodedType>(response: NSURLResponse!, data: NSData!, toObject object: T.Type, forRequest request: HTTPRequest) -> HTTPResult<T> {
+    public class func mapResponse<T: AtlasMap>(response: NSURLResponse!, data: NSData!, forRequest request: HTTPRequest) -> HTTPResult<T> {
         
         let resultResponse = HTTPResult(HTTPResponse(data: data, urlResponse: response), nil)
         let resultData = parseDataFromResult(resultResponse, forRequest: request)
         let resultJSON = deserializeJSON(resultData)
-        let _object = deserializeObject(object, withResultJSON: resultJSON)
+        let _object: HTTPResult<T> = deserializeObject(withResultJSON: resultJSON)
         
         return _object
     }
     
-    /** 
+    /**
         Used to simply pull out the NSData that is wrapped up in the HTTPResult<HTTPResponse> and return a new instance of HTTPResult<NSData>
     
-        :param: result The instance of HTTPResult<HTTPResponse> that contains the NSData
-        :param: request The HTTPRequest from which the HTTPResult was received. This is used to get the requests acceptableStatusCodeRange.
+        - Parameters:
+            - result: The instance of HTTPResult<HTTPResponse> that contains the NSData
+            - request: The HTTPRequest from which the HTTPResult was received. This is used to get the requests acceptableStatusCodeRange.
     
-        :returns: A new instance of HTTPResult<NSData>
+        - Returns: A new instance of HTTPResult<NSData>
     */
     class func parseDataFromResult(result: HTTPResult<HTTPResponse>, forRequest request: HTTPRequest) -> HTTPResult<NSData> {
         switch result {
@@ -81,17 +82,21 @@ public class HTTPObjectMapping {
     
         :returns: A new instance of HTTPResult<T>.Success containing the newly created and parsed instance of "object" or HTTPResult<T>.Failure containing an NSError
     */
-    class func deserializeObject<T where T: JSONSerializable, T == T.DecodedType>(object: T.Type, withResultJSON resultJSON: HTTPResult<AnyObject>) -> HTTPResult<T> {
+    class func deserializeObject<T: AtlasMap>(withResultJSON resultJSON: HTTPResult<AnyObject>) -> HTTPResult<T> {
         switch resultJSON {
         case let .Success(box):
-            let jsonObject: AnyObject = box.value
-            let json = JSON.parse(jsonObject)
-            let parsedObject = object.fromJSON(json)
-            var error: NSError?
-            if parsedObject == nil {
-                error = NSError(domain: "HTTPObjectMappingErrorDomain", code: 2828, userInfo: [NSLocalizedDescriptionKey: "Uable to deserialize object"])
+            do {
+                let jsonObject: JSON = box.value
+                let parsedObject = try T.init(json: jsonObject)
+                var error: NSError?
+                if parsedObject == nil {
+                    error = NSError(domain: "HTTPObjectMappingErrorDomain", code: 2828, userInfo: [NSLocalizedDescriptionKey: "Uable to deserialize object"])
+                }
+                return HTTPResult.fromOptional(parsedObject, error)
+            } catch let e {
+                let error = NSError(domain: "HTTPObjectMappingErrorDomain", code: 118822, userInfo: [NSLocalizedDescriptionKey: "\(e)"])
+                return .Failure(error)
             }
-            return HTTPResult.fromOptional(parsedObject, error)
         case let .Failure(error):
             return .Failure(error)
         }

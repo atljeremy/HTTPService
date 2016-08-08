@@ -7,20 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		19AA9F461BA23A2900BEFCDC /* HTTPRequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AA9F451BA23A2900BEFCDC /* HTTPRequestOperation.swift */; settings = {ASSET_TAGS = (); }; };
+		1918B8091D57F4970094FA6B /* Atlas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1918B8021D57F4800094FA6B /* Atlas.framework */; };
+		19AA9F461BA23A2900BEFCDC /* HTTPRequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AA9F451BA23A2900BEFCDC /* HTTPRequestOperation.swift */; };
 		3F43766A1AD1A14100FFC40C /* HTTPService.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F4376691AD1A14100FFC40C /* HTTPService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3F4376701AD1A14100FFC40C /* HTTPService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F4376641AD1A14100FFC40C /* HTTPService.framework */; };
-		3F43769C1AD1A19300FFC40C /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43768A1AD1A19300FFC40C /* Operators.swift */; };
 		3F43769D1AD1A19300FFC40C /* HTTPService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43768B1AD1A19300FFC40C /* HTTPService.swift */; };
-		3F43769E1AD1A19300FFC40C /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43768D1AD1A19300FFC40C /* JSON.swift */; };
-		3F43769F1AD1A19300FFC40C /* JSONExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43768E1AD1A19300FFC40C /* JSONExtensions.swift */; };
-		3F4376A01AD1A19300FFC40C /* JSONSerializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43768F1AD1A19300FFC40C /* JSONSerializable.swift */; };
 		3F4376A11AD1A19300FFC40C /* HTTPObjectMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4376911AD1A19300FFC40C /* HTTPObjectMapping.swift */; };
-		3F4376A31AD1A19300FFC40C /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4376951AD1A19300FFC40C /* Dictionary.swift */; };
 		3F4376A41AD1A19300FFC40C /* HTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4376971AD1A19300FFC40C /* HTTPRequest.swift */; };
 		3F4376A51AD1A19300FFC40C /* HTTPResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4376991AD1A19300FFC40C /* HTTPResponse.swift */; };
 		3F4376A61AD1A19300FFC40C /* HTTPResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43769B1AD1A19300FFC40C /* HTTPResult.swift */; };
-		3F5B7DD01BAE2867006DC884 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5B7DCF1BAE2867006DC884 /* Reachability.swift */; settings = {ASSET_TAGS = (); }; };
+		3F5B7DD01BAE2867006DC884 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5B7DCF1BAE2867006DC884 /* Reachability.swift */; };
 		3F64449E1B0A102300AD34A0 /* JSONSerializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F64449D1B0A102300AD34A0 /* JSONSerializableTests.swift */; };
 		3F98C3321B0AAD5600AC23D4 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F98C32F1B0AAD5600AC23D4 /* Address.swift */; };
 		3F98C3331B0AAD5600AC23D4 /* FloorPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F98C3301B0AAD5600AC23D4 /* FloorPlan.swift */; };
@@ -28,6 +24,41 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		1918B8011D57F4800094FA6B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1918B7BB1D57F4800094FA6B /* Atlas.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1AF952621CABF52A00D44B05;
+			remoteInfo = Atlas;
+		};
+		1918B8031D57F4800094FA6B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1918B7BB1D57F4800094FA6B /* Atlas.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1AF9526C1CABF52A00D44B05;
+			remoteInfo = AtlasTests;
+		};
+		1918B8051D57F4800094FA6B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1918B7BB1D57F4800094FA6B /* Atlas.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1AF952961CAC446B00D44B05;
+			remoteInfo = AtlasTV;
+		};
+		1918B8071D57F4800094FA6B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1918B7BB1D57F4800094FA6B /* Atlas.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1AF9529F1CAC446B00D44B05;
+			remoteInfo = AtlasTVTests;
+		};
+		1918B80A1D57F49D0094FA6B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1918B7BB1D57F4800094FA6B /* Atlas.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 1AF952611CABF52A00D44B05;
+			remoteInfo = Atlas;
+		};
 		3F4376711AD1A14100FFC40C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3F43765B1AD1A14100FFC40C /* Project object */;
@@ -38,19 +69,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1918B7BB1D57F4800094FA6B /* Atlas.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Atlas.xcodeproj; sourceTree = "<group>"; };
 		19AA9F451BA23A2900BEFCDC /* HTTPRequestOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPRequestOperation.swift; sourceTree = "<group>"; };
 		3F4376641AD1A14100FFC40C /* HTTPService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HTTPService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F4376681AD1A14100FFC40C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3F4376691AD1A14100FFC40C /* HTTPService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTTPService.h; sourceTree = "<group>"; };
 		3F43766F1AD1A14100FFC40C /* HTTPServiceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HTTPServiceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F4376751AD1A14100FFC40C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3F43768A1AD1A19300FFC40C /* Operators.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Operators.swift; sourceTree = "<group>"; };
 		3F43768B1AD1A19300FFC40C /* HTTPService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPService.swift; sourceTree = "<group>"; };
-		3F43768D1AD1A19300FFC40C /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
-		3F43768E1AD1A19300FFC40C /* JSONExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONExtensions.swift; sourceTree = "<group>"; };
-		3F43768F1AD1A19300FFC40C /* JSONSerializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONSerializable.swift; sourceTree = "<group>"; };
 		3F4376911AD1A19300FFC40C /* HTTPObjectMapping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPObjectMapping.swift; sourceTree = "<group>"; };
-		3F4376951AD1A19300FFC40C /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
 		3F4376971AD1A19300FFC40C /* HTTPRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPRequest.swift; sourceTree = "<group>"; };
 		3F4376991AD1A19300FFC40C /* HTTPResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPResponse.swift; sourceTree = "<group>"; };
 		3F43769B1AD1A19300FFC40C /* HTTPResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPResult.swift; sourceTree = "<group>"; };
@@ -67,6 +94,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1918B8091D57F4970094FA6B /* Atlas.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,9 +109,37 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1918B7A31D57F4800094FA6B /* Vendor */ = {
+			isa = PBXGroup;
+			children = (
+				1918B7A41D57F4800094FA6B /* Atlas */,
+			);
+			path = Vendor;
+			sourceTree = "<group>";
+		};
+		1918B7A41D57F4800094FA6B /* Atlas */ = {
+			isa = PBXGroup;
+			children = (
+				1918B7BB1D57F4800094FA6B /* Atlas.xcodeproj */,
+			);
+			path = Atlas;
+			sourceTree = "<group>";
+		};
+		1918B7BC1D57F4800094FA6B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1918B8021D57F4800094FA6B /* Atlas.framework */,
+				1918B8041D57F4800094FA6B /* AtlasTests.xctest */,
+				1918B8061D57F4800094FA6B /* AtlasTV.framework */,
+				1918B8081D57F4800094FA6B /* AtlasTVTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		3F43765A1AD1A14100FFC40C = {
 			isa = PBXGroup;
 			children = (
+				1918B7A31D57F4800094FA6B /* Vendor */,
 				3F4376661AD1A14100FFC40C /* HTTPService */,
 				3F4376731AD1A14100FFC40C /* HTTPServiceTests */,
 				3F4376651AD1A14100FFC40C /* Products */,
@@ -104,11 +160,8 @@
 			children = (
 				3F4376691AD1A14100FFC40C /* HTTPService.h */,
 				3F43768B1AD1A19300FFC40C /* HTTPService.swift */,
-				3F4376891AD1A19300FFC40C /* Functional */,
-				3F43768C1AD1A19300FFC40C /* JSON */,
 				3F4376901AD1A19300FFC40C /* Mapping */,
 				3F4376921AD1A19300FFC40C /* Operations */,
-				3F4376941AD1A19300FFC40C /* Overloads */,
 				3F5B7DCE1BAE2851006DC884 /* Reachability */,
 				3F4376961AD1A19300FFC40C /* Request */,
 				3F4376981AD1A19300FFC40C /* Response */,
@@ -145,24 +198,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		3F4376891AD1A19300FFC40C /* Functional */ = {
-			isa = PBXGroup;
-			children = (
-				3F43768A1AD1A19300FFC40C /* Operators.swift */,
-			);
-			path = Functional;
-			sourceTree = "<group>";
-		};
-		3F43768C1AD1A19300FFC40C /* JSON */ = {
-			isa = PBXGroup;
-			children = (
-				3F43768D1AD1A19300FFC40C /* JSON.swift */,
-				3F43768E1AD1A19300FFC40C /* JSONExtensions.swift */,
-				3F43768F1AD1A19300FFC40C /* JSONSerializable.swift */,
-			);
-			path = JSON;
-			sourceTree = "<group>";
-		};
 		3F4376901AD1A19300FFC40C /* Mapping */ = {
 			isa = PBXGroup;
 			children = (
@@ -177,14 +212,6 @@
 				19AA9F451BA23A2900BEFCDC /* HTTPRequestOperation.swift */,
 			);
 			path = Operations;
-			sourceTree = "<group>";
-		};
-		3F4376941AD1A19300FFC40C /* Overloads */ = {
-			isa = PBXGroup;
-			children = (
-				3F4376951AD1A19300FFC40C /* Dictionary.swift */,
-			);
-			path = Overloads;
 			sourceTree = "<group>";
 		};
 		3F4376961AD1A19300FFC40C /* Request */ = {
@@ -255,6 +282,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				1918B80B1D57F49D0094FA6B /* PBXTargetDependency */,
 			);
 			name = HTTPService;
 			productName = HTTPService;
@@ -306,6 +334,12 @@
 			mainGroup = 3F43765A1AD1A14100FFC40C;
 			productRefGroup = 3F4376651AD1A14100FFC40C /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 1918B7BC1D57F4800094FA6B /* Products */;
+					ProjectRef = 1918B7BB1D57F4800094FA6B /* Atlas.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				3F4376631AD1A14100FFC40C /* HTTPService */,
@@ -313,6 +347,37 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		1918B8021D57F4800094FA6B /* Atlas.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Atlas.framework;
+			remoteRef = 1918B8011D57F4800094FA6B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1918B8041D57F4800094FA6B /* AtlasTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AtlasTests.xctest;
+			remoteRef = 1918B8031D57F4800094FA6B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1918B8061D57F4800094FA6B /* AtlasTV.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AtlasTV.framework;
+			remoteRef = 1918B8051D57F4800094FA6B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1918B8081D57F4800094FA6B /* AtlasTVTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AtlasTVTests.xctest;
+			remoteRef = 1918B8071D57F4800094FA6B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		3F4376621AD1A14100FFC40C /* Resources */ = {
@@ -336,13 +401,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3F43769E1AD1A19300FFC40C /* JSON.swift in Sources */,
-				3F4376A31AD1A19300FFC40C /* Dictionary.swift in Sources */,
 				3F5B7DD01BAE2867006DC884 /* Reachability.swift in Sources */,
 				3F4376A51AD1A19300FFC40C /* HTTPResponse.swift in Sources */,
-				3F43769F1AD1A19300FFC40C /* JSONExtensions.swift in Sources */,
-				3F4376A01AD1A19300FFC40C /* JSONSerializable.swift in Sources */,
-				3F43769C1AD1A19300FFC40C /* Operators.swift in Sources */,
 				19AA9F461BA23A2900BEFCDC /* HTTPRequestOperation.swift in Sources */,
 				3F4376A41AD1A19300FFC40C /* HTTPRequest.swift in Sources */,
 				3F4376A61AD1A19300FFC40C /* HTTPResult.swift in Sources */,
@@ -365,6 +425,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		1918B80B1D57F49D0094FA6B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Atlas;
+			targetProxy = 1918B80A1D57F49D0094FA6B /* PBXContainerItemProxy */;
+		};
 		3F4376721AD1A14100FFC40C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3F4376631AD1A14100FFC40C /* HTTPService */;
