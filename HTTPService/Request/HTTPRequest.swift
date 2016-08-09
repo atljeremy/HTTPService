@@ -80,7 +80,7 @@ public struct HTTPRequest {
         return self
     }
     
-    public func executeMappingResponseToObject<T: AtlasMap>(completion: ((HTTPRequestOperation, HTTPResult<T>) -> Void)?) -> HTTPRequestOperation? {
+    public func execute<T: AtlasMap>(completion: ((HTTPRequestOperation, HTTPResult<T>) -> Void)?) -> HTTPRequestOperation? {
         return HTTPService.defaultService().enqueue(self, completion: completion)
     }
     
