@@ -21,8 +21,8 @@ struct Listing {
 extension Listing: AtlasMap {
     
     func toJSON() -> JSON? {
-        var listingDictionary: [String : AnyObject] = [
-            "id": NSNumber(longLong: id),
+        var listingDictionary: [String: Any] = [
+            "id": id,
             "title": title,
             "latitude": latitude,
             "longitude": longitude,
@@ -44,14 +44,14 @@ extension Listing: AtlasMap {
     init?(json: JSON) throws {
         do {
             let map = try Atlas(json)
-            id = try map.objectFromKey("id")
-            title = try map.objectFromKey("title")
-            latitude = try map.objectFromKey("latitude")
-            longitude = try map.objectFromKey("longitude")
-            petsAllowed = try map.objectFromKey("pets_allowed")
-            address = try map.objectFromOptionalKey("address")
-            expired = try map.objectFromKey("expired")
-            floorPlans = try map.arrayFromOptionalKey("floorplan_set")
+            id = try map.object(for: "id")
+            title = try map.object(for: "title")
+            latitude = try map.object(for: "latitude")
+            longitude = try map.object(for: "longitude")
+            petsAllowed = try map.object(for: "pets_allowed")
+            address = try map.object(forOptional: "address")
+            expired = try map.object(for: "expired")
+            floorPlans = try map.array(forOptional: "floorplan_set")
         } catch let e {
             throw e
         }

@@ -9,12 +9,12 @@ import Foundation
 
 public struct HTTPResponse {
     
-    public let data: NSData
+    public let data: Data
     public let statusCode: Int
     
-    public init(data: NSData, urlResponse: NSURLResponse) {
+    public init(data: Data, urlResponse: URLResponse) {
         self.data = data
-        if let _urlResponse = urlResponse as? NSHTTPURLResponse {
+        if let _urlResponse = urlResponse as? HTTPURLResponse {
             statusCode = _urlResponse.statusCode
         } else {
             statusCode = -1

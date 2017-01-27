@@ -37,7 +37,7 @@ public struct HTTPRequest {
     public var headers: Headers?
     public let body: Params?
     public let imageUpload: ImageUpload?
-    public var timeout: NSTimeInterval = 30
+    public var timeout: TimeInterval = 30
     public var acceptibleStatusCodeRange = 200..<300
     
     public init(path: String, method: Method, headers: Headers? = nil, body: Params? = nil) {
@@ -56,66 +56,64 @@ public struct HTTPRequest {
         self.imageUpload = imageUpload
     }
     
-    public mutating func addHeaders(_headers: Headers) -> HTTPRequest {
+    public mutating func add(_ _headers: Headers) -> HTTPRequest {
         if headers == nil {
             headers = HTTPRequest.Headers()
         }
         
         for (key, value) in _headers {
-            headers?.updateValue(value, forKey: key)
+            _ = headers?.updateValue(value, forKey: key)
         }
         
         return self
     }
     
-    public mutating func removeHeaders(_headers: Headers) -> HTTPRequest {
+    public mutating func remove(_ _headers: Headers) -> HTTPRequest {
         for (key, value) in _headers {
-            if let containsHeader = headers?.contains({ $0.1 == value }) {
-                if containsHeader {
-                    headers?.removeValueForKey(key)
-                }
+            if let containsHeader = headers?.contains(where: { $0.1 == value }), containsHeader {
+                _ = headers?.removeValue(forKey: key)
             }
         }
         
         return self
     }
     
-    public func execute<T: AtlasMap>(completion: ((HTTPRequestOperation, HTTPResult<T>) -> Void)?) -> HTTPRequestOperation? {
+    public func execute<T: AtlasMap>(_ completion: ((HTTPRequestOperation, HTTPResult<T>) -> Void)?) -> HTTPRequestOperation? {
         return HTTPService.defaultService().enqueue(self, completion: completion)
     }
     
-    public func execute(completion: ((HTTPRequestOperation, HTTPResult<AnyObject>) -> Void)?) -> HTTPRequestOperation? {
+    public func execute(_ completion: ((HTTPRequestOperation, HTTPResult<AnyObject>) -> Void)?) -> HTTPRequestOperation? {
         return HTTPService.defaultService().enqueue(self, completion: completion)
     }
     
-    func mutableURLRequest() -> NSMutableURLRequest? {
+    func urlRequest() -> URLRequest? {
         
         let baseURLString = HTTPService.defaultService().baseURL.absoluteString
         
-        var URL: NSURL
-        if let _URL = NSURL(string: baseURLString + path) {
+        var URL: Foundation.URL
+        if let _URL = Foundation.URL(string: baseURLString + path) {
             URL = _URL
         } else {
             return nil
         }
         
-        let URLRequest = NSMutableURLRequest(URL: URL, cachePolicy: NSURLRequestCachePolicy.UseProtocolCachePolicy, timeoutInterval: timeout)
-        URLRequest.HTTPMethod = method.rawValue
+        var urlRequest = URLRequest(url: URL, cachePolicy: .useProtocolCachePolicy, timeoutInterval: timeout)
+        urlRequest.httpMethod = method.rawValue
         
-        if let _image = imageUpload?.image, _field = imageUpload?.field {
+        if let _image = imageUpload?.image, let _field = imageUpload?.field {
             
             guard let imageData = UIImageJPEGRepresentation(_image, 1.0) else {
                 return nil
             }
             
-            if imageData.length > 0 {
+            if imageData.count > 0 {
                 
-                let uniqueId = NSProcessInfo.processInfo().globallyUniqueString
+                let uniqueId = ProcessInfo.processInfo.globallyUniqueString
                 let postBody = NSMutableData()
                 var postData = ""
                 let boundary = "------WebKitFormBoundary\(uniqueId)"
                 
-                URLRequest.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField:"Content-Type")
+                urlRequest.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField:"Content-Type")
                 
                 if let _params = body {
                     postData += "--\(boundary)\r\n"
@@ -123,35 +121,35 @@ public struct HTTPRequest {
                     postData += "--\(boundary)\r\n"
                 }
                 
-                postData += "Content-Disposition: form-data; name=\"\(_field)\"; filename=\"\(Int64(NSDate().timeIntervalSince1970*1000)).jpg\"\r\n"
+                postData += "Content-Disposition: form-data; name=\"\(_field)\"; filename=\"\(Int64(Date().timeIntervalSince1970*1000)).jpg\"\r\n"
                 postData += "Content-Type: image/jpeg\r\n\r\n"
-                postBody.appendData(postData.dataUsingEncoding(NSUTF8StringEncoding)!)
-                postBody.appendData(imageData)
+                postBody.append(postData.data(using: String.Encoding.utf8)!)
+                postBody.append(imageData)
                 postData = String()
                 postData += "\r\n"
                 postData += "\r\n--\(boundary)--\r\n"
-                postBody.appendData(postData.dataUsingEncoding(NSUTF8StringEncoding)!)
+                postBody.append(postData.data(using: String.Encoding.utf8)!)
                 
-                URLRequest.HTTPBody = NSData(data: postBody)
+                urlRequest.httpBody = NSData(data: postBody as Data) as Data
             }
         } else {
             if let _body = body {
-                if let _bodyData = try? NSJSONSerialization.dataWithJSONObject(_body, options: NSJSONWritingOptions(rawValue: 0)) {
-                    URLRequest.HTTPBody = _bodyData
+                if let _bodyData = try? JSONSerialization.data(withJSONObject: _body, options: JSONSerialization.WritingOptions(rawValue: 0)) {
+                    urlRequest.httpBody = _bodyData
                 }
             }
         }
         
         if let _headers = headers {
             for (headerFeld, value) in _headers {
-                URLRequest.addValue(value, forHTTPHeaderField: headerFeld)
+                urlRequest.addValue(value, forHTTPHeaderField: headerFeld)
             }
         }
         
-        return URLRequest
+        return urlRequest
     }
     
-    private func appendParams(params: [String: AnyObject], withBoundary boundary: String, parentKey: String? = nil, atIndex index: Int? = nil) -> String {
+    fileprivate func appendParams(_ params: [String: AnyObject], withBoundary boundary: String, parentKey: String? = nil, atIndex index: Int? = nil) -> String {
         var postData = ""
         for (key, value) in params {
             if let nestedParams = value as? [String: AnyObject] {
@@ -178,9 +176,9 @@ public struct HTTPRequest {
         return postData
     }
     
-    private func appendArrayParams(arrayParams: [AnyObject], withBoundary boundary: String, parentKey: String) -> String {
+    fileprivate func appendArrayParams(_ arrayParams: [AnyObject], withBoundary boundary: String, parentKey: String) -> String {
         var postData = ""
-        for (index, param) in arrayParams.enumerate() {
+        for (index, param) in arrayParams.enumerated() {
             if let _param = param as? [String: AnyObject] {
                 postData += appendParams(_param, withBoundary: boundary, parentKey: parentKey, atIndex: index)
             }

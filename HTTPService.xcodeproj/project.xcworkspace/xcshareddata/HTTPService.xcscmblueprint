@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "367142E5B62D6BB7DC7D3B81A21951F1DB07CEEE",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "367142E5B62D6BB7DC7D3B81A21951F1DB07CEEE" : 9223372036854775807,
+    "E55C33625A9DCFBB7DD41CCA69D85D67C503114C" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "BE762550-6FC0-49F3-A535-528DA787BBD5",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "367142E5B62D6BB7DC7D3B81A21951F1DB07CEEE" : "HTTPService\/",
+    "E55C33625A9DCFBB7DD41CCA69D85D67C503114C" : "HTTPService\/Vendor\/Atlas\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "HTTPService",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "HTTPService.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:atljeremy\/HTTPService.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "367142E5B62D6BB7DC7D3B81A21951F1DB07CEEE"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:rentpath\/Atlas",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "E55C33625A9DCFBB7DD41CCA69D85D67C503114C"
+    }
+  ]
+}

@@ -10,16 +10,16 @@ import Foundation.NSOperation
 import Atlas
 
 /// The main class used for all Jeremy Fox API networking.
-public class HTTPService {
+open class HTTPService {
     
     /// The queue used to schedule all incoming HTTPRequest's
-    public let _queue = NSOperationQueue()
+    open let _queue = OperationQueue()
     
     /// The baseURL that should be prefixed to all HTTPRequest.path's
-    public var baseURL: NSURL!
+    open var baseURL: URL!
     
     /// The private default instance of HTTPService. Use defaultService() to access this instance.
-    private class var _defaultService: HTTPService {
+    fileprivate class var _defaultService: HTTPService {
         struct Static {
             static let instance = HTTPService()
         }
@@ -31,7 +31,7 @@ public class HTTPService {
     
         :returns: The default (shared) instance of HTTPService
     */
-    public class func defaultService() -> HTTPService {
+    open class func defaultService() -> HTTPService {
         return _defaultService
     }
     
@@ -56,7 +56,7 @@ public class HTTPService {
         
         - Returns: The instance of HTTPRequestOperation that was constructed based on the HTTPRequest and will be enqueued for execution. If you need to cancel a request, keep a reference to this operation and call cancel() on it. Note, if the request is currently executing this will mark the operation as cancelled and will eventually be cancelled. This may not necessarilly happen instantly but will evenutally be cancelled and the completion handler will be called.
     */
-    public func enqueue<T: AtlasMap>(request: HTTPRequest, completion: ((HTTPRequestOperation, HTTPResult<T>) -> Void)?) -> HTTPRequestOperation {
+    open func enqueue<T: AtlasMap>(_ request: HTTPRequest, completion: ((HTTPRequestOperation, HTTPResult<T>) -> Void)?) -> HTTPRequestOperation {
         
         let operation = HTTPRequestOperation(request: request)
         operation.setCompletionHandlerWithSuccess({ operation, data in
@@ -71,14 +71,14 @@ public class HTTPService {
             if let _result = result {
                 completion?(operation, _result)
             } else {
-                completion?(operation, .Failure(NSError(domain: "HTTPServiceErrorDomain", code: 1616, userInfo: [NSLocalizedDescriptionKey: "Unexpected error occurred"])))
+                completion?(operation, .failure(NSError(domain: "HTTPServiceErrorDomain", code: 1616, userInfo: [NSLocalizedDescriptionKey: "Unexpected error occurred"])))
             }
             
         }, failure: { operation, error in
             
             self.verifyAuthStatusFromResponse(operation.response)
             
-            completion?(operation, .Failure(error))
+            completion?(operation, .failure(error))
             
         })
         _queue.addOperation(operation)
@@ -98,7 +98,7 @@ public class HTTPService {
      
         - Returns: The instance of HTTPRequestOperation that was constructed based on the HTTPRequest and will be enqueued for execution. If you need to cancel a request, keep a reference to this operation and call cancel() on it. Note, if the request is currently executing this will mark the operation as cancelled and will eventually be cancelled. This may not necessarilly happen instantly but will evenutally be cancelled and the completion handler will be called.
     */
-    public func enqueue(request: HTTPRequest, completion: ((HTTPRequestOperation, HTTPResult<AnyObject>) -> Void)?) -> HTTPRequestOperation {
+    open func enqueue(_ request: HTTPRequest, completion: ((HTTPRequestOperation, HTTPResult<AnyObject>) -> Void)?) -> HTTPRequestOperation {
         
         let operation = HTTPRequestOperation(request: request)
         operation.setCompletionHandlerWithSuccess({ operation, data in
@@ -111,19 +111,19 @@ public class HTTPService {
                 // A DELETE request should return a 204 stats code indicating "No Content".
                 if operation.response?.statusCode == 204 {
                     
-                    result = HTTPResult.fromOptional("", nil)
+                    result = HTTPResult.from(value: "" as AnyObject?)
                     
                 } else {
                     
                     var _json: AnyObject? = nil
-                    var _error: NSError? = nil
+                    var _error: Error? = nil
                     do {
-                        _json = try NSJSONSerialization.JSONObjectWithData(_data, options: NSJSONReadingOptions(rawValue: 0))
-                    } catch let error as NSError {
+                        _json = try JSONSerialization.jsonObject(with: _data, options: JSONSerialization.ReadingOptions(rawValue: 0)) as AnyObject?
+                    } catch let error {
                         _error = error
                     }
                     
-                    result = HTTPResult.fromOptional(_json, _error)
+                    result = HTTPResult.from(value: _json , with: _error)
                     
                 }
                 
@@ -132,14 +132,14 @@ public class HTTPService {
             if let _result = result {
                 completion?(operation, _result)
             } else {
-                completion?(operation, .Failure(NSError(domain: "HTTPServiceErrorDomain", code: 1616, userInfo: [NSLocalizedDescriptionKey: "Unexpected error occurred"])))
+                completion?(operation, .failure(NSError(domain: "HTTPServiceErrorDomain", code: 1616, userInfo: [NSLocalizedDescriptionKey: "Unexpected error occurred"])))
             }
             
         }, failure: { operation, error in
             
             self.verifyAuthStatusFromResponse(operation.response)
                 
-            completion?(operation, .Failure(error))
+            completion?(operation, .failure(error))
                 
         })
         _queue.addOperation(operation)
@@ -150,13 +150,13 @@ public class HTTPService {
     /**
         Use this to suspend the internal operation queue. Once suspended, no further operations will be executed until un-suspended.
     */
-    public func suspend(suspend: Bool) {
-        _queue.suspended = suspend
+    open func suspend(_ suspend: Bool) {
+        _queue.isSuspended = suspend
     }
     
-    private func verifyAuthStatusFromResponse(response: NSHTTPURLResponse?) {
-        if let _statusCode = response?.statusCode where _statusCode == 401 {
-            NSNotificationCenter.defaultCenter().postNotificationName(Notifications.UnauthorizedRequest, object: nil)
+    fileprivate func verifyAuthStatusFromResponse(_ response: HTTPURLResponse?) {
+        if let _statusCode = response?.statusCode, _statusCode == 401 {
+            NotificationCenter.default.post(name: Notification.Name(rawValue: Notifications.UnauthorizedRequest), object: nil)
         }
     }
     

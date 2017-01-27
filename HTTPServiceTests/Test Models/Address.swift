@@ -24,8 +24,8 @@ extension Address: AtlasMap {
     init?(json: JSON) throws {
         do {
             let map = try Atlas(json)
-            number = try map.objectFromKey("number")
-            street = try map.objectFromKey("street")
+            number = try map.object(for: "number")
+            street = try map.object(for: "street")
         } catch let e {
             throw e
         }

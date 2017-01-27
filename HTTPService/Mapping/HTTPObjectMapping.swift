@@ -8,10 +8,10 @@
 import Atlas
 
 /// Used by the HTTPService to map a response to a JSONSerializable model
-public class HTTPObjectMapping {
+open class HTTPObjectMapping {
     
     public enum Errors: Int {
-        case DeserializationFailure = 2828
+        case deserializationFailure = 2828
     }
     
     /**
@@ -23,9 +23,9 @@ public class HTTPObjectMapping {
     
         - Returns: An instance of HTTPResult which will have either a .Success containg a Box'ed JSONSerializable model instance of a .Failure containg an NSError.
     */
-    public class func mapResponse<T: AtlasMap>(response: NSURLResponse!, data: NSData!, forRequest request: HTTPRequest) -> HTTPResult<T> {
+    open class func mapResponse<T: AtlasMap>(_ response: URLResponse!, data: Data!, forRequest request: HTTPRequest) -> HTTPResult<T> {
         
-        let resultResponse = HTTPResult(HTTPResponse(data: data, urlResponse: response), nil)
+        let resultResponse = HTTPResult.from(value: HTTPResponse(data: data, urlResponse: response))
         let resultData = parseDataFromResult(resultResponse, forRequest: request)
         let resultJSON = deserializeJSON(resultData)
         let _object: HTTPResult<T> = deserializeObject(withResultJSON: resultJSON)
@@ -42,17 +42,17 @@ public class HTTPObjectMapping {
     
         - Returns: A new instance of HTTPResult<NSData>
     */
-    class func parseDataFromResult(result: HTTPResult<HTTPResponse>, forRequest request: HTTPRequest) -> HTTPResult<NSData> {
+    class func parseDataFromResult(_ result: HTTPResult<HTTPResponse>, forRequest request: HTTPRequest) -> HTTPResult<Data> {
         switch result {
-        case let .Success(box):
+        case let .success(box):
             let response = box.value
             let successRange = request.acceptibleStatusCodeRange
             if !successRange.contains(response.statusCode) {
-                return .Failure(NSError(domain: "HTTPObjectMappingErrorDomain", code: 8989, userInfo: [NSLocalizedDescriptionKey: "Response status code not in acceptable range"]))
+                return .failure(NSError(domain: "HTTPObjectMappingErrorDomain", code: 8989, userInfo: [NSLocalizedDescriptionKey: "Response status code not in acceptable range"]))
             }
-            return .Success(Box(response.data))
-        case let .Failure(error):
-            return .Failure(error)
+            return .success(Box(response.data))
+        case let .failure(error):
+            return .failure(error)
         }
     }
     
@@ -63,14 +63,14 @@ public class HTTPObjectMapping {
     
         :returns: A new instance of HTTPResult<AnyObject>.Success which is a Box'ed value of JSON (AnyObject) or HTTPResult<AnyObject>.Failure which contains an NSError
     */
-    class func deserializeJSON(resultData: HTTPResult<NSData>) -> HTTPResult<AnyObject> {
+    class func deserializeJSON(_ resultData: HTTPResult<Data>) -> HTTPResult<AnyObject> {
         switch resultData {
-        case let .Success(box):
+        case let .success(box):
             let data = box.value
-            let jsonOptional: AnyObject? = try? NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(rawValue: 0))
-            return HTTPResult.fromOptional(jsonOptional, nil)
-        case let .Failure(resultError):
-            return .Failure(resultError)
+            let jsonOptional = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)) as AnyObject
+            return .from(value: jsonOptional)
+        case let .failure(resultError):
+            return .failure(resultError)
         }
     }
     
@@ -84,7 +84,7 @@ public class HTTPObjectMapping {
     */
     class func deserializeObject<T: AtlasMap>(withResultJSON resultJSON: HTTPResult<AnyObject>) -> HTTPResult<T> {
         switch resultJSON {
-        case let .Success(box):
+        case let .success(box):
             do {
                 let jsonObject: JSON = box.value
                 let parsedObject = try T.init(json: jsonObject)
@@ -92,13 +92,13 @@ public class HTTPObjectMapping {
                 if parsedObject == nil {
                     error = NSError(domain: "HTTPObjectMappingErrorDomain", code: 2828, userInfo: [NSLocalizedDescriptionKey: "Uable to deserialize object"])
                 }
-                return HTTPResult.fromOptional(parsedObject, error)
+                return .from(value: parsedObject, with: error)
             } catch let e {
                 let error = NSError(domain: "HTTPObjectMappingErrorDomain", code: 118822, userInfo: [NSLocalizedDescriptionKey: "\(e)"])
-                return .Failure(error)
+                return .failure(error)
             }
-        case let .Failure(error):
-            return .Failure(error)
+        case let .failure(error):
+            return .failure(error)
         }
     }
 }

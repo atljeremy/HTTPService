@@ -24,7 +24,7 @@ class JSONSerializableTests: XCTestCase {
     }
     
     func testJSONParsingPerformance() {
-        self.measureBlock {
+        self.measure {
             let _ = try! Listing.init(json: self.json)
         }
     }
@@ -73,13 +73,15 @@ class JSONSerializableTests: XCTestCase {
         // When
         let listingDictionary = listing.toJSON() as! [String: AnyObject]
         let listingID = listingDictionary["id"] as! NSNumber
+        
+        // Then
         XCTAssert(listingID == 123, "Expected listingDictionary[\"id\"] to equal 123 but got \(listingID)")
     }
 }
 
 extension JSONSerializableTests {
     static func listingJSON() -> JSON {
-        let json: [String: AnyObject] = [
+        let json: [String: Any] = [
             "id": 123,
             "title": "Some Property Title",
             "latitude": 12.4444,

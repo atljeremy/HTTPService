@@ -20,24 +20,24 @@ extension FloorPlan: AtlasMap {
     
     func toJSON() -> JSON? {
         var floorPlanDictionary: [String : AnyObject] = [
-            "id": id,
-            "available": available
+            "id": id as AnyObject,
+            "available": available as AnyObject
         ]
         
         if let _baths = baths {
-            floorPlanDictionary["baths"] = _baths
+            floorPlanDictionary["baths"] = _baths as AnyObject?
         }
         
         if let _beds = beds {
-            floorPlanDictionary["beds"] = _beds
+            floorPlanDictionary["beds"] = _beds as AnyObject?
         }
         
         if let _photos = photos {
-            floorPlanDictionary["photos"] = _photos
+            floorPlanDictionary["photos"] = _photos as AnyObject?
         }
         
         if let _createDate = createDate {
-            floorPlanDictionary["create_date"] = _createDate
+            floorPlanDictionary["create_date"] = _createDate as AnyObject?
         }
         
         return floorPlanDictionary
@@ -46,12 +46,12 @@ extension FloorPlan: AtlasMap {
     init?(json: JSON) throws {
         do {
             let map = try Atlas(json)
-            id = try map.objectFromKey("id")
-            available = try map.objectFromKey("available")
-            baths = try map.objectFromOptionalKey("baths")
-            beds = try map.objectFromOptionalKey("beds")
-            photos = try map.arrayFromOptionalKey("photos")
-            createDate = try map.objectFromOptionalKey("create_date")
+            id = try map.object(for: "id")
+            available = try map.object(for: "available")
+            baths = try map.object(forOptional: "baths")
+            beds = try map.object(forOptional: "beds")
+            photos = try map.array(forOptional: "photos")
+            createDate = try map.object(forOptional: "create_date")
         } catch let e {
             throw e
         }

@@ -5,41 +5,46 @@
 //  Copyright (c) 2015 Jeremy Fox. All rights reserved.
 //
 
+import Foundation
 import UIKit
 
-public class HTTPRequestOperation: NSOperation {
+open class HTTPRequestOperation: Operation {
     
-    typealias SuccessHandler = (HTTPRequestOperation, NSData?) -> Void
-    typealias FailureHandler = (HTTPRequestOperation, NSError) -> Void
+    typealias SuccessHandler = (HTTPRequestOperation, Data?) -> Void
+    typealias FailureHandler = (HTTPRequestOperation, Error) -> Void
     
-    private let errorDomain = "HTTPRequestOperationErrorDomain"
+    fileprivate let errorDomain = "HTTPRequestOperationErrorDomain"
     
-    private var isExecuting = false
-    public private(set) override var executing: Bool {
-        get { return isExecuting }
+    var _executing = false
+    open override var isExecuting: Bool {
+        get {
+            return _executing
+        }
         set {
-            willChangeValueForKey("isExecuting")
-            isExecuting = newValue
-            didChangeValueForKey("isExecuting")
+            willChangeValue(forKey: "isExecuting")
+            _executing = newValue
+            didChangeValue(forKey: "isExecuting")
         }
     }
     
-    private var isFinished = false
-    public override var finished: Bool {
-        get { return isFinished }
+    open var _finished = false
+    open override var isFinished: Bool {
+        get {
+            return _finished
+        }
         set {
-            willChangeValueForKey("isFinished")
-            isFinished = newValue
-            didChangeValueForKey("isFinished")
+            willChangeValue(forKey: "isFinished")
+            _finished = newValue
+            didChangeValue(forKey: "isFinished")
         }
     }
     
-    public private(set) var request: HTTPRequest
-    public private(set) var response: NSHTTPURLResponse?
-    public private(set) var responseData: NSData?
+    open fileprivate(set) var request: HTTPRequest
+    open fileprivate(set) var response: HTTPURLResponse?
+    open fileprivate(set) var responseData: Data?
     
-    private var _error: NSError?
-    public private(set) var error: NSError? {
+    fileprivate var _error: Error?
+    open fileprivate(set) var error: Error? {
         get {
             if _error != nil {
                 return _error
@@ -54,43 +59,37 @@ public class HTTPRequestOperation: NSOperation {
         }
     }
     
-    public override var asynchronous: Bool {
+    open override var isAsynchronous: Bool {
         get { return true }
     }
     
-    //MARK: ----------------------
-    //MARK: Instantiation
-    //MARK: ----------------------
+    //MARK: - Instantiation
     
     public required init(request: HTTPRequest) {
         self.request = request
         super.init()
     }
     
-    //MARK: ----------------------
-    //MARK: Completion Blocks
-    //MARK: ----------------------
+    //MARK: - Completion Blocks
     
-    func setCompletionHandlerWithSuccess(success: SuccessHandler, failure: FailureHandler) {
+    func setCompletionHandlerWithSuccess(_ success: @escaping SuccessHandler, failure: @escaping FailureHandler) {
         completionBlock = {
             if let _error = self.error {
-                dispatch_async(dispatch_get_main_queue()) {
+                DispatchQueue.main.async {
                     failure(self, _error)
                 }
             } else {
-                dispatch_async(dispatch_get_main_queue()) {
+                DispatchQueue.main.async {
                     success(self, self.responseData)
                 }
             }
         }
     }
     
-    //MARK: ----------------------
-    //MARK: NSOperation Handling
-    //MARK: ----------------------
+    //MARK: - NSOperation Handling
     
-    public override func main() {
-        if cancelled {
+    open override func main() {
+        if isCancelled {
             completeOperation()
             return
         }
@@ -102,13 +101,13 @@ public class HTTPRequestOperation: NSOperation {
             return
         }
         
-        if cancelled {
+        if isCancelled {
             completeOperation()
             return
         }
         
-        let URLRequest: NSMutableURLRequest
-        if let _request = request.mutableURLRequest() {
+        let URLRequest: URLRequest
+        if let _request = request.urlRequest() {
             URLRequest = _request
         } else {
             cancel()
@@ -116,16 +115,16 @@ public class HTTPRequestOperation: NSOperation {
             return
         }
         
-        let semephore = dispatch_semaphore_create(0)
+        let semephore = DispatchSemaphore(value: 0)
         
-        let session = NSURLSession(configuration: NSURLSessionConfiguration.ephemeralSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.currentQueue())
-        session.dataTaskWithRequest(URLRequest) { data, response, error in
+        let session = URLSession(configuration: URLSessionConfiguration.ephemeral, delegate: self, delegateQueue: OperationQueue.current)
+        let task = session.dataTask(with: URLRequest) { data, response, error in
             
-            if let _response = response as? NSHTTPURLResponse {
+            if let _response = response as? HTTPURLResponse {
                 let statusCode = _response.statusCode
                 self.response = _response
                 
-                if self.request.acceptibleStatusCodeRange.contains(statusCode) {
+                if self.request.acceptibleStatusCodeRange ~= statusCode {
                     
                     self.responseData = data
                     self.error = error
@@ -139,8 +138,8 @@ public class HTTPRequestOperation: NSOperation {
                     }
                     
                     do {
-                        let errorJSON = try NSJSONSerialization.JSONObjectWithData(_data, options: NSJSONReadingOptions(rawValue: 0))
-                        guard let _error = errorJSON["error"] as? String else {
+                        let errorJSON = try JSONSerialization.jsonObject(with: _data, options: JSONSerialization.ReadingOptions(rawValue: 0)) as? [String: Any]
+                        guard let _error = errorJSON?["error"] as? String else {
                             self.error = self.invlaidStatusCodeError(statusCode)
                             self.cancel()
                             return
@@ -159,12 +158,17 @@ public class HTTPRequestOperation: NSOperation {
                 self.cancel()
             }
             
-            dispatch_semaphore_signal(semephore)
-        }.resume()
+            semephore.signal()
+        }
         
-        dispatch_semaphore_wait(semephore, dispatch_time(DISPATCH_TIME_NOW, Int64(UInt64(request.timeout + 1) * NSEC_PER_SEC)))
+        task.resume()
         
-        if cancelled {
+        let timeout = Int(request.timeout)
+        let additionalWait = 1
+        let totalWait = DispatchTimeInterval.seconds(timeout + additionalWait)
+        _ = semephore.wait(timeout: .now() + totalWait)
+        
+        if isCancelled {
             completeOperation()
             return
         }
@@ -179,29 +183,29 @@ public class HTTPRequestOperation: NSOperation {
         completeOperation()
     }
     
-    public override func start() {
-        if cancelled {
-            finished = true
+    open override func start() {
+        if isCancelled {
+            isFinished = true
             return
         }
-        executing = true
+        isExecuting = true
         main()
     }
     
     func completeOperation() {
-        executing = false
-        finished = true
+        isExecuting = false
+        isFinished = true
     }
     
-    func invlaidStatusCodeError(statusCode: Int) -> NSError {
-        return NSError(domain: self.errorDomain, code: 3333, userInfo: [NSLocalizedDescriptionKey: "Status code received (\(statusCode)) was not within acceptable range (\(self.request.acceptibleStatusCodeRange.startIndex))-(\(self.request.acceptibleStatusCodeRange.endIndex))"])
+    func invlaidStatusCodeError(_ statusCode: Int) -> NSError {
+        return NSError(domain: self.errorDomain, code: 3333, userInfo: [NSLocalizedDescriptionKey: "Status code received (\(statusCode)) was not within acceptable range (\(self.request.acceptibleStatusCodeRange.lowerBound))-(\(self.request.acceptibleStatusCodeRange.upperBound))"])
     }
     
 }
 
-extension HTTPRequestOperation: NSURLSessionDelegate {
+extension HTTPRequestOperation: URLSessionDelegate {
     
-    public func URLSession(session: NSURLSession, didBecomeInvalidWithError error: NSError?) {
+    public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
         
         print("\(#file): \(#function)")
         
@@ -215,22 +219,22 @@ extension HTTPRequestOperation: NSURLSessionDelegate {
     
 }
 
-extension HTTPRequestOperation: NSURLSessionDataDelegate {
+extension HTTPRequestOperation: URLSessionDataDelegate {
     
-    public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         
         print("\(#file): \(#function)")
         
     }
     
-    public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, willCacheResponse proposedResponse: NSCachedURLResponse, completionHandler: (NSCachedURLResponse?) -> Void) {
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, willCacheResponse proposedResponse: CachedURLResponse, completionHandler: @escaping (CachedURLResponse?) -> Void) {
         
         print("\(#file): \(#function)")
         
     }
 }
 
-extension HTTPRequestOperation: NSURLSessionTaskDelegate {
+extension HTTPRequestOperation: URLSessionTaskDelegate {
     
     //    public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
     //
@@ -238,19 +242,19 @@ extension HTTPRequestOperation: NSURLSessionTaskDelegate {
     //
     //    }
     
-    public func URLSession(session: NSURLSession, task: NSURLSessionTask, needNewBodyStream completionHandler: (NSInputStream?) -> Void) {
+    public func urlSession(_ session: URLSession, task: URLSessionTask, needNewBodyStream completionHandler: @escaping (InputStream?) -> Void) {
         
         print("\(#file): \(#function)")
         
     }
     
-    public func URLSession(session: NSURLSession, task: NSURLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         
         print("\(#file): \(#function)")
         
     }
     
-    public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         
         print("\(#file): \(#function)")
         
