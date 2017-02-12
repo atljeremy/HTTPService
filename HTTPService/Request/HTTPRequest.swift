@@ -21,7 +21,7 @@ public struct ImageUpload {
 
 public struct HTTPRequest {
     
-    public typealias Params = [String: AnyObject]
+    public typealias Params = [String: Any]
     public typealias Headers = [String: String]
     
     public enum Method: String {
@@ -149,7 +149,7 @@ public struct HTTPRequest {
         return urlRequest
     }
     
-    fileprivate func appendParams(_ params: [String: AnyObject], withBoundary boundary: String, parentKey: String? = nil, atIndex index: Int? = nil) -> String {
+    fileprivate func appendParams(_ params: [String: Any], withBoundary boundary: String, parentKey: String? = nil, atIndex index: Int? = nil) -> String {
         var postData = ""
         for (key, value) in params {
             if let nestedParams = value as? [String: AnyObject] {

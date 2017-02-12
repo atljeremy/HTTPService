@@ -4,13 +4,17 @@
 
   },
   "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
-    "367142E5B62D6BB7DC7D3B81A21951F1DB07CEEE" : 9223372036854775807,
-    "E55C33625A9DCFBB7DD41CCA69D85D67C503114C" : 9223372036854775807
+    "E55C33625A9DCFBB7DD41CCA69D85D67C503114C" : 9223372036854775807,
+    "F074788A689FAEE34E43CEDF9FA57AA1AF7F9E2C" : 9223372036854775807,
+    "8857A258E216E4D1D32A58B85AE253C1C31CB38E" : 9223372036854775807,
+    "367142E5B62D6BB7DC7D3B81A21951F1DB07CEEE" : 9223372036854775807
   },
   "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "BE762550-6FC0-49F3-A535-528DA787BBD5",
   "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
-    "367142E5B62D6BB7DC7D3B81A21951F1DB07CEEE" : "HTTPService\/",
-    "E55C33625A9DCFBB7DD41CCA69D85D67C503114C" : "HTTPService\/Vendor\/Atlas\/"
+    "E55C33625A9DCFBB7DD41CCA69D85D67C503114C" : "HTTPService\/Vendor\/Atlas\/",
+    "F074788A689FAEE34E43CEDF9FA57AA1AF7F9E2C" : "..\/..\/..\/..",
+    "8857A258E216E4D1D32A58B85AE253C1C31CB38E" : "..\/..",
+    "367142E5B62D6BB7DC7D3B81A21951F1DB07CEEE" : "HTTPService\/"
   },
   "DVTSourceControlWorkspaceBlueprintNameKey" : "HTTPService",
   "DVTSourceControlWorkspaceBlueprintVersion" : 204,
@@ -22,9 +26,19 @@
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "367142E5B62D6BB7DC7D3B81A21951F1DB07CEEE"
     },
     {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "bitbucket.org:lawntap\/lawntap_ios.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "8857A258E216E4D1D32A58B85AE253C1C31CB38E"
+    },
+    {
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:rentpath\/Atlas",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "E55C33625A9DCFBB7DD41CCA69D85D67C503114C"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "bitbucket.com:lawntap\/lawntap-ios",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "F074788A689FAEE34E43CEDF9FA57AA1AF7F9E2C"
     }
   ]
 }
