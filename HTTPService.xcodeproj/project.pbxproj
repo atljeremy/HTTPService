@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1918B8091D57F4970094FA6B /* Atlas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1918B8021D57F4800094FA6B /* Atlas.framework */; };
+		197940EA1E8406C500FA41A5 /* Atlas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 197940E91E8406C500FA41A5 /* Atlas.framework */; };
 		19AA9F461BA23A2900BEFCDC /* HTTPRequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AA9F451BA23A2900BEFCDC /* HTTPRequestOperation.swift */; };
 		3F43766A1AD1A14100FFC40C /* HTTPService.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F4376691AD1A14100FFC40C /* HTTPService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3F4376701AD1A14100FFC40C /* HTTPService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F4376641AD1A14100FFC40C /* HTTPService.framework */; };
@@ -24,41 +24,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1918B8011D57F4800094FA6B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1918B7BB1D57F4800094FA6B /* Atlas.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1AF952621CABF52A00D44B05;
-			remoteInfo = Atlas;
-		};
-		1918B8031D57F4800094FA6B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1918B7BB1D57F4800094FA6B /* Atlas.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1AF9526C1CABF52A00D44B05;
-			remoteInfo = AtlasTests;
-		};
-		1918B8051D57F4800094FA6B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1918B7BB1D57F4800094FA6B /* Atlas.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1AF952961CAC446B00D44B05;
-			remoteInfo = AtlasTV;
-		};
-		1918B8071D57F4800094FA6B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1918B7BB1D57F4800094FA6B /* Atlas.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1AF9529F1CAC446B00D44B05;
-			remoteInfo = AtlasTVTests;
-		};
-		1918B80A1D57F49D0094FA6B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1918B7BB1D57F4800094FA6B /* Atlas.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 1AF952611CABF52A00D44B05;
-			remoteInfo = Atlas;
-		};
 		3F4376711AD1A14100FFC40C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3F43765B1AD1A14100FFC40C /* Project object */;
@@ -69,7 +34,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1918B7BB1D57F4800094FA6B /* Atlas.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Atlas.xcodeproj; sourceTree = "<group>"; };
+		197940E91E8406C500FA41A5 /* Atlas.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Atlas.framework; path = Carthage/Build/iOS/Atlas.framework; sourceTree = "<group>"; };
 		19AA9F451BA23A2900BEFCDC /* HTTPRequestOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPRequestOperation.swift; sourceTree = "<group>"; };
 		3F4376641AD1A14100FFC40C /* HTTPService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HTTPService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F4376681AD1A14100FFC40C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -94,7 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1918B8091D57F4970094FA6B /* Atlas.framework in Frameworks */,
+				197940EA1E8406C500FA41A5 /* Atlas.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,37 +74,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1918B7A31D57F4800094FA6B /* Vendor */ = {
+		197940EB1E8406C900FA41A5 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
-				1918B7A41D57F4800094FA6B /* Atlas */,
+				197940E91E8406C500FA41A5 /* Atlas.framework */,
 			);
-			path = Vendor;
-			sourceTree = "<group>";
-		};
-		1918B7A41D57F4800094FA6B /* Atlas */ = {
-			isa = PBXGroup;
-			children = (
-				1918B7BB1D57F4800094FA6B /* Atlas.xcodeproj */,
-			);
-			path = Atlas;
-			sourceTree = "<group>";
-		};
-		1918B7BC1D57F4800094FA6B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				1918B8021D57F4800094FA6B /* Atlas.framework */,
-				1918B8041D57F4800094FA6B /* AtlasTests.xctest */,
-				1918B8061D57F4800094FA6B /* AtlasTV.framework */,
-				1918B8081D57F4800094FA6B /* AtlasTVTests.xctest */,
-			);
-			name = Products;
+			name = Vendor;
 			sourceTree = "<group>";
 		};
 		3F43765A1AD1A14100FFC40C = {
 			isa = PBXGroup;
 			children = (
-				1918B7A31D57F4800094FA6B /* Vendor */,
+				197940EB1E8406C900FA41A5 /* Vendor */,
 				3F4376661AD1A14100FFC40C /* HTTPService */,
 				3F4376731AD1A14100FFC40C /* HTTPServiceTests */,
 				3F4376651AD1A14100FFC40C /* Products */,
@@ -282,7 +228,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				1918B80B1D57F49D0094FA6B /* PBXTargetDependency */,
 			);
 			name = HTTPService;
 			productName = HTTPService;
@@ -336,12 +281,6 @@
 			mainGroup = 3F43765A1AD1A14100FFC40C;
 			productRefGroup = 3F4376651AD1A14100FFC40C /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 1918B7BC1D57F4800094FA6B /* Products */;
-					ProjectRef = 1918B7BB1D57F4800094FA6B /* Atlas.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				3F4376631AD1A14100FFC40C /* HTTPService */,
@@ -349,37 +288,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		1918B8021D57F4800094FA6B /* Atlas.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Atlas.framework;
-			remoteRef = 1918B8011D57F4800094FA6B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1918B8041D57F4800094FA6B /* AtlasTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = AtlasTests.xctest;
-			remoteRef = 1918B8031D57F4800094FA6B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1918B8061D57F4800094FA6B /* AtlasTV.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AtlasTV.framework;
-			remoteRef = 1918B8051D57F4800094FA6B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1918B8081D57F4800094FA6B /* AtlasTVTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = AtlasTVTests.xctest;
-			remoteRef = 1918B8071D57F4800094FA6B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		3F4376621AD1A14100FFC40C /* Resources */ = {
@@ -427,11 +335,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1918B80B1D57F49D0094FA6B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Atlas;
-			targetProxy = 1918B80A1D57F49D0094FA6B /* PBXContainerItemProxy */;
-		};
 		3F4376721AD1A14100FFC40C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3F4376631AD1A14100FFC40C /* HTTPService */;
@@ -541,6 +444,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = HTTPService/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -560,6 +467,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = HTTPService/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -668,6 +579,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = HTTPService/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
