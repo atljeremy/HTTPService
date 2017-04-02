@@ -45,7 +45,9 @@ open class HTTPObjectMapping {
     class func parseDataFromResult(_ result: HTTPResult<HTTPResponse>, forRequest request: HTTPRequest) -> HTTPResult<Data> {
         switch result {
         case let .success(box):
-            let response = box.value
+            guard let response = box?.value else {
+                return .failure(NSError(domain: "HTTPObjectMappingErrorDomain", code: 8989, userInfo: [NSLocalizedDescriptionKey: "Received empty response."]))
+            }
             let successRange = request.acceptibleStatusCodeRange
             if !successRange.contains(response.statusCode) {
                 return .failure(NSError(domain: "HTTPObjectMappingErrorDomain", code: 8989, userInfo: [NSLocalizedDescriptionKey: "Response status code not in acceptable range"]))
@@ -66,7 +68,9 @@ open class HTTPObjectMapping {
     class func deserializeJSON(_ resultData: HTTPResult<Data>) -> HTTPResult<AnyObject> {
         switch resultData {
         case let .success(box):
-            let data = box.value
+            guard let data = box?.value else {
+                return .from(value: nil)
+            }
             let jsonOptional = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)) as AnyObject
             return .from(value: jsonOptional)
         case let .failure(resultError):
@@ -86,7 +90,7 @@ open class HTTPObjectMapping {
         switch resultJSON {
         case let .success(box):
             do {
-                let jsonObject: JSON = box.value
+                let jsonObject: JSON = box?.value
                 let parsedObject = try T.init(json: jsonObject)
                 var error: NSError?
                 if parsedObject == nil {

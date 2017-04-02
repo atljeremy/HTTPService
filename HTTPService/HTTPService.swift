@@ -64,12 +64,14 @@ open class HTTPService {
             self.verifyAuthStatusFromResponse(operation.response)
             
             var result: HTTPResult<T>?
-            if let _data = data {
+            if let _data = data, _data.count > 0 {
                 result = HTTPObjectMapping.mapResponse(operation.response, data: _data, forRequest: request)
             }
-            
+                
             if let _result = result {
                 completion?(operation, _result)
+            } else if operation.response?.statusCode == 204 {
+                completion?(operation, .success(nil))
             } else {
                 completion?(operation, .failure(NSError(domain: "HTTPServiceErrorDomain", code: 1616, userInfo: [NSLocalizedDescriptionKey: "Unexpected error occurred"])))
             }

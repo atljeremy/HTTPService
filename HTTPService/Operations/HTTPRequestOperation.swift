@@ -173,7 +173,7 @@ open class HTTPRequestOperation: Operation {
             return
         }
         
-        if responseData == nil {
+        if response?.statusCode != 204 && responseData == nil {
             let userInfo = [NSLocalizedDescriptionKey: "Received empty response"]
             error = NSError(domain: errorDomain, code: NSURLErrorResourceUnavailable, userInfo: userInfo)
             completeOperation()
