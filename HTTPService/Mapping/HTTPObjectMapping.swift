@@ -69,7 +69,7 @@ open class HTTPObjectMapping {
         switch resultData {
         case let .success(box):
             guard let data = box?.value else {
-                return .from(value: nil)
+                return .success(nil)
             }
             let jsonOptional = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)) as AnyObject
             return .from(value: jsonOptional)
@@ -90,7 +90,9 @@ open class HTTPObjectMapping {
         switch resultJSON {
         case let .success(box):
             do {
-                let jsonObject: JSON = box?.value
+                guard let jsonObject: JSON = box?.value else {
+                    return .success(nil)
+                }
                 let parsedObject = try T.init(json: jsonObject)
                 var error: NSError?
                 if parsedObject == nil {
