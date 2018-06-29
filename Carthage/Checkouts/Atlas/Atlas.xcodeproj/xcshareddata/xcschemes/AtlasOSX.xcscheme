@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AF952611CABF52A00D44B05"
+               BlueprintIdentifier = "1A113F871F7B2EF800B49AAB"
                BuildableName = "Atlas.framework"
-               BlueprintName = "Atlas"
+               BlueprintName = "AtlasOSX"
                ReferencedContainer = "container:Atlas.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -33,9 +33,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AF9526B1CABF52A00D44B05"
-               BuildableName = "AtlasTests.xctest"
-               BlueprintName = "AtlasTests"
+               BlueprintIdentifier = "1A113F8F1F7B2EF800B49AAB"
+               BuildableName = "AtlasOSXTests.xctest"
+               BlueprintName = "AtlasOSXTests"
                ReferencedContainer = "container:Atlas.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -43,9 +43,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AF952611CABF52A00D44B05"
+            BlueprintIdentifier = "1A113F871F7B2EF800B49AAB"
             BuildableName = "Atlas.framework"
-            BlueprintName = "Atlas"
+            BlueprintName = "AtlasOSX"
             ReferencedContainer = "container:Atlas.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -66,9 +66,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AF952611CABF52A00D44B05"
+            BlueprintIdentifier = "1A113F871F7B2EF800B49AAB"
             BuildableName = "Atlas.framework"
-            BlueprintName = "Atlas"
+            BlueprintName = "AtlasOSX"
             ReferencedContainer = "container:Atlas.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -84,9 +84,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AF952611CABF52A00D44B05"
+            BlueprintIdentifier = "1A113F871F7B2EF800B49AAB"
             BuildableName = "Atlas.framework"
-            BlueprintName = "Atlas"
+            BlueprintName = "AtlasOSX"
             ReferencedContainer = "container:Atlas.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
