@@ -5,9 +5,9 @@
 //  Copyright (c) 2015 Jeremy Fox. All rights reserved.
 //
 
-import Atlas
+import Foundation
 
-struct Listing {
+struct Listing: Codable {
     var id: Int64
     var title: String
     var latitude: Double
@@ -16,45 +16,15 @@ struct Listing {
     var address: Address?
     var expired: Bool
     var floorPlans: [FloorPlan]?
-}
-
-extension Listing: AtlasMap {
     
-    func toJSON() -> JSON? {
-        var listingDictionary: [String: Any] = [
-            "id": id,
-            "title": title,
-            "latitude": latitude,
-            "longitude": longitude,
-            "pets_allowed": petsAllowed,
-            "expired": expired
-        ]
-        
-        if let _address = address {
-            listingDictionary["address"] = _address.toJSON()
-        }
-        
-        if let _floorPlans = floorPlans {
-            listingDictionary["floorPlans"] = _floorPlans.map { $0.toJSON()! }
-        }
-        
-        return listingDictionary
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case title
+        case latitude
+        case longitude
+        case petsAllowed = "pets_allowed"
+        case address
+        case expired
+        case floorPlans = "floorplan_set"
     }
-    
-    init?(json: JSON) throws {
-        do {
-            let map = try Atlas(json)
-            id = try map.object(for: "id")
-            title = try map.object(for: "title")
-            latitude = try map.object(for: "latitude")
-            longitude = try map.object(for: "longitude")
-            petsAllowed = try map.object(for: "pets_allowed")
-            address = try map.object(forOptional: "address")
-            expired = try map.object(for: "expired")
-            floorPlans = try map.array(forOptional: "floorplan_set")
-        } catch let e {
-            throw e
-        }
-    }
-    
 }

@@ -5,29 +5,9 @@
 //  Copyright (c) 2015 Jeremy Fox. All rights reserved.
 //
 
-import Atlas
+import Foundation
 
-struct Address {
+struct Address: Codable {
     var number: Int
     var street: String
-}
-
-extension Address: AtlasMap {
-    
-    func toJSON() -> JSON? {
-        return [
-            "number": number,
-            "street": street
-        ]
-    }
-    
-    init?(json: JSON) throws {
-        do {
-            let map = try Atlas(json)
-            number = try map.object(for: "number")
-            street = try map.object(for: "street")
-        } catch let e {
-            throw e
-        }
-    }
 }

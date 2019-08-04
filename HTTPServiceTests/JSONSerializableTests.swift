@@ -9,7 +9,6 @@
 import UIKit
 import XCTest
 import HTTPService
-import Atlas
 
 class JSONSerializableTests: XCTestCase {
     
@@ -20,12 +19,10 @@ class JSONSerializableTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // When
-        listing = try! Listing.init(json: json)
-    }
-    
-    func testJSONParsingPerformance() {
-        self.measure {
-            let _ = try! Listing.init(json: self.json)
+        do {
+            listing = try JSONDecoder().decode(Listing.self, from: json)
+        } catch let e {
+            XCTFail(e.localizedDescription)
         }
     }
     
@@ -52,8 +49,8 @@ class JSONSerializableTests: XCTestCase {
     
     func testJSONParsingParsesCustomObjectValues() {
         // Then
-        XCTAssert(listing.address?.number == 42, "Expected listing.address.number to equal 42 but got \(listing.address?.number)")
-        XCTAssert(listing.address?.street == "Main St", "Expected listing.address.street to equal (Main St) but got \(listing.address?.street)")
+        XCTAssert(listing.address?.number == 42, "Expected listing.address.number to equal 42 but got \(String(describing: listing.address?.number))")
+        XCTAssert(listing.address?.street == "Main St", "Expected listing.address.street to equal (Main St) but got \(String(describing: listing.address?.street))")
     }
     
     func testJSONParsingParsesArrayOfCustomObjectValues() {
@@ -62,25 +59,16 @@ class JSONSerializableTests: XCTestCase {
         
         // Then
         XCTAssert(floorplan.available == true, "Expected floorplan.available to equal true but got \(floorplan.available)")
-        XCTAssert(floorplan.baths == 3, "Expected floorplan.baths to equal 3 but got \(floorplan.baths)")
-        XCTAssert(floorplan.beds == 2, "Expected floorplan.beds to equal 2 but got \(floorplan.beds)")
-        XCTAssert(floorplan.createDate == "2/2/2015", "Expected floorplan.create_date to equal 2/2/2015 but got \(floorplan.createDate)")
+        XCTAssert(floorplan.baths == 3, "Expected floorplan.baths to equal 3 but got \(String(describing: floorplan.baths))")
+        XCTAssert(floorplan.beds == 2, "Expected floorplan.beds to equal 2 but got \(String(describing: floorplan.beds))")
+        XCTAssert(floorplan.createDate == "2/2/2015", "Expected floorplan.create_date to equal 2/2/2015 but got \(String(describing: floorplan.createDate))")
         XCTAssert(floorplan.id == 55, "Expected floorplan.id to equal 55 but got \(floorplan.id)")
         XCTAssert(floorplan.photos![0] == "/imgr/34505d862c70474b99042cbc8a168e04/800-", "Expected floorplan.photos![0] to equal (/imgr/34505d862c70474b99042cbc8a168e04/800-) but got (\(floorplan.photos![0]))")
-    }
-    
-    func testCustomObjectIsConvertedToJSONObject() {
-        // When
-        let listingDictionary = listing.toJSON() as! [String: AnyObject]
-        let listingID = listingDictionary["id"] as! NSNumber
-        
-        // Then
-        XCTAssert(listingID == 123, "Expected listingDictionary[\"id\"] to equal 123 but got \(listingID)")
     }
 }
 
 extension JSONSerializableTests {
-    static func listingJSON() -> JSON {
+    static func listingJSON() -> Data {
         let json: [String: Any] = [
             "id": 123,
             "title": "Some Property Title",
@@ -104,6 +92,6 @@ extension JSONSerializableTests {
             ]
         ]
         
-        return json
+        return try! JSONSerialization.data(withJSONObject: json, options: .init(rawValue: 0))
     }
 }
