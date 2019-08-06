@@ -78,7 +78,7 @@ extension HTTPService {
     }
     
     @discardableResult
-    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPRequest {
+    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPRequest {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
         logRequestInfo(for: urlRequest)
         var task: URLSessionTask?
@@ -120,7 +120,7 @@ extension HTTPService {
     }
     
     @discardableResult
-    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPRequestChainable {
+    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPRequestChainable {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
         logRequestInfo(for: urlRequest)
         var task: URLSessionTask?
@@ -176,7 +176,7 @@ extension HTTPService {
     }
     
     @discardableResult
-    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPDownloadRequestChainable {
+    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPDownloadRequestChainable {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
         logRequestInfo(for: urlRequest)
         var task: URLSessionTask?
@@ -232,7 +232,7 @@ extension HTTPService {
     }
     
     @discardableResult
-    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPRequest & HTTPRequestLifecycleAware {
+    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPRequest & HTTPRequestLifecycleAware {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
         logRequestInfo(for: urlRequest)
         var task: URLSessionTask?
@@ -273,7 +273,7 @@ extension HTTPService {
     }
     
     @discardableResult
-    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPDownloadRequest {
+    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPDownloadRequest {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers)
         logRequestInfo(for: urlRequest)
         var task: URLSessionTask?
@@ -305,7 +305,7 @@ extension HTTPService {
     }
     
     @discardableResult
-    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T: HTTPDownloadRequest & HTTPRequestLifecycleAware {
+    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T: HTTPDownloadRequest & HTTPRequestLifecycleAware {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
         logRequestInfo(for: urlRequest)
         var task: URLSessionTask?
@@ -341,7 +341,7 @@ extension HTTPService {
     }
     
     @discardableResult
-    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T: HTTPUploadRequest {
+    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T: HTTPUploadRequest {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
         logRequestInfo(for: urlRequest)
         var task: URLSessionTask?
