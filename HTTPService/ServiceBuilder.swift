@@ -9,12 +9,12 @@
 import Foundation
 
 public class ServiceBuilder<T: HTTPService> {
-    static func purgeCache() {
+    public static func purgeCache() {
         let key = String(describing: T.self)
         ServiceCache.shared.delete(key: key)
     }
     
-    static func build(ignoringCache ignoreCache: Bool = false) -> T? {
+    public static func build(ignoringCache ignoreCache: Bool = false) -> T? {
         let key = String(describing: T.self)
         let cachedService: T? = ServiceCache.shared.get(key: key)
         guard ignoreCache || cachedService == nil else {
