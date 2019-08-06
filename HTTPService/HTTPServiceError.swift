@@ -14,7 +14,7 @@ public enum HTTPServiceError: Error {
     case jsonDecodingError(String)
     case downloadFailed(String)
     
-    var message: String {
+    public var message: String {
         switch self {
         case let .requestFailed(s):
             return s

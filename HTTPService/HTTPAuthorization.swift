@@ -25,7 +25,7 @@ public struct HTTPBasicAuthorization: HTTPAuthorization {
     let password: String
     public var value: String
     
-    init(username: String, password: String) {
+    public init(username: String, password: String) {
         self.username = username
         self.password = password
         value = "Basic \(Data("\(username):\(password)".utf8).base64EncodedString())"
@@ -39,7 +39,7 @@ public struct HTTPBearerAuthorization: HTTPAuthorization {
     let token: String
     public var value: String
     
-    init(token: String) {
+    public init(token: String) {
         self.token = token
         value = "Bearer \(token)"
     }
@@ -50,7 +50,7 @@ public struct HTTPTokenAuthorization: HTTPAuthorization {
     let token: String
     public var value: String
     
-    init(token: String) {
+    public init(token: String) {
         self.token = token
         value = "token \(token)"
     }
@@ -63,7 +63,7 @@ public struct HTTPTokenAuthorization: HTTPAuthorization {
 public struct HTTPCustomTokenAuthorization: HTTPAuthorization {
     public var value: String
     
-    init(token: String) {
+    public init(token: String) {
         value = token
     }
 }
