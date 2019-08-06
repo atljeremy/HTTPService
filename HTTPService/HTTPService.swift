@@ -53,6 +53,14 @@ public protocol HTTPService: class {
 
 extension HTTPService {
     
+    var urlSession: URLSession {
+        return URLSession.shared
+    }
+    
+    var headers: HTTPHeaders? {
+        return nil
+    }
+    
     private func logRequestInfo(for request: URLRequest) {
         var info = """
         
