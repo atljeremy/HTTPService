@@ -20,17 +20,19 @@
 		1988FC7D22FA0B34000F70B3 /* HTTPServiceBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904222F654B300B3BDC5 /* HTTPServiceBuilder.swift */; };
 		1988FC7E22FA0B34000F70B3 /* ServiceBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904A22F655EE00B3BDC5 /* ServiceBuilder.swift */; };
 		1988FC7F22FA0B34000F70B3 /* HTTPServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971903F22F6547700B3BDC5 /* HTTPServiceError.swift */; };
-		1988FC8022FA0B5F000F70B3 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F98C32F1B0AAD5600AC23D4 /* Address.swift */; };
-		1988FC8122FA0B5F000F70B3 /* FloorPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F98C3301B0AAD5600AC23D4 /* FloorPlan.swift */; };
-		1988FC8222FA0B5F000F70B3 /* Listing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F98C3311B0AAD5600AC23D4 /* Listing.swift */; };
-		1988FC8322FA0B5F000F70B3 /* JSONSerializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F64449D1B0A102300AD34A0 /* JSONSerializableTests.swift */; };
+		1988FC8022FA0B5F000F70B3 /* PullRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F98C32F1B0AAD5600AC23D4 /* PullRequest.swift */; };
+		1988FC8D22FB839B000F70B3 /* ServiceBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1988FC8C22FB839B000F70B3 /* ServiceBuilderTests.swift */; };
+		1988FC8E22FB83A4000F70B3 /* ServiceBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1988FC8C22FB839B000F70B3 /* ServiceBuilderTests.swift */; };
+		1988FC9122FB83CE000F70B3 /* GitHubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1988FC9022FB83CE000F70B3 /* GitHubService.swift */; };
+		1988FC9222FB83D2000F70B3 /* GitHubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1988FC9022FB83CE000F70B3 /* GitHubService.swift */; };
+		1988FC9522FBA080000F70B3 /* GitHubGetPullRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1988FC9422FBA080000F70B3 /* GitHubGetPullRequest.swift */; };
+		1988FC9622FBA080000F70B3 /* GitHubGetPullRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1988FC9422FBA080000F70B3 /* GitHubGetPullRequest.swift */; };
+		1988FC9822FBA227000F70B3 /* HTTPServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1988FC9722FBA227000F70B3 /* HTTPServiceTests.swift */; };
+		1988FC9922FBA229000F70B3 /* HTTPServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1988FC9722FBA227000F70B3 /* HTTPServiceTests.swift */; };
 		3F43766A1AD1A14100FFC40C /* HTTPService.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F4376691AD1A14100FFC40C /* HTTPService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3F4376701AD1A14100FFC40C /* HTTPService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F4376641AD1A14100FFC40C /* HTTPService.framework */; };
 		3F43769D1AD1A19300FFC40C /* HTTPService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43768B1AD1A19300FFC40C /* HTTPService.swift */; };
-		3F64449E1B0A102300AD34A0 /* JSONSerializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F64449D1B0A102300AD34A0 /* JSONSerializableTests.swift */; };
-		3F98C3321B0AAD5600AC23D4 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F98C32F1B0AAD5600AC23D4 /* Address.swift */; };
-		3F98C3331B0AAD5600AC23D4 /* FloorPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F98C3301B0AAD5600AC23D4 /* FloorPlan.swift */; };
-		3F98C3341B0AAD5600AC23D4 /* Listing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F98C3311B0AAD5600AC23D4 /* Listing.swift */; };
+		3F98C3321B0AAD5600AC23D4 /* PullRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F98C32F1B0AAD5600AC23D4 /* PullRequest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +63,10 @@
 		1988FC6622FA0AE6000F70B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1988FC6B22FA0AE6000F70B3 /* HTTPService macOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "HTTPService macOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1988FC7222FA0AE7000F70B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1988FC8C22FB839B000F70B3 /* ServiceBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceBuilderTests.swift; sourceTree = "<group>"; };
+		1988FC9022FB83CE000F70B3 /* GitHubService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubService.swift; sourceTree = "<group>"; };
+		1988FC9422FBA080000F70B3 /* GitHubGetPullRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubGetPullRequest.swift; sourceTree = "<group>"; };
+		1988FC9722FBA227000F70B3 /* HTTPServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPServiceTests.swift; sourceTree = "<group>"; };
 		3F4376641AD1A14100FFC40C /* HTTPService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HTTPService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F4376681AD1A14100FFC40C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3F4376691AD1A14100FFC40C /* HTTPService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTTPService.h; sourceTree = "<group>"; };
@@ -68,10 +74,7 @@
 		3F4376751AD1A14100FFC40C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3F43768B1AD1A19300FFC40C /* HTTPService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPService.swift; sourceTree = "<group>"; };
 		3F64449C1B0A102200AD34A0 /* HTTPServiceTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HTTPServiceTests-Bridging-Header.h"; sourceTree = "<group>"; };
-		3F64449D1B0A102300AD34A0 /* JSONSerializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONSerializableTests.swift; sourceTree = "<group>"; };
-		3F98C32F1B0AAD5600AC23D4 /* Address.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
-		3F98C3301B0AAD5600AC23D4 /* FloorPlan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloorPlan.swift; sourceTree = "<group>"; };
-		3F98C3311B0AAD5600AC23D4 /* Listing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Listing.swift; sourceTree = "<group>"; };
+		3F98C32F1B0AAD5600AC23D4 /* PullRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PullRequest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,6 +161,22 @@
 			path = "HTTPService macOSTests";
 			sourceTree = "<group>";
 		};
+		1988FC8F22FB83BC000F70B3 /* Test Service */ = {
+			isa = PBXGroup;
+			children = (
+				1988FC9022FB83CE000F70B3 /* GitHubService.swift */,
+			);
+			path = "Test Service";
+			sourceTree = "<group>";
+		};
+		1988FC9322FBA068000F70B3 /* Test Requests */ = {
+			isa = PBXGroup;
+			children = (
+				1988FC9422FBA080000F70B3 /* GitHubGetPullRequest.swift */,
+			);
+			path = "Test Requests";
+			sourceTree = "<group>";
+		};
 		3F43765A1AD1A14100FFC40C = {
 			isa = PBXGroup;
 			children = (
@@ -205,8 +224,11 @@
 		3F4376731AD1A14100FFC40C /* HTTPServiceTests */ = {
 			isa = PBXGroup;
 			children = (
+				1988FC9322FBA068000F70B3 /* Test Requests */,
+				1988FC8F22FB83BC000F70B3 /* Test Service */,
 				3F98C32E1B0AAD5600AC23D4 /* Test Models */,
-				3F64449D1B0A102300AD34A0 /* JSONSerializableTests.swift */,
+				1988FC8C22FB839B000F70B3 /* ServiceBuilderTests.swift */,
+				1988FC9722FBA227000F70B3 /* HTTPServiceTests.swift */,
 				3F4376741AD1A14100FFC40C /* Supporting Files */,
 			);
 			path = HTTPServiceTests;
@@ -224,9 +246,7 @@
 		3F98C32E1B0AAD5600AC23D4 /* Test Models */ = {
 			isa = PBXGroup;
 			children = (
-				3F98C32F1B0AAD5600AC23D4 /* Address.swift */,
-				3F98C3301B0AAD5600AC23D4 /* FloorPlan.swift */,
-				3F98C3311B0AAD5600AC23D4 /* Listing.swift */,
+				3F98C32F1B0AAD5600AC23D4 /* PullRequest.swift */,
 			);
 			path = "Test Models";
 			sourceTree = "<group>";
@@ -424,10 +444,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1988FC8022FA0B5F000F70B3 /* Address.swift in Sources */,
-				1988FC8222FA0B5F000F70B3 /* Listing.swift in Sources */,
-				1988FC8322FA0B5F000F70B3 /* JSONSerializableTests.swift in Sources */,
-				1988FC8122FA0B5F000F70B3 /* FloorPlan.swift in Sources */,
+				1988FC8022FA0B5F000F70B3 /* PullRequest.swift in Sources */,
+				1988FC9922FBA229000F70B3 /* HTTPServiceTests.swift in Sources */,
+				1988FC9222FB83D2000F70B3 /* GitHubService.swift in Sources */,
+				1988FC9622FBA080000F70B3 /* GitHubGetPullRequest.swift in Sources */,
+				1988FC8E22FB83A4000F70B3 /* ServiceBuilderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -448,10 +469,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3F98C3321B0AAD5600AC23D4 /* Address.swift in Sources */,
-				3F98C3331B0AAD5600AC23D4 /* FloorPlan.swift in Sources */,
-				3F98C3341B0AAD5600AC23D4 /* Listing.swift in Sources */,
-				3F64449E1B0A102300AD34A0 /* JSONSerializableTests.swift in Sources */,
+				3F98C3321B0AAD5600AC23D4 /* PullRequest.swift in Sources */,
+				1988FC9822FBA227000F70B3 /* HTTPServiceTests.swift in Sources */,
+				1988FC9122FB83CE000F70B3 /* GitHubService.swift in Sources */,
+				1988FC9522FBA080000F70B3 /* GitHubGetPullRequest.swift in Sources */,
+				1988FC8D22FB839B000F70B3 /* ServiceBuilderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

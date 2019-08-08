@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Address: Codable {
-    var number: Int
-    var street: String
+struct PullRequest: Codable {
+    let id: Int
+    let name: String
 }
