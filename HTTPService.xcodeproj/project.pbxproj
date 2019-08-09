@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1971904022F6547700B3BDC5 /* HTTPServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971903F22F6547700B3BDC5 /* HTTPServiceError.swift */; };
-		1971904322F654B300B3BDC5 /* HTTPServiceBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904222F654B300B3BDC5 /* HTTPServiceBuilder.swift */; };
+		1971904322F654B300B3BDC5 /* HTTPServiceBuildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904222F654B300B3BDC5 /* HTTPServiceBuildable.swift */; };
 		1971904622F654E900B3BDC5 /* HTTPAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904522F654E900B3BDC5 /* HTTPAuthorization.swift */; };
 		1971904922F6555900B3BDC5 /* HTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904822F6555900B3BDC5 /* HTTPRequest.swift */; };
 		1971904B22F655EE00B3BDC5 /* ServiceBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904A22F655EE00B3BDC5 /* ServiceBuilder.swift */; };
@@ -17,7 +17,7 @@
 		1988FC7A22FA0B34000F70B3 /* HTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904822F6555900B3BDC5 /* HTTPRequest.swift */; };
 		1988FC7B22FA0B34000F70B3 /* HTTPService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43768B1AD1A19300FFC40C /* HTTPService.swift */; };
 		1988FC7C22FA0B34000F70B3 /* HTTPAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904522F654E900B3BDC5 /* HTTPAuthorization.swift */; };
-		1988FC7D22FA0B34000F70B3 /* HTTPServiceBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904222F654B300B3BDC5 /* HTTPServiceBuilder.swift */; };
+		1988FC7D22FA0B34000F70B3 /* HTTPServiceBuildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904222F654B300B3BDC5 /* HTTPServiceBuildable.swift */; };
 		1988FC7E22FA0B34000F70B3 /* ServiceBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904A22F655EE00B3BDC5 /* ServiceBuilder.swift */; };
 		1988FC7F22FA0B34000F70B3 /* HTTPServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971903F22F6547700B3BDC5 /* HTTPServiceError.swift */; };
 		1988FC8022FA0B5F000F70B3 /* PullRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F98C32F1B0AAD5600AC23D4 /* PullRequest.swift */; };
@@ -29,6 +29,8 @@
 		1988FC9622FBA080000F70B3 /* GitHubGetPullRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1988FC9422FBA080000F70B3 /* GitHubGetPullRequest.swift */; };
 		1988FC9822FBA227000F70B3 /* HTTPServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1988FC9722FBA227000F70B3 /* HTTPServiceTests.swift */; };
 		1988FC9922FBA229000F70B3 /* HTTPServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1988FC9722FBA227000F70B3 /* HTTPServiceTests.swift */; };
+		1988FC9B22FCFD82000F70B3 /* ServiceBuildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1988FC9A22FCFD82000F70B3 /* ServiceBuildable.swift */; };
+		1988FC9C22FCFD82000F70B3 /* ServiceBuildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1988FC9A22FCFD82000F70B3 /* ServiceBuildable.swift */; };
 		3F43766A1AD1A14100FFC40C /* HTTPService.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F4376691AD1A14100FFC40C /* HTTPService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3F4376701AD1A14100FFC40C /* HTTPService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F4376641AD1A14100FFC40C /* HTTPService.framework */; };
 		3F43769D1AD1A19300FFC40C /* HTTPService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F43768B1AD1A19300FFC40C /* HTTPService.swift */; };
@@ -54,7 +56,7 @@
 
 /* Begin PBXFileReference section */
 		1971903F22F6547700B3BDC5 /* HTTPServiceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPServiceError.swift; sourceTree = "<group>"; };
-		1971904222F654B300B3BDC5 /* HTTPServiceBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPServiceBuilder.swift; sourceTree = "<group>"; };
+		1971904222F654B300B3BDC5 /* HTTPServiceBuildable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPServiceBuildable.swift; sourceTree = "<group>"; };
 		1971904522F654E900B3BDC5 /* HTTPAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPAuthorization.swift; sourceTree = "<group>"; };
 		1971904822F6555900B3BDC5 /* HTTPRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPRequest.swift; sourceTree = "<group>"; };
 		1971904A22F655EE00B3BDC5 /* ServiceBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceBuilder.swift; sourceTree = "<group>"; };
@@ -67,6 +69,7 @@
 		1988FC9022FB83CE000F70B3 /* GitHubService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubService.swift; sourceTree = "<group>"; };
 		1988FC9422FBA080000F70B3 /* GitHubGetPullRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubGetPullRequest.swift; sourceTree = "<group>"; };
 		1988FC9722FBA227000F70B3 /* HTTPServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPServiceTests.swift; sourceTree = "<group>"; };
+		1988FC9A22FCFD82000F70B3 /* ServiceBuildable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceBuildable.swift; sourceTree = "<group>"; };
 		3F4376641AD1A14100FFC40C /* HTTPService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HTTPService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F4376681AD1A14100FFC40C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3F4376691AD1A14100FFC40C /* HTTPService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTTPService.h; sourceTree = "<group>"; };
@@ -122,8 +125,9 @@
 		1971904122F654A400B3BDC5 /* Builders */ = {
 			isa = PBXGroup;
 			children = (
-				1971904222F654B300B3BDC5 /* HTTPServiceBuilder.swift */,
+				1971904222F654B300B3BDC5 /* HTTPServiceBuildable.swift */,
 				1971904A22F655EE00B3BDC5 /* ServiceBuilder.swift */,
+				1988FC9A22FCFD82000F70B3 /* ServiceBuildable.swift */,
 			);
 			name = Builders;
 			sourceTree = "<group>";
@@ -431,11 +435,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1988FC9C22FCFD82000F70B3 /* ServiceBuildable.swift in Sources */,
 				1988FC7A22FA0B34000F70B3 /* HTTPRequest.swift in Sources */,
 				1988FC7C22FA0B34000F70B3 /* HTTPAuthorization.swift in Sources */,
 				1988FC7F22FA0B34000F70B3 /* HTTPServiceError.swift in Sources */,
 				1988FC7B22FA0B34000F70B3 /* HTTPService.swift in Sources */,
-				1988FC7D22FA0B34000F70B3 /* HTTPServiceBuilder.swift in Sources */,
+				1988FC7D22FA0B34000F70B3 /* HTTPServiceBuildable.swift in Sources */,
 				1988FC7E22FA0B34000F70B3 /* ServiceBuilder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -456,8 +461,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1988FC9B22FCFD82000F70B3 /* ServiceBuildable.swift in Sources */,
 				1971904022F6547700B3BDC5 /* HTTPServiceError.swift in Sources */,
-				1971904322F654B300B3BDC5 /* HTTPServiceBuilder.swift in Sources */,
+				1971904322F654B300B3BDC5 /* HTTPServiceBuildable.swift in Sources */,
 				1971904922F6555900B3BDC5 /* HTTPRequest.swift in Sources */,
 				3F43769D1AD1A19300FFC40C /* HTTPService.swift in Sources */,
 				1971904622F654E900B3BDC5 /* HTTPAuthorization.swift in Sources */,

@@ -18,7 +18,7 @@ public typealias HTTPResult<T> = Result<T?, HTTPServiceError>
 
 public protocol HTTPService: class {
     
-    associatedtype Builder: HTTPServiceBuilder
+    associatedtype Builder: HTTPServiceBuildable
     associatedtype Authorization: HTTPAuthorization
     
     var urlSession: URLSession { get }
@@ -52,15 +52,6 @@ public protocol HTTPService: class {
 }
 
 extension HTTPService {
-    
-    var urlSession: URLSession {
-        return URLSession.shared
-    }
-    
-    var headers: HTTPHeaders? {
-        return nil
-    }
-    
     private func logRequestInfo(for request: URLRequest) {
         var info = """
         

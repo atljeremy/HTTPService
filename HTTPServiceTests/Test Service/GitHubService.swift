@@ -26,10 +26,12 @@ final class GitHubService: HTTPService {
     }
 }
 
-extension GitHubService: HTTPServiceBuilder {
-    static func build<T>() -> T? {
+extension GitHubService: HTTPServiceBuildable {
+    typealias Service = GitHubService
+    
+    static func build() -> GitHubService? {
         let auth = HTTPTokenAuthorization(token: UUID().uuidString)
-        return GitHubService(authorization: auth) as? T
+        return self.init(authorization: auth)
     }
 }
 

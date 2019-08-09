@@ -21,12 +21,12 @@ public class ServiceBuilder<T: HTTPService> {
             return cachedService!
         }
         
-        let service: T? = T.Builder.build()
+        let service = T.Builder.build()
         if let service = service {
             ServiceCache.shared.set(service: service, for: key)
         }
         
-        return service
+        return service as? T
     }
 }
 
