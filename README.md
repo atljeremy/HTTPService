@@ -4,7 +4,7 @@ A super simple networking library which utilizes a service builder to construct 
 ### Usage
 NOTE: These instructions are for v3.0+ only. Prior versions are no longer supported.
 
-Start by creating a class that will represent the a service and have it conform to the HTTPService protocol.
+Start by creating a class that will represent a service and have it conform to the HTTPService protocol.
 ```swift
 public class GitHubService: HTTPService {
     typealias Builder = GitHubService
