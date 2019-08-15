@@ -23,17 +23,18 @@ public class GitHubService: HTTPService {
 }
 ```
 
-Now, in order for `ServiceBuilder` to be able to build this service, we'll conform to the `HTTPServiceBuilder` protocol.
+Now, in order for `ServiceBuilder` to be able to build this service, we'll conform to the `HTTPServiceBuildable` protocol.
 ```swift
-extension GitHubService: HTTPServiceBuilder {
-    static func build<T>() -> T? {
+extension GitHubService: HTTPServiceBuildable {
+    typealias Service = GitHubService
+
+    static func build<T>() -> GitHubService? {
         guard let token = <Wherever you store user details>?.gitHubToken else {
             print("Cannot build GitHubService without an auth token.")
             return nil
         }
         let auth = HTTPTokenAuthorization(token: token)
-        let service = GitHubService(authorization: auth) as! T
-        return service
+        return GitHubService(authorization: auth)
     }
 }
 ```
