@@ -1,8 +1,10 @@
 # HTTPService
 A super simple networking library which utilizes a service builder to construct and cache services.
 
-### Usage
+## Usage
 NOTE: These instructions are for v3.0+ only. Prior versions are no longer supported.
+
+### Creating a Service
 
 Start by creating a class that will represent a service and have it conform to the HTTPService protocol.
 ```swift
@@ -44,9 +46,13 @@ Your service is now ready to be created. If the service has already been created
 let gitHubService = ServiceBuilder<GitHubService>.build()
 ```
 
+### Clearing ServiceBuilder's cache
+
 If you ever need to clear the cache, simply call `ServiceBuilder<GitHubService>.purgeCache()`. If there is a cached version of this service, it'll be removed.
 
-Next, create request classes that conform to the `HTTPRequest` protocol.
+### Creating Requests
+
+Create request classes that conform to the `HTTPRequest` protocol.
 
 Example GET request:
 ```swift
@@ -129,6 +135,7 @@ class GitHubCreatePRRequest: HTTPRequest {
 }
 ```
 
+### Executing Requests
 
 You're now ready to send a request!
 ```swift
