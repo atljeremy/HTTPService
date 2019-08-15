@@ -47,6 +47,8 @@ let gitHubService = ServiceBuilder<GitHubService>.build()
 If you ever need to clear the cache, simply call `ServiceBuilder<GitHubService>.purgeCache()`. If there is a cached version of this service, it'll be removed.
 
 Next, create request classes that conform to the `HTTPRequest` protocol.
+
+Example GET request:
 ```swift
 class GitHubGetPRsRequest: HTTPRequest {
     
@@ -80,6 +82,53 @@ class GitHubGetPRsRequest: HTTPRequest {
     }
 }
 ```
+
+Example POST request:
+```swift
+struct GitHubPRBody: Encodable {
+    let title: String
+    let head: String
+    let base: String
+    let body: String = ""
+    let maintainerCanModify: Bool = false
+    let draft: Bool = false
+}
+
+class GitHubCreatePRRequest: HTTPRequest {
+    
+    typealias ResultType = GitHubPR
+    typealias BodyType = GitHubPRBody
+    
+    var endpoint: String {
+        return "/repos/\(pr.owner)/\(pr.repo)/pulls"
+    }
+    var method: HTTPMethod = .post
+    var params: [String : Any]?
+    var body: GitHubPRBody? {
+        return GitHubPRBody(
+            title: pr.title,
+            head: "headbranch",
+            base: "basebranch"
+        )
+    }
+    var headers: [String : String]?
+    var includeServiceLevelHeaders: Bool = true
+    var includeServiceLevelAuthorization: Bool = true
+    
+    let pr: GitHubPR
+    let head: String
+    let base: String
+    
+    required init(for pr: GitHubPR, head: String, base: String) {
+        self.pr = pr
+    }
+    
+    required init(id: String?) {
+        fatalError("Use init(for pr:) instead")
+    }
+}
+```
+
 
 You're now ready to send a request!
 ```swift
