@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1988FC6222FA0AE6000F70B3"
-               BuildableName = "HTTPService_macOS.framework"
+               BuildableName = "HTTPService.framework"
                BlueprintName = "HTTPService macOS"
                ReferencedContainer = "container:HTTPService.xcodeproj">
             </BuildableReference>
@@ -27,6 +27,15 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "1988FC6222FA0AE6000F70B3"
+            BuildableName = "HTTPService.framework"
+            BlueprintName = "HTTPService macOS"
+            ReferencedContainer = "container:HTTPService.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <Testables>
          <TestableReference
             skipped = "NO">
@@ -39,17 +48,6 @@
             </BuildableReference>
          </TestableReference>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1988FC6222FA0AE6000F70B3"
-            BuildableName = "HTTPService_macOS.framework"
-            BlueprintName = "HTTPService macOS"
-            ReferencedContainer = "container:HTTPService.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -65,13 +63,11 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1988FC6222FA0AE6000F70B3"
-            BuildableName = "HTTPService_macOS.framework"
+            BuildableName = "HTTPService.framework"
             BlueprintName = "HTTPService macOS"
             ReferencedContainer = "container:HTTPService.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -83,7 +79,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1988FC6222FA0AE6000F70B3"
-            BuildableName = "HTTPService_macOS.framework"
+            BuildableName = "HTTPService.framework"
             BlueprintName = "HTTPService macOS"
             ReferencedContainer = "container:HTTPService.xcodeproj">
          </BuildableReference>

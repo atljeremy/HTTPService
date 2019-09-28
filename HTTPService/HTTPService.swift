@@ -55,7 +55,7 @@ extension HTTPService {
     private func logRequestInfo(for request: URLRequest) {
         var info = """
         
-        --------- Autom8or Executing HTTP Request ---------
+        --------- HTTPService Executing HTTP Request ---------
         URL: \(request.url?.absoluteString ?? "No URL, wtf?!")
         Headers: \(request.allHTTPHeaderFields ?? [:])
         """
@@ -88,6 +88,11 @@ extension HTTPService {
                 return
             }
             
+            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
+                handler(.failure(.unauthorized("")))
+                return
+            }
+            
             guard !(T.ResultType.self is HTTPResponseNoContent.Type) else {
                 handler(.success(nil))
                 return
@@ -99,7 +104,9 @@ extension HTTPService {
             }
             
             do {
-                let obj = try JSONDecoder().decode(T.ResultType.self, from: data)
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .formatted(.iso8601Full)
+                let obj = try decoder.decode(T.ResultType.self, from: data)
                 handler(.success(obj))
             } catch let e {
                 handler(.failure(.jsonDecodingError(e.localizedDescription)))
@@ -132,6 +139,11 @@ extension HTTPService {
                 return
             }
             
+            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
+                handler(.failure(.unauthorized("")))
+                return
+            }
+            
             guard let data = data, data.count > 0 else {
                 request.didComplete(request: urlRequest, with: error)
                 handler(.failure(.emptyResponseData(response?.url?.absoluteString ?? "")))
@@ -139,7 +151,9 @@ extension HTTPService {
             }
             
             do {
-                var obj = try JSONDecoder().decode(T.ResultType.self, from: data)
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .formatted(.iso8601Full)
+                var obj = try decoder.decode(T.ResultType.self, from: data)
                 obj = request.didComplete(request: urlRequest, receiving: obj) ?? obj
                 self?.execute(request: request.chainedRequest) { (result) in
                     switch result {
@@ -188,6 +202,11 @@ extension HTTPService {
                 return
             }
             
+            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
+                handler(.failure(.unauthorized("")))
+                return
+            }
+            
             guard let data = data, data.count > 0 else {
                 request.didComplete(request: urlRequest, with: error)
                 handler(.failure(.emptyResponseData(response?.url?.absoluteString ?? "")))
@@ -195,7 +214,9 @@ extension HTTPService {
             }
             
             do {
-                var obj = try JSONDecoder().decode(T.ResultType.self, from: data)
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .formatted(.iso8601Full)
+                var obj = try decoder.decode(T.ResultType.self, from: data)
                 obj = request.didComplete(request: urlRequest, receiving: obj) ?? obj
                 self?.execute(request: request.chainedRequest) { (result) in
                     switch result {
@@ -244,6 +265,11 @@ extension HTTPService {
                 return
             }
             
+            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
+                handler(.failure(.unauthorized("")))
+                return
+            }
+            
             guard let data = data, data.count > 0 else {
                 request.didComplete(request: urlRequest, with: error)
                 handler(.failure(.emptyResponseData(response?.url?.absoluteString ?? "")))
@@ -251,7 +277,9 @@ extension HTTPService {
             }
             
             do {
-                let obj = try JSONDecoder().decode(T.ResultType.self, from: data)
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .formatted(.iso8601Full)
+                let obj = try decoder.decode(T.ResultType.self, from: data)
                 handler(.success(request.didComplete(request: urlRequest, receiving: obj) ?? obj))
             } catch let e {
                 request.didComplete(request: urlRequest, with: error)
@@ -280,6 +308,11 @@ extension HTTPService {
             
             guard error == nil else {
                 handler(.failure(.requestFailed(error!.localizedDescription)))
+                return
+            }
+            
+            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
+                handler(.failure(.unauthorized("")))
                 return
             }
             
@@ -317,6 +350,11 @@ extension HTTPService {
                 return
             }
             
+            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
+                handler(.failure(.unauthorized("")))
+                return
+            }
+            
             guard let url = url else {
                 let error = HTTPServiceError.downloadFailed("Failing URL: \(response?.url?.absoluteString ?? "")")
                 request.didComplete(request: urlRequest, with: error)
@@ -351,13 +389,20 @@ extension HTTPService {
                 return
             }
             
+            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
+                handler(.failure(.unauthorized("")))
+                return
+            }
+            
             guard let data = data, data.count > 0 else {
                 handler(.failure(.emptyResponseData(response?.url?.absoluteString ?? "")))
                 return
             }
             
             do {
-                let obj = try JSONDecoder().decode(T.ResultType.self, from: data)
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .formatted(.iso8601Full)
+                let obj = try decoder.decode(T.ResultType.self, from: data)
                 handler(.success(obj))
             } catch let e {
                 handler(.failure(.jsonDecodingError(e.localizedDescription)))

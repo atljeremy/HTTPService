@@ -13,16 +13,19 @@ public enum HTTPServiceError: Error {
     case emptyResponseData(String)
     case jsonDecodingError(String)
     case downloadFailed(String)
+    case unauthorized(String)
     
     public var message: String {
         switch self {
-        case let .requestFailed(s):
+        case .requestFailed(let s):
             return s
-        case let .emptyResponseData(s):
+        case .emptyResponseData(let s):
             return s
-        case let .jsonDecodingError(s):
+        case .jsonDecodingError(let s):
             return s
-        case let .downloadFailed(s):
+        case .downloadFailed(let s):
+            return s
+        case .unauthorized(let s):
             return s
         }
     }

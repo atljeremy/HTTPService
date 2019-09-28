@@ -12,6 +12,7 @@
 		1971904622F654E900B3BDC5 /* HTTPAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904522F654E900B3BDC5 /* HTTPAuthorization.swift */; };
 		1971904922F6555900B3BDC5 /* HTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904822F6555900B3BDC5 /* HTTPRequest.swift */; };
 		1971904B22F655EE00B3BDC5 /* ServiceBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904A22F655EE00B3BDC5 /* ServiceBuilder.swift */; };
+		198095DB2340178B00AFCE86 /* DateFormatter+iso8601.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198095DA2340178B00AFCE86 /* DateFormatter+iso8601.swift */; };
 		1988FC6C22FA0AE7000F70B3 /* HTTPService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1988FC6322FA0AE6000F70B3 /* HTTPService.framework */; };
 		1988FC7322FA0AE7000F70B3 /* HTTPService_macOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 1988FC6522FA0AE6000F70B3 /* HTTPService_macOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1988FC7A22FA0B34000F70B3 /* HTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904822F6555900B3BDC5 /* HTTPRequest.swift */; };
@@ -60,6 +61,7 @@
 		1971904522F654E900B3BDC5 /* HTTPAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPAuthorization.swift; sourceTree = "<group>"; };
 		1971904822F6555900B3BDC5 /* HTTPRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPRequest.swift; sourceTree = "<group>"; };
 		1971904A22F655EE00B3BDC5 /* ServiceBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceBuilder.swift; sourceTree = "<group>"; };
+		198095DA2340178B00AFCE86 /* DateFormatter+iso8601.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+iso8601.swift"; sourceTree = "<group>"; };
 		1988FC6322FA0AE6000F70B3 /* HTTPService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HTTPService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1988FC6522FA0AE6000F70B3 /* HTTPService_macOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTTPService_macOS.h; sourceTree = "<group>"; };
 		1988FC6622FA0AE6000F70B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -148,6 +150,14 @@
 			name = Requests;
 			sourceTree = "<group>";
 		};
+		198095D92340177300AFCE86 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				198095DA2340178B00AFCE86 /* DateFormatter+iso8601.swift */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
 		1988FC6422FA0AE6000F70B3 /* HTTPService macOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -206,6 +216,7 @@
 		3F4376661AD1A14100FFC40C /* HTTPService */ = {
 			isa = PBXGroup;
 			children = (
+				198095D92340177300AFCE86 /* Extensions */,
 				1971904722F6554D00B3BDC5 /* Requests */,
 				3F4376691AD1A14100FFC40C /* HTTPService.h */,
 				3F43768B1AD1A19300FFC40C /* HTTPService.swift */,
@@ -466,6 +477,7 @@
 				1971904322F654B300B3BDC5 /* HTTPServiceBuildable.swift in Sources */,
 				1971904922F6555900B3BDC5 /* HTTPRequest.swift in Sources */,
 				3F43769D1AD1A19300FFC40C /* HTTPService.swift in Sources */,
+				198095DB2340178B00AFCE86 /* DateFormatter+iso8601.swift in Sources */,
 				1971904622F654E900B3BDC5 /* HTTPAuthorization.swift in Sources */,
 				1971904B22F655EE00B3BDC5 /* ServiceBuilder.swift in Sources */,
 			);
@@ -673,7 +685,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -725,7 +737,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -747,7 +759,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = HTTPService/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jeremyfox.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -767,7 +779,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = HTTPService/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jeremyfox.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
