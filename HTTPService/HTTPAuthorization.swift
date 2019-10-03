@@ -10,14 +10,19 @@ import Foundation
 
 /// Used to authorize HTTP Requests using the "Authorization" header.
 ///
-/// Use `HTTPBasicAuthorization` or `HTTPBearerAuthorization`
+/// See `HTTPBasicAuthorization`, `HTTPBearerAuthorization`, `HTTPTokenAuthorization`, `HTTPCustomTokenAuthorization` and `HTTPNoAuthorization`
 public protocol HTTPAuthorization {
     
     /// Used as the value of the "Authorization" header
     var value: String { get }
 }
 
-/// Used for standard "Basic" authorization
+/// Use for services that do not require authorization
+public struct HTTPNoAuthorization: HTTPAuthorization {
+    public var value: String = ""
+}
+
+/// Use for standard "Basic" authorization
 ///
 /// http://www.iana.org/go/rfc7617
 public struct HTTPBasicAuthorization: HTTPAuthorization {
@@ -32,7 +37,7 @@ public struct HTTPBasicAuthorization: HTTPAuthorization {
     }
 }
 
-/// Used for standard "Bearer" authorization
+/// Use for standard "Bearer" authorization
 ///
 /// http://www.iana.org/go/rfc6750
 public struct HTTPBearerAuthorization: HTTPAuthorization {
@@ -45,7 +50,7 @@ public struct HTTPBearerAuthorization: HTTPAuthorization {
     }
 }
 
-/// Used for authorization similar to Bearer, but require `token` in place of `bearer`
+/// Use for authorization similar to Bearer, but require `token` in place of `bearer`
 public struct HTTPTokenAuthorization: HTTPAuthorization {
     let token: String
     public var value: String
@@ -56,7 +61,7 @@ public struct HTTPTokenAuthorization: HTTPAuthorization {
     }
 }
 
-/// Used for authorized HTTP requests that only accept a token and aren't Basic or Bearer.
+/// Use for authorized HTTP requests that only accept a token and aren't Basic or Bearer.
 ///
 /// A custom authorization mechanism where the value of the "Authorization"
 /// header should only contain a `token` and aren't "Basic" or "Bearer" auth.

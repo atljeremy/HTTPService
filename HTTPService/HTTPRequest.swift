@@ -123,7 +123,7 @@ extension HTTPRequest {
         }
         
         // Add the authorization
-        if includeServiceLevelAuthorization, let auth = authorization {
+        if includeServiceLevelAuthorization, let auth = authorization, !(auth is HTTPNoAuthorization) {
             request.addValue(auth.value, forHTTPHeaderField: "Authorization")
         }
         
