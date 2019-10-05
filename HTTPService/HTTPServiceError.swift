@@ -14,6 +14,7 @@ public enum HTTPServiceError: Error {
     case jsonDecodingError(String)
     case downloadFailed(String)
     case unauthorized(String)
+    case conflict(String)
     
     public var message: String {
         switch self {
@@ -26,6 +27,8 @@ public enum HTTPServiceError: Error {
         case .downloadFailed(let s):
             return s
         case .unauthorized(let s):
+            return s
+        case .conflict(let s):
             return s
         }
     }

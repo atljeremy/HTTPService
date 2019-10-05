@@ -66,6 +66,7 @@ public protocol HTTPRequestLifecycleAware {
     func didComplete(request: URLRequest, with error: Error?)
 }
 
+public protocol HTTPDataRequest: HTTPRequest where ResultType == Data {}
 public protocol HTTPDownloadRequest: HTTPRequest where ResultType == URL {}
 public protocol HTTPUploadRequest: HTTPRequest where BodyType == Data {
     var fileUrl: URL? { get set }

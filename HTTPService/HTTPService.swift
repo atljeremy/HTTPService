@@ -33,6 +33,9 @@ public protocol HTTPService: class {
     func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPRequest
     
     @discardableResult
+    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPDataRequest
+    
+    @discardableResult
     func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPRequestChainable
     
     @discardableResult
@@ -93,6 +96,11 @@ extension HTTPService {
                 return
             }
             
+            guard (response as? HTTPURLResponse)?.statusCode != 409 else {
+                handler(.failure(.conflict("")))
+                return
+            }
+            
             guard !(T.ResultType.self is HTTPResponseNoContent.Type) else {
                 handler(.success(nil))
                 return
@@ -111,6 +119,43 @@ extension HTTPService {
             } catch let e {
                 handler(.failure(.jsonDecodingError(e.localizedDescription)))
             }
+        }
+        tasks.append(task!)
+        task!.resume()
+        return task!
+    }
+    
+    @discardableResult
+    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPDataRequest {
+        let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
+        logRequestInfo(for: urlRequest)
+        var task: URLSessionTask?
+        task = urlSession.dataTask(with: urlRequest) { [weak self] (data, response, error) in
+            
+            if let response = response {
+                print(response)
+            }
+            
+            if let index = self?.tasks.firstIndex(of: task!) {
+                self?.tasks.remove(at: index)
+            }
+            
+            guard error == nil else {
+                handler(.failure(.requestFailed(error!.localizedDescription)))
+                return
+            }
+            
+            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
+                handler(.failure(.unauthorized("")))
+                return
+            }
+            
+            guard let data = data, data.count > 0 else {
+                handler(.failure(.emptyResponseData(response?.url?.absoluteString ?? "")))
+                return
+            }
+            
+            handler(.success(data))
         }
         tasks.append(task!)
         task!.resume()

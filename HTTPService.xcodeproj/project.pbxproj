@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		192CAFFF234932D8000E399F /* DateFormatter+iso8601.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198095DA2340178B00AFCE86 /* DateFormatter+iso8601.swift */; };
 		1971904022F6547700B3BDC5 /* HTTPServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971903F22F6547700B3BDC5 /* HTTPServiceError.swift */; };
 		1971904322F654B300B3BDC5 /* HTTPServiceBuildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904222F654B300B3BDC5 /* HTTPServiceBuildable.swift */; };
 		1971904622F654E900B3BDC5 /* HTTPAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904522F654E900B3BDC5 /* HTTPAuthorization.swift */; };
@@ -451,6 +452,7 @@
 				1988FC7C22FA0B34000F70B3 /* HTTPAuthorization.swift in Sources */,
 				1988FC7F22FA0B34000F70B3 /* HTTPServiceError.swift in Sources */,
 				1988FC7B22FA0B34000F70B3 /* HTTPService.swift in Sources */,
+				192CAFFF234932D8000E399F /* DateFormatter+iso8601.swift in Sources */,
 				1988FC7D22FA0B34000F70B3 /* HTTPServiceBuildable.swift in Sources */,
 				1988FC7E22FA0B34000F70B3 /* ServiceBuilder.swift in Sources */,
 			);
