@@ -33,6 +33,9 @@ public protocol HTTPService: class {
     func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPRequest
     
     @discardableResult
+    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPPagedRequest
+    
+    @discardableResult
     func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPDataRequest
     
     @discardableResult
@@ -115,6 +118,70 @@ extension HTTPService {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .formatted(.iso8601Full)
                 let obj = try decoder.decode(T.ResultType.self, from: data)
+                handler(.success(obj))
+            } catch let e {
+                handler(.failure(.jsonDecodingError(e.localizedDescription)))
+            }
+        }
+        tasks.append(task!)
+        task!.resume()
+        return task!
+    }
+    
+    @discardableResult
+    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPPagedRequest {
+        let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
+        logRequestInfo(for: urlRequest)
+        var task: URLSessionTask?
+        task = urlSession.dataTask(with: urlRequest) { [weak self] (data, response, error) in
+            
+            if let response = response {
+                print(response)
+            }
+            
+            if let index = self?.tasks.firstIndex(of: task!) {
+                self?.tasks.remove(at: index)
+            }
+            
+            guard error == nil else {
+                handler(.failure(.requestFailed(error!.localizedDescription)))
+                return
+            }
+            
+            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
+                handler(.failure(.unauthorized("")))
+                return
+            }
+            
+            guard (response as? HTTPURLResponse)?.statusCode != 409 else {
+                handler(.failure(.conflict("")))
+                return
+            }
+            
+            guard !(T.ResultType.self is HTTPResponseNoContent.Type) else {
+                handler(.success(nil))
+                return
+            }
+            
+            guard let data = data, data.count > 0 else {
+                handler(.failure(.emptyResponseData(response?.url?.absoluteString ?? "")))
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .formatted(.iso8601Full)
+                var obj = try decoder.decode(T.ResultType.self, from: data)
+                if let res = response as? HTTPURLResponse {
+                    let links = (res.allHeaderFields["Link"] as? String)?.httpLinks
+                    obj.links = PagedLinks(first: links?[.first], previous: links?[.previous], next: links?[.next], last: links?[.last])
+                    if let perPage = res.allHeaderFields["per-page"] as? String {
+                        obj.perPage = Int(perPage)
+                    }
+                    if let total = res.allHeaderFields["total"] as? String {
+                        obj.total = Int(total)
+                    }
+                }
                 handler(.success(obj))
             } catch let e {
                 handler(.failure(.jsonDecodingError(e.localizedDescription)))

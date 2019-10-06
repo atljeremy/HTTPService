@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		192CAFFF234932D8000E399F /* DateFormatter+iso8601.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198095DA2340178B00AFCE86 /* DateFormatter+iso8601.swift */; };
+		192CB001234A6471000E399F /* String+HTTPPagedLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192CB000234A6471000E399F /* String+HTTPPagedLinks.swift */; };
+		192CB003234A64B7000E399F /* HTTPPagedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192CB002234A64B7000E399F /* HTTPPagedRequest.swift */; };
+		192CB004234A64BD000E399F /* HTTPPagedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192CB002234A64B7000E399F /* HTTPPagedRequest.swift */; };
+		192CB005234A64BF000E399F /* String+HTTPPagedLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192CB000234A6471000E399F /* String+HTTPPagedLinks.swift */; };
 		1971904022F6547700B3BDC5 /* HTTPServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971903F22F6547700B3BDC5 /* HTTPServiceError.swift */; };
 		1971904322F654B300B3BDC5 /* HTTPServiceBuildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904222F654B300B3BDC5 /* HTTPServiceBuildable.swift */; };
 		1971904622F654E900B3BDC5 /* HTTPAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971904522F654E900B3BDC5 /* HTTPAuthorization.swift */; };
@@ -57,6 +61,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		192CB000234A6471000E399F /* String+HTTPPagedLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+HTTPPagedLinks.swift"; sourceTree = "<group>"; };
+		192CB002234A64B7000E399F /* HTTPPagedRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPPagedRequest.swift; sourceTree = "<group>"; };
 		1971903F22F6547700B3BDC5 /* HTTPServiceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPServiceError.swift; sourceTree = "<group>"; };
 		1971904222F654B300B3BDC5 /* HTTPServiceBuildable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPServiceBuildable.swift; sourceTree = "<group>"; };
 		1971904522F654E900B3BDC5 /* HTTPAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPAuthorization.swift; sourceTree = "<group>"; };
@@ -147,6 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				1971904822F6555900B3BDC5 /* HTTPRequest.swift */,
+				192CB002234A64B7000E399F /* HTTPPagedRequest.swift */,
 			);
 			name = Requests;
 			sourceTree = "<group>";
@@ -155,6 +162,7 @@
 			isa = PBXGroup;
 			children = (
 				198095DA2340178B00AFCE86 /* DateFormatter+iso8601.swift */,
+				192CB000234A6471000E399F /* String+HTTPPagedLinks.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -447,10 +455,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				192CB005234A64BF000E399F /* String+HTTPPagedLinks.swift in Sources */,
 				1988FC9C22FCFD82000F70B3 /* ServiceBuildable.swift in Sources */,
 				1988FC7A22FA0B34000F70B3 /* HTTPRequest.swift in Sources */,
 				1988FC7C22FA0B34000F70B3 /* HTTPAuthorization.swift in Sources */,
 				1988FC7F22FA0B34000F70B3 /* HTTPServiceError.swift in Sources */,
+				192CB004234A64BD000E399F /* HTTPPagedRequest.swift in Sources */,
 				1988FC7B22FA0B34000F70B3 /* HTTPService.swift in Sources */,
 				192CAFFF234932D8000E399F /* DateFormatter+iso8601.swift in Sources */,
 				1988FC7D22FA0B34000F70B3 /* HTTPServiceBuildable.swift in Sources */,
@@ -481,7 +491,9 @@
 				3F43769D1AD1A19300FFC40C /* HTTPService.swift in Sources */,
 				198095DB2340178B00AFCE86 /* DateFormatter+iso8601.swift in Sources */,
 				1971904622F654E900B3BDC5 /* HTTPAuthorization.swift in Sources */,
+				192CB003234A64B7000E399F /* HTTPPagedRequest.swift in Sources */,
 				1971904B22F655EE00B3BDC5 /* ServiceBuilder.swift in Sources */,
+				192CB001234A6471000E399F /* String+HTTPPagedLinks.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
