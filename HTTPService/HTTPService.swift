@@ -84,22 +84,23 @@ extension HTTPService {
             if let response = response {
                 print(response)
             }
+            let response = response as? HTTPURLResponse
             
             if let index = self?.tasks.firstIndex(of: task!) {
                 self?.tasks.remove(at: index)
             }
             
-            guard error == nil else {
-                handler(.failure(.requestFailed(error!.localizedDescription)))
+            guard error == nil, response?.statusCode != 500 else {
+                handler(.failure(.requestFailed(error?.localizedDescription ?? "")))
                 return
             }
             
-            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
+            guard response?.statusCode != 401 else {
                 handler(.failure(.unauthorized("")))
                 return
             }
             
-            guard (response as? HTTPURLResponse)?.statusCode != 409 else {
+            guard response?.statusCode != 409 else {
                 handler(.failure(.conflict("")))
                 return
             }
