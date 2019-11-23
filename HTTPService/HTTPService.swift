@@ -57,6 +57,26 @@ public protocol HTTPService: class {
     func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T: HTTPUploadRequest
 }
 
+extension HTTPURLResponse {
+    var isFailure: Bool {
+        return statusCode >= 400
+    }
+    
+    func httpServiceError(with message: String? = nil) -> HTTPServiceError? {
+        guard isFailure == true else { return nil }
+        
+        switch statusCode {
+        case 400: return .badRequest(message ?? "")
+        case 401: return .unauthorized(message ?? "")
+        case 403: return .forbidden(message ?? "")
+        case 409: return .conflict(message ?? "")
+        case 422: return .unprocessableEntity(message ?? "")
+        case 500: return .serverError(message ?? "")
+        default: return .requestFailed(message ?? "")
+        }
+    }
+}
+
 extension HTTPService {
     private func logRequestInfo(for request: URLRequest) {
         var info = """
@@ -81,27 +101,17 @@ extension HTTPService {
         var task: URLSessionTask?
         task = urlSession.dataTask(with: urlRequest) { [weak self] (data, response, error) in
             
+            if let index = self?.tasks.firstIndex(of: task!) {
+                self?.tasks.remove(at: index)
+            }
+            
             if let response = response {
                 print(response)
             }
             let response = response as? HTTPURLResponse
             
-            if let index = self?.tasks.firstIndex(of: task!) {
-                self?.tasks.remove(at: index)
-            }
-            
-            guard error == nil, response?.statusCode != 500 else {
-                handler(.failure(.requestFailed(error?.localizedDescription ?? "")))
-                return
-            }
-            
-            guard response?.statusCode != 401 else {
-                handler(.failure(.unauthorized("")))
-                return
-            }
-            
-            guard response?.statusCode != 409 else {
-                handler(.failure(.conflict("")))
+            guard response?.isFailure == false else {
+                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
                 return
             }
             
@@ -139,23 +149,14 @@ extension HTTPService {
             if let response = response {
                 print(response)
             }
+            let response = response as? HTTPURLResponse
             
             if let index = self?.tasks.firstIndex(of: task!) {
                 self?.tasks.remove(at: index)
             }
             
-            guard error == nil else {
-                handler(.failure(.requestFailed(error!.localizedDescription)))
-                return
-            }
-            
-            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
-                handler(.failure(.unauthorized("")))
-                return
-            }
-            
-            guard (response as? HTTPURLResponse)?.statusCode != 409 else {
-                handler(.failure(.conflict("")))
+            guard response?.isFailure == false else {
+                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
                 return
             }
             
@@ -173,13 +174,13 @@ extension HTTPService {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .formatted(.iso8601Full)
                 var obj = try decoder.decode(T.ResultType.self, from: data)
-                if let res = response as? HTTPURLResponse {
-                    let links = (res.allHeaderFields["Link"] as? String)?.httpLinks
+                if let headers = response?.allHeaderFields {
+                    let links = (headers["Link"] as? String)?.httpLinks
                     obj.links = PagedLinks(first: links?[.first], previous: links?[.previous], next: links?[.next], last: links?[.last])
-                    if let perPage = res.allHeaderFields["per-page"] as? String {
+                    if let perPage = headers["per-page"] as? String {
                         obj.perPage = Int(perPage)
                     }
-                    if let total = res.allHeaderFields["total"] as? String {
+                    if let total = headers["total"] as? String {
                         obj.total = Int(total)
                     }
                 }
@@ -203,18 +204,14 @@ extension HTTPService {
             if let response = response {
                 print(response)
             }
+            let response = response as? HTTPURLResponse
             
             if let index = self?.tasks.firstIndex(of: task!) {
                 self?.tasks.remove(at: index)
             }
             
-            guard error == nil else {
-                handler(.failure(.requestFailed(error!.localizedDescription)))
-                return
-            }
-            
-            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
-                handler(.failure(.unauthorized("")))
+            guard response?.isFailure == false else {
+                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
                 return
             }
             
@@ -238,22 +235,17 @@ extension HTTPService {
         request.willExecute(request: urlRequest)
         task = urlSession.dataTask(with: urlRequest) { [weak self] (data, response, error) in
             
-            if let response = response {
-                print(response)
-            }
-            
             if let index = self?.tasks.firstIndex(of: task!) {
                 self?.tasks.remove(at: index)
             }
             
-            guard error == nil else {
-                request.didComplete(request: urlRequest, with: error)
-                handler(.failure(.requestFailed(error!.localizedDescription)))
-                return
+            if let response = response {
+                print(response)
             }
+            let response = response as? HTTPURLResponse
             
-            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
-                handler(.failure(.unauthorized("")))
+            guard response?.isFailure == false else {
+                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
                 return
             }
             
@@ -301,22 +293,18 @@ extension HTTPService {
         request.willExecute(request: urlRequest)
         task = urlSession.dataTask(with: urlRequest) { [weak self] (data, response, error) in
             
-            if let response = response {
-                print(response)
-            }
-            
             if let index = self?.tasks.firstIndex(of: task!) {
                 self?.tasks.remove(at: index)
             }
             
-            guard error == nil else {
-                request.didComplete(request: urlRequest, with: error)
-                handler(.failure(.requestFailed(error!.localizedDescription)))
-                return
+            if let response = response {
+                print(response)
             }
+            let response = response as? HTTPURLResponse
             
-            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
-                handler(.failure(.unauthorized("")))
+            guard response?.isFailure == false else {
+                request.didComplete(request: urlRequest, with: error)
+                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
                 return
             }
             
@@ -364,22 +352,18 @@ extension HTTPService {
         request.willExecute(request: urlRequest)
         task = urlSession.dataTask(with: urlRequest) { [weak self] (data, response, error) in
             
-            if let response = response {
-                print(response)
-            }
-            
             if let index = self?.tasks.firstIndex(of: task!) {
                 self?.tasks.remove(at: index)
             }
             
-            guard error == nil else {
-                request.didComplete(request: urlRequest, with: error)
-                handler(.failure(.requestFailed(error!.localizedDescription)))
-                return
+            if let response = response {
+                print(response)
             }
+            let response = response as? HTTPURLResponse
             
-            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
-                handler(.failure(.unauthorized("")))
+            guard response?.isFailure == false else {
+                request.didComplete(request: urlRequest, with: error)
+                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
                 return
             }
             
@@ -411,21 +395,17 @@ extension HTTPService {
         var task: URLSessionTask?
         task = urlSession.downloadTask(with: urlRequest) { [weak self] (url, response, error) in
             
-            if let response = response {
-                print(response)
-            }
-            
             if let index = self?.tasks.firstIndex(of: task!) {
                 self?.tasks.remove(at: index)
             }
             
-            guard error == nil else {
-                handler(.failure(.requestFailed(error!.localizedDescription)))
-                return
+            if let response = response {
+                print(response)
             }
+            let response = response as? HTTPURLResponse
             
-            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
-                handler(.failure(.unauthorized("")))
+            guard response?.isFailure == false else {
+                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
                 return
             }
             
@@ -449,22 +429,18 @@ extension HTTPService {
         request.willExecute(request: urlRequest)
         task = urlSession.downloadTask(with: urlRequest) { [weak self] (url, response, error) in
             
-            if let response = response {
-                print(response)
-            }
-            
             if let index = self?.tasks.firstIndex(of: task!) {
                 self?.tasks.remove(at: index)
             }
             
-            guard error == nil else {
-                request.didComplete(request: urlRequest, with: error)
-                handler(.failure(.requestFailed(error!.localizedDescription)))
-                return
+            if let response = response {
+                print(response)
             }
+            let response = response as? HTTPURLResponse
             
-            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
-                handler(.failure(.unauthorized("")))
+            guard response?.isFailure == false else {
+                request.didComplete(request: urlRequest, with: error)
+                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
                 return
             }
             
@@ -489,21 +465,17 @@ extension HTTPService {
         var task: URLSessionTask?
         task = urlSession.uploadTask(with: urlRequest, from: urlRequest.httpBody) { [weak self] (data, response, error) in
             
-            if let response = response {
-                print(response)
-            }
-            
             if let index = self?.tasks.firstIndex(of: task!) {
                 self?.tasks.remove(at: index)
             }
             
-            guard error == nil else {
-                handler(.failure(.requestFailed(error!.localizedDescription)))
-                return
+            if let response = response {
+                print(response)
             }
+            let response = response as? HTTPURLResponse
             
-            guard (response as? HTTPURLResponse)?.statusCode != 401 else {
-                handler(.failure(.unauthorized("")))
+            guard response?.isFailure == false else {
+                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
                 return
             }
             
