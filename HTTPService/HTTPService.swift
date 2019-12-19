@@ -63,7 +63,7 @@ extension HTTPURLResponse {
     }
     
     func httpServiceError(with message: String? = nil) -> HTTPServiceError? {
-        guard isFailure == true else { return nil }
+        guard isFailure else { return nil }
         
         switch statusCode {
         case 400: return .badRequest(message ?? "")
@@ -108,10 +108,14 @@ extension HTTPService {
             if let response = response {
                 print(response)
             }
-            let response = response as? HTTPURLResponse
             
-            guard response?.isFailure == false else {
-                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
+            guard let response = response as? HTTPURLResponse else {
+                handler(.failure(.serverError(error?.localizedDescription ?? "")))
+                return
+            }
+            
+            guard !response.isFailure else {
+                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
                 return
             }
             
@@ -121,7 +125,7 @@ extension HTTPService {
             }
             
             guard let data = data, data.count > 0 else {
-                handler(.failure(.emptyResponseData(response?.url?.absoluteString ?? "")))
+                handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
                 return
             }
             
@@ -146,17 +150,21 @@ extension HTTPService {
         var task: URLSessionTask?
         task = urlSession.dataTask(with: urlRequest) { [weak self] (data, response, error) in
             
-            if let response = response {
-                print(response)
-            }
-            let response = response as? HTTPURLResponse
-            
             if let index = self?.tasks.firstIndex(of: task!) {
                 self?.tasks.remove(at: index)
             }
             
-            guard response?.isFailure == false else {
-                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
+            if let response = response {
+                print(response)
+            }
+            
+            guard let response = response as? HTTPURLResponse else {
+                handler(.failure(.serverError(error?.localizedDescription ?? "")))
+                return
+            }
+            
+            guard !response.isFailure else {
+                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
                 return
             }
             
@@ -166,7 +174,7 @@ extension HTTPService {
             }
             
             guard let data = data, data.count > 0 else {
-                handler(.failure(.emptyResponseData(response?.url?.absoluteString ?? "")))
+                handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
                 return
             }
             
@@ -174,15 +182,14 @@ extension HTTPService {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .formatted(.iso8601Full)
                 var obj = try decoder.decode(T.ResultType.self, from: data)
-                if let headers = response?.allHeaderFields {
-                    let links = (headers["Link"] as? String)?.httpLinks
-                    obj.links = PagedLinks(first: links?[.first], previous: links?[.previous], next: links?[.next], last: links?[.last])
-                    if let perPage = headers["per-page"] as? String {
-                        obj.perPage = Int(perPage)
-                    }
-                    if let total = headers["total"] as? String {
-                        obj.total = Int(total)
-                    }
+                let headers = response.allHeaderFields
+                let links = (headers["Link"] as? String)?.httpLinks
+                obj.links = PagedLinks(first: links?[.first], previous: links?[.previous], next: links?[.next], last: links?[.last])
+                if let perPage = headers["per-page"] as? String {
+                    obj.perPage = Int(perPage)
+                }
+                if let total = headers["total"] as? String {
+                    obj.total = Int(total)
                 }
                 handler(.success(obj))
             } catch let e {
@@ -201,22 +208,26 @@ extension HTTPService {
         var task: URLSessionTask?
         task = urlSession.dataTask(with: urlRequest) { [weak self] (data, response, error) in
             
-            if let response = response {
-                print(response)
-            }
-            let response = response as? HTTPURLResponse
-            
             if let index = self?.tasks.firstIndex(of: task!) {
                 self?.tasks.remove(at: index)
             }
             
-            guard response?.isFailure == false else {
-                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
+            if let response = response {
+                print(response)
+            }
+            
+            guard let response = response as? HTTPURLResponse else {
+                handler(.failure(.serverError(error?.localizedDescription ?? "")))
+                return
+            }
+            
+            guard !response.isFailure else {
+                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
                 return
             }
             
             guard let data = data, data.count > 0 else {
-                handler(.failure(.emptyResponseData(response?.url?.absoluteString ?? "")))
+                handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
                 return
             }
             
@@ -242,16 +253,22 @@ extension HTTPService {
             if let response = response {
                 print(response)
             }
-            let response = response as? HTTPURLResponse
             
-            guard response?.isFailure == false else {
-                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
+            guard let response = response as? HTTPURLResponse else {
+                request.didComplete(request: urlRequest, with: error)
+                handler(.failure(.serverError(error?.localizedDescription ?? "")))
+                return
+            }
+            
+            guard !response.isFailure else {
+                request.didComplete(request: urlRequest, with: error)
+                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
                 return
             }
             
             guard let data = data, data.count > 0 else {
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(.emptyResponseData(response?.url?.absoluteString ?? "")))
+                handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
                 return
             }
             
@@ -265,7 +282,7 @@ extension HTTPService {
                     case let .success(chainedObj):
                         guard let chainedObj = chainedObj else {
                             request.didComplete(request: urlRequest, with: nil)
-                            handler(.failure(.emptyResponseData(response?.url?.absoluteString ?? "")))
+                            handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
                             return
                         }
                         obj = (request.didComplete(chained: urlRequest, receiving: chainedObj) as? T.ResultType) ?? obj
@@ -300,17 +317,22 @@ extension HTTPService {
             if let response = response {
                 print(response)
             }
-            let response = response as? HTTPURLResponse
             
-            guard response?.isFailure == false else {
+            guard let response = response as? HTTPURLResponse else {
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
+                handler(.failure(.serverError(error?.localizedDescription ?? "")))
+                return
+            }
+            
+            guard !response.isFailure else {
+                request.didComplete(request: urlRequest, with: error)
+                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
                 return
             }
             
             guard let data = data, data.count > 0 else {
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(.emptyResponseData(response?.url?.absoluteString ?? "")))
+                handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
                 return
             }
             
@@ -324,7 +346,7 @@ extension HTTPService {
                     case let .success(chainedObj):
                         guard let chainedObj = chainedObj else {
                             request.didComplete(request: urlRequest, with: nil)
-                            handler(.failure(.emptyResponseData(response?.url?.absoluteString ?? "")))
+                            handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
                             return
                         }
                         obj = (request.didComplete(chained: urlRequest, receiving: chainedObj) as? T.ResultType) ?? obj
@@ -359,17 +381,22 @@ extension HTTPService {
             if let response = response {
                 print(response)
             }
-            let response = response as? HTTPURLResponse
             
-            guard response?.isFailure == false else {
+            guard let response = response as? HTTPURLResponse else {
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
+                handler(.failure(.serverError(error?.localizedDescription ?? "")))
+                return
+            }
+            
+            guard !response.isFailure else {
+                request.didComplete(request: urlRequest, with: error)
+                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
                 return
             }
             
             guard let data = data, data.count > 0 else {
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(.emptyResponseData(response?.url?.absoluteString ?? "")))
+                handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
                 return
             }
             
@@ -402,15 +429,19 @@ extension HTTPService {
             if let response = response {
                 print(response)
             }
-            let response = response as? HTTPURLResponse
             
-            guard response?.isFailure == false else {
-                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
+            guard let response = response as? HTTPURLResponse else {
+                handler(.failure(.serverError(error?.localizedDescription ?? "")))
+                return
+            }
+            
+            guard !response.isFailure else {
+                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
                 return
             }
             
             guard let url = url else {
-                handler(.failure(.downloadFailed("Failing URL: \(response?.url?.absoluteString ?? "")")))
+                handler(.failure(.downloadFailed("Failing URL: \(response.url?.absoluteString ?? "")")))
                 return
             }
             
@@ -436,16 +467,21 @@ extension HTTPService {
             if let response = response {
                 print(response)
             }
-            let response = response as? HTTPURLResponse
             
-            guard response?.isFailure == false else {
+            guard let response = response as? HTTPURLResponse else {
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
+                handler(.failure(.serverError(error?.localizedDescription ?? "")))
+                return
+            }
+            
+            guard !response.isFailure else {
+                request.didComplete(request: urlRequest, with: error)
+                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
                 return
             }
             
             guard let url = url else {
-                let error = HTTPServiceError.downloadFailed("Failing URL: \(response?.url?.absoluteString ?? "")")
+                let error = HTTPServiceError.downloadFailed("Failing URL: \(response.url?.absoluteString ?? "")")
                 request.didComplete(request: urlRequest, with: error)
                 handler(.failure(error))
                 return
@@ -472,15 +508,19 @@ extension HTTPService {
             if let response = response {
                 print(response)
             }
-            let response = response as? HTTPURLResponse
             
-            guard response?.isFailure == false else {
-                handler(.failure(response!.httpServiceError(with: error?.localizedDescription)!))
+            guard let response = response as? HTTPURLResponse else {
+                handler(.failure(.serverError(error?.localizedDescription ?? "")))
+                return
+            }
+            
+            guard !response.isFailure else {
+                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
                 return
             }
             
             guard let data = data, data.count > 0 else {
-                handler(.failure(.emptyResponseData(response?.url?.absoluteString ?? "")))
+                handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
                 return
             }
             
