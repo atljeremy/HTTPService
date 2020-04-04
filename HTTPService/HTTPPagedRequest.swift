@@ -20,11 +20,11 @@ public struct PagedLinks: Codable {
 }
 
 public protocol HTTPPagedResult: Codable {
-    associatedtype ObjectType: Codable
+    associatedtype ObjectsCollectionType: Codable
     var links: PagedLinks? { get set }
     var perPage: Int? { get set }
     var total: Int? { get set }
-    var objects: [ObjectType]? { get }
+    var objects: ObjectsCollectionType? { get }
 }
 
 public protocol HTTPPagedRequest: HTTPRequest where ResultType: HTTPPagedResult {}
