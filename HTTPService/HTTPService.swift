@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Combine
 
 /// A simple typealias that represents HTTP Headers
 public typealias HTTPHeaders = [String: String]
@@ -141,6 +142,32 @@ extension HTTPService {
         tasks.append(task!)
         task!.resume()
         return task!
+    }
+    
+    @available(iOS 13.0, *)
+    public func execute<T>(request: T) -> AnyPublisher<T.ResultType, Error> where T : HTTPRequest {
+        let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
+        logRequestInfo(for: urlRequest)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .formatted(.iso8601Full)
+        var task: AnyPublisher<T.ResultType, Error>
+        task = urlSession.dataTaskPublisher(for: urlRequest)
+            .tryMap() {
+                print($0.response)
+
+                guard let response = $0.response as? HTTPURLResponse else { throw HTTPServiceError.serverError("") }
+
+                guard !response.isFailure else { throw response.httpServiceError(with: "") ?? .serverError("") }
+
+                guard $0.data.count > 0 else { throw HTTPServiceError.emptyResponseData(response.url?.absoluteString ?? "") }
+                
+                return $0.data
+            }
+            .decode(type: T.ResultType.self, decoder: decoder)
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+            
+        return task
     }
     
     @discardableResult
