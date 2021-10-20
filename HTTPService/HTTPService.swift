@@ -17,7 +17,7 @@ public typealias BaseURL = URL
 
 public typealias HTTPResult<T> = Result<T?, HTTPServiceError>
 
-public protocol HTTPService: class {
+public protocol HTTPService: AnyObject {
     
     associatedtype Builder: HTTPServiceBuildable
     associatedtype Authorization: HTTPAuthorization
