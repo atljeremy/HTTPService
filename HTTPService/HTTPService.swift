@@ -144,6 +144,7 @@ extension HTTPService {
         return task!
     }
     
+    @available(macOS 10.15, *)
     @available(iOS 13.0, *)
     public func execute<T>(request: T) -> AnyPublisher<T.ResultType, Error> where T : HTTPRequest {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
@@ -170,6 +171,7 @@ extension HTTPService {
         return task
     }
     
+    @available(macOS 10.15, *)
     @available(iOS 13.0, *)
     public func execute<T>(request: T) -> AnyPublisher<Void, Error> where T : HTTPRequest, T.ResultType == HTTPResponseNoContent {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
