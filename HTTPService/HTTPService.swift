@@ -23,7 +23,6 @@ public protocol HTTPService: AnyObject {
     associatedtype Authorization: HTTPAuthorization
     
     var urlSession: URLSession { get }
-    var tasks: [URLSessionTask] { get set }
     var baseUrl: BaseURL { get }
     var headers: HTTPHeaders? { get }
     var authorization: Authorization? { get }
@@ -31,31 +30,34 @@ public protocol HTTPService: AnyObject {
     init(authorization: Authorization?)
     
     @discardableResult
-    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPRequest
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPRequest
     
     @discardableResult
-    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPPagedRequest
+    func executeWithCancelation<T>(request: T) -> Task<Result<T.ResultType?, HTTPServiceError>, Never> where T : HTTPRequest
     
     @discardableResult
-    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPDataRequest
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPPagedRequest
     
     @discardableResult
-    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPRequestChainable
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPDataRequest
     
     @discardableResult
-    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPDownloadRequestChainable
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPRequestChainable
     
     @discardableResult
-    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPRequest & HTTPRequestLifecycleAware
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPDownloadRequestChainable
     
     @discardableResult
-    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPDownloadRequest
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPRequest & HTTPRequestLifecycleAware
     
     @discardableResult
-    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPDownloadRequest & HTTPRequestLifecycleAware
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPDownloadRequest
     
     @discardableResult
-    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T: HTTPUploadRequest
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPDownloadRequest & HTTPRequestLifecycleAware
+    
+    @discardableResult
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T: HTTPUploadRequest
 }
 
 extension HTTPURLResponse {
@@ -96,495 +98,391 @@ extension HTTPService {
     }
     
     @discardableResult
-    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPRequest {
+    public func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPRequest {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
         logRequestInfo(for: urlRequest)
-        var task: URLSessionTask?
-        task = urlSession.dataTask(with: urlRequest) { [weak self] (data, response, error) in
+        do {
+            let (data, urlResponse) = try await urlSession.data(for: urlRequest)
             
-            if let index = self?.tasks.firstIndex(of: task!) {
-                self?.tasks.remove(at: index)
-            }
-            
-            if let response = response {
-                print(response)
-            }
-            
-            guard let response = response as? HTTPURLResponse else {
-                handler(.failure(.serverError(error?.localizedDescription ?? "")))
-                return
+            guard let response = urlResponse as? HTTPURLResponse else {
+                return .failure(.serverError(""))
             }
             
             guard !response.isFailure else {
-                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
-                return
+                return .failure(response.httpServiceError(with: "") ?? .requestFailed(""))
             }
             
             guard !(T.ResultType.self is HTTPResponseNoContent.Type) else {
-                handler(.success(nil))
-                return
+                return .success(nil)
             }
             
-            guard let data = data, data.count > 0 else {
-                handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
-                return
+            guard data.count > 0 else {
+                return .failure(.emptyResponseData(response.url?.absoluteString ?? ""))
             }
-            
-            do {
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .formatted(.iso8601Full)
-                let obj = try decoder.decode(T.ResultType.self, from: data)
-                handler(.success(obj))
-            } catch let e {
-                handler(.failure(.jsonDecodingError(e.localizedDescription)))
-            }
+
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .formatted(.iso8601Full)
+            let obj = try decoder.decode(T.ResultType.self, from: data)
+            return .success(obj)
+        } catch let decodingError as DecodingError {
+            return .failure(.jsonDecodingError(decodingError.localizedDescription))
+        } catch {
+            return .failure(.requestFailed(error.localizedDescription))
         }
-        tasks.append(task!)
-        task!.resume()
-        return task!
-    }
-    
-    @available(macOS 10.15, *)
-    @available(iOS 13.0, *)
-    public func execute<T>(request: T) -> AnyPublisher<T.ResultType, Error> where T : HTTPRequest {
-        let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
-        logRequestInfo(for: urlRequest)
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .formatted(.iso8601Full)
-        var task: AnyPublisher<T.ResultType, Error>
-        task = urlSession.dataTaskPublisher(for: urlRequest)
-            .tryMap() {
-                print($0.response)
-
-                guard let response = $0.response as? HTTPURLResponse else { throw HTTPServiceError.serverError("") }
-
-                guard !response.isFailure else { throw response.httpServiceError(with: "") ?? .serverError("") }
-                
-                guard $0.data.count > 0 else { throw HTTPServiceError.emptyResponseData(response.url?.absoluteString ?? "") }
-                
-                return $0.data
-            }
-            .decode(type: T.ResultType.self, decoder: decoder)
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
-            
-        return task
-    }
-    
-    @available(macOS 10.15, *)
-    @available(iOS 13.0, *)
-    public func execute<T>(request: T) -> AnyPublisher<Void, Error> where T : HTTPRequest, T.ResultType == HTTPResponseNoContent {
-        let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
-        logRequestInfo(for: urlRequest)
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .formatted(.iso8601Full)
-        var task: AnyPublisher<Void, Error>
-        task = urlSession.dataTaskPublisher(for: urlRequest)
-            .tryMap() {
-                print($0.response)
-
-                guard let response = $0.response as? HTTPURLResponse else { throw HTTPServiceError.serverError("") }
-
-                guard !response.isFailure else { throw response.httpServiceError(with: "") ?? .serverError("") }
-            }
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
-            
-        return task
     }
     
     @discardableResult
-    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPPagedRequest {
+    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPRequest {
+        return Task {
+            await execute(request: request)
+        }
+    }
+    
+    @discardableResult
+    public func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPPagedRequest {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
         logRequestInfo(for: urlRequest)
-        var task: URLSessionTask?
-        task = urlSession.dataTask(with: urlRequest) { [weak self] (data, response, error) in
+        do {
+            let (data, urlResponse) = try await urlSession.data(for: urlRequest)
             
-            if let index = self?.tasks.firstIndex(of: task!) {
-                self?.tasks.remove(at: index)
-            }
-            
-            if let response = response {
-                print(response)
-            }
-            
-            guard let response = response as? HTTPURLResponse else {
-                handler(.failure(.serverError(error?.localizedDescription ?? "")))
-                return
+            guard let response = urlResponse as? HTTPURLResponse else {
+                return .failure(.serverError(""))
             }
             
             guard !response.isFailure else {
-                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
-                return
+                return .failure(response.httpServiceError(with: "") ?? .requestFailed(""))
             }
             
             guard !(T.ResultType.self is HTTPResponseNoContent.Type) else {
-                handler(.success(nil))
-                return
+                return .success(nil)
             }
             
-            guard let data = data, data.count > 0 else {
-                handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
-                return
+            guard data.count > 0 else {
+                return .failure(.emptyResponseData(response.url?.absoluteString ?? ""))
             }
             
-            do {
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .formatted(.iso8601Full)
-                var obj = try decoder.decode(T.ResultType.self, from: data)
-                let headers = response.allHeaderFields
-                let links = (headers["Link"] as? String)?.httpLinks
-                obj.links = PagedLinks(first: links?[.first], previous: links?[.previous], next: links?[.next], last: links?[.last])
-                if let perPage = headers["per-page"] as? String {
-                    obj.perPage = Int(perPage)
-                }
-                if let total = headers["total"] as? String {
-                    obj.total = Int(total)
-                }
-                handler(.success(obj))
-            } catch let e {
-                handler(.failure(.jsonDecodingError(e.localizedDescription)))
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .formatted(.iso8601Full)
+            var obj = try decoder.decode(T.ResultType.self, from: data)
+            let headers = response.allHeaderFields
+            let links = (headers["Link"] as? String)?.httpLinks
+            obj.links = PagedLinks(first: links?[.first], previous: links?[.previous], next: links?[.next], last: links?[.last])
+            if let perPage = headers["per-page"] as? String {
+                obj.perPage = Int(perPage)
             }
+            if let total = headers["total"] as? String {
+                obj.total = Int(total)
+            }
+            return .success(obj)
+        } catch let decodingError as DecodingError  {
+            return .failure(.jsonDecodingError(decodingError.localizedDescription))
+        } catch {
+            return .failure(.requestFailed(error.localizedDescription))
         }
-        tasks.append(task!)
-        task!.resume()
-        return task!
     }
     
     @discardableResult
-    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPDataRequest {
+    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPPagedRequest {
+        return Task {
+            await execute(request: request)
+        }
+    }
+    
+    @discardableResult
+    public func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPDataRequest {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
         logRequestInfo(for: urlRequest)
-        var task: URLSessionTask?
-        task = urlSession.dataTask(with: urlRequest) { [weak self] (data, response, error) in
+        do {
+            let (data, urlResponse) = try await urlSession.data(for: urlRequest)
             
-            if let index = self?.tasks.firstIndex(of: task!) {
-                self?.tasks.remove(at: index)
-            }
-            
-            if let response = response {
-                print(response)
-            }
-            
-            guard let response = response as? HTTPURLResponse else {
-                handler(.failure(.serverError(error?.localizedDescription ?? "")))
-                return
+            guard let response = urlResponse as? HTTPURLResponse else {
+                return .failure(.serverError(""))
             }
             
             guard !response.isFailure else {
-                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
-                return
+                return .failure(response.httpServiceError(with: "") ?? .requestFailed(""))
             }
             
-            guard let data = data, data.count > 0 else {
-                handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
-                return
+            guard data.count > 0 else {
+                return .failure(.emptyResponseData(response.url?.absoluteString ?? ""))
             }
-            
-            handler(.success(data))
+
+            return .success(data)
+        } catch {
+            return .failure(.requestFailed(error.localizedDescription))
         }
-        tasks.append(task!)
-        task!.resume()
-        return task!
     }
     
     @discardableResult
-    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPRequestChainable {
+    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPDataRequest {
+        return Task {
+            await execute(request: request)
+        }
+    }
+    
+    @discardableResult
+    public func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPRequestChainable {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
         logRequestInfo(for: urlRequest)
-        var task: URLSessionTask?
         request.willExecute(request: urlRequest)
-        task = urlSession.dataTask(with: urlRequest) { [weak self] (data, response, error) in
+        do {
+            let (data, urlResponse) = try await urlSession.data(for: urlRequest)
             
-            if let index = self?.tasks.firstIndex(of: task!) {
-                self?.tasks.remove(at: index)
-            }
-            
-            if let response = response {
-                print(response)
-            }
-            
-            guard let response = response as? HTTPURLResponse else {
+            guard let response = urlResponse as? HTTPURLResponse else {
+                let error = HTTPServiceError.serverError("")
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(.serverError(error?.localizedDescription ?? "")))
-                return
+                return .failure(error)
             }
             
             guard !response.isFailure else {
+                let error = response.httpServiceError(with: "") ?? .requestFailed("")
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
-                return
+                return .failure(error)
             }
             
-            guard let data = data, data.count > 0 else {
+            guard data.count > 0 else {
+                let error = HTTPServiceError.emptyResponseData(response.url?.absoluteString ?? "")
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
-                return
+                return .failure(error)
             }
             
-            do {
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .formatted(.iso8601Full)
-                var obj = try decoder.decode(T.ResultType.self, from: data)
-                obj = request.didComplete(request: urlRequest, receiving: obj) ?? obj
-                self?.execute(request: request.chainedRequest) { (result) in
-                    switch result {
-                    case let .success(chainedObj):
-                        guard let chainedObj = chainedObj else {
-                            request.didComplete(request: urlRequest, with: nil)
-                            handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
-                            return
-                        }
-                        obj = (request.didComplete(chained: urlRequest, receiving: chainedObj) as? T.ResultType) ?? obj
-                        handler(.success(obj))
-                    case let .failure(error):
-                        request.didComplete(request: urlRequest, with: error)
-                        handler(.failure(error))
-                    }
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .formatted(.iso8601Full)
+            var obj = try decoder.decode(T.ResultType.self, from: data)
+            obj = request.didComplete(request: urlRequest, receiving: obj) ?? obj
+            let result = await execute(request: request.chainedRequest)
+            switch result {
+            case let .success(chainedObj):
+                guard let chainedObj = chainedObj else {
+                    request.didComplete(request: urlRequest, with: nil)
+                    return .failure(.emptyResponseData(response.url?.absoluteString ?? ""))
                 }
-            } catch let e {
+                obj = (request.didComplete(chained: urlRequest, receiving: chainedObj) as? T.ResultType) ?? obj
+                return .success(obj)
+            case let .failure(error):
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(.jsonDecodingError(e.localizedDescription)))
+                return .failure(error)
             }
+        } catch let decodingError as DecodingError  {
+            request.didComplete(request: urlRequest, with: decodingError)
+            return .failure(.jsonDecodingError(decodingError.localizedDescription))
+        } catch {
+            return .failure(.requestFailed(error.localizedDescription))
         }
-        tasks.append(task!)
-        task!.resume()
-        return task!
     }
     
     @discardableResult
-    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPDownloadRequestChainable {
+    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPRequestChainable {
+        return Task {
+            await execute(request: request)
+        }
+    }
+    
+    @discardableResult
+    public func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPDownloadRequestChainable {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
         logRequestInfo(for: urlRequest)
-        var task: URLSessionTask?
         request.willExecute(request: urlRequest)
-        task = urlSession.dataTask(with: urlRequest) { [weak self] (data, response, error) in
+        do {
+            let (data, urlResponse) = try await urlSession.data(for: urlRequest)
             
-            if let index = self?.tasks.firstIndex(of: task!) {
-                self?.tasks.remove(at: index)
-            }
-            
-            if let response = response {
-                print(response)
-            }
-            
-            guard let response = response as? HTTPURLResponse else {
+            guard let response = urlResponse as? HTTPURLResponse else {
+                let error = HTTPServiceError.serverError("")
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(.serverError(error?.localizedDescription ?? "")))
-                return
+                return .failure(error)
             }
             
             guard !response.isFailure else {
+                let error = response.httpServiceError(with: "") ?? .requestFailed("")
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
-                return
+                return .failure(error)
             }
             
-            guard let data = data, data.count > 0 else {
+            guard data.count > 0 else {
+                let error = HTTPServiceError.emptyResponseData(response.url?.absoluteString ?? "")
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
-                return
+                return .failure(error)
             }
             
-            do {
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .formatted(.iso8601Full)
-                var obj = try decoder.decode(T.ResultType.self, from: data)
-                obj = request.didComplete(request: urlRequest, receiving: obj) ?? obj
-                self?.execute(request: request.chainedRequest) { (result) in
-                    switch result {
-                    case let .success(chainedObj):
-                        guard let chainedObj = chainedObj else {
-                            request.didComplete(request: urlRequest, with: nil)
-                            handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
-                            return
-                        }
-                        obj = (request.didComplete(chained: urlRequest, receiving: chainedObj) as? T.ResultType) ?? obj
-                        handler(.success(obj))
-                    case let .failure(error):
-                        request.didComplete(request: urlRequest, with: error)
-                        handler(.failure(error))
-                    }
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .formatted(.iso8601Full)
+            var obj = try decoder.decode(T.ResultType.self, from: data)
+            obj = request.didComplete(request: urlRequest, receiving: obj) ?? obj
+            let result = await execute(request: request.chainedRequest)
+            switch result {
+            case let .success(chainedObj):
+                guard let chainedObj = chainedObj else {
+                    request.didComplete(request: urlRequest, with: nil)
+                    return .failure(.emptyResponseData(response.url?.absoluteString ?? ""))
                 }
-            } catch let e {
+                obj = (request.didComplete(chained: urlRequest, receiving: chainedObj) as? T.ResultType) ?? obj
+                return .success(obj)
+            case let .failure(error):
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(.jsonDecodingError(e.localizedDescription)))
+                return .failure(error)
             }
+        } catch let decodingError as DecodingError  {
+            request.didComplete(request: urlRequest, with: decodingError)
+            return .failure(.jsonDecodingError(decodingError.localizedDescription))
+        } catch {
+            return .failure(.requestFailed(error.localizedDescription))
         }
-        tasks.append(task!)
-        task!.resume()
-        return task!
     }
     
     @discardableResult
-    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPRequest & HTTPRequestLifecycleAware {
+    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPDownloadRequestChainable {
+        return Task {
+            await execute(request: request)
+        }
+    }
+    
+    @discardableResult
+    public func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPRequest & HTTPRequestLifecycleAware {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
         logRequestInfo(for: urlRequest)
-        var task: URLSessionTask?
         request.willExecute(request: urlRequest)
-        task = urlSession.dataTask(with: urlRequest) { [weak self] (data, response, error) in
+        do {
+            let (data, urlResponse) = try await urlSession.data(for: urlRequest)
             
-            if let index = self?.tasks.firstIndex(of: task!) {
-                self?.tasks.remove(at: index)
-            }
-            
-            if let response = response {
-                print(response)
-            }
-            
-            guard let response = response as? HTTPURLResponse else {
+            guard let response = urlResponse as? HTTPURLResponse else {
+                let error = HTTPServiceError.serverError("")
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(.serverError(error?.localizedDescription ?? "")))
-                return
+                return .failure(error)
             }
             
             guard !response.isFailure else {
+                let error = response.httpServiceError(with: "") ?? .requestFailed("")
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
-                return
+                return .failure(error)
             }
             
-            guard let data = data, data.count > 0 else {
+            guard data.count > 0 else {
+                let error = HTTPServiceError.emptyResponseData(response.url?.absoluteString ?? "")
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
-                return
+                return .failure(error)
             }
             
-            do {
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .formatted(.iso8601Full)
-                let obj = try decoder.decode(T.ResultType.self, from: data)
-                handler(.success(request.didComplete(request: urlRequest, receiving: obj) ?? obj))
-            } catch let e {
-                request.didComplete(request: urlRequest, with: error)
-                handler(.failure(.jsonDecodingError(e.localizedDescription)))
-            }
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .formatted(.iso8601Full)
+            let obj = try decoder.decode(T.ResultType.self, from: data)
+            return .success(request.didComplete(request: urlRequest, receiving: obj) ?? obj)
+        } catch let decodingError as DecodingError  {
+            request.didComplete(request: urlRequest, with: decodingError)
+            return .failure(.jsonDecodingError(decodingError.localizedDescription))
+        } catch {
+            return .failure(.requestFailed(error.localizedDescription))
         }
-        tasks.append(task!)
-        task!.resume()
-        return task!
     }
     
     @discardableResult
-    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPDownloadRequest {
+    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPRequest & HTTPRequestLifecycleAware {
+        return Task {
+            await execute(request: request)
+        }
+    }
+    
+    @discardableResult
+    public func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPDownloadRequest {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers)
         logRequestInfo(for: urlRequest)
-        var task: URLSessionTask?
-        task = urlSession.downloadTask(with: urlRequest) { [weak self] (url, response, error) in
+        do {
+            let (url, urlResponse) = try await urlSession.download(for: urlRequest)
             
-            if let index = self?.tasks.firstIndex(of: task!) {
-                self?.tasks.remove(at: index)
-            }
-            
-            if let response = response {
-                print(response)
-            }
-            
-            guard let response = response as? HTTPURLResponse else {
-                handler(.failure(.serverError(error?.localizedDescription ?? "")))
-                return
+            guard let response = urlResponse as? HTTPURLResponse else {
+                return .failure(.serverError(""))
             }
             
             guard !response.isFailure else {
-                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
-                return
+                return .failure(response.httpServiceError(with: "") ?? .requestFailed(""))
             }
             
-            guard let url = url else {
-                handler(.failure(.downloadFailed("Failing URL: \(response.url?.absoluteString ?? "")")))
-                return
+            guard !url.absoluteString.isEmpty else {
+                return .failure(.downloadFailed("Failing URL: \(response.url?.absoluteString ?? "")"))
             }
             
-            handler(.success(url))
+            return .success(url)
+        } catch {
+            return .failure(.requestFailed(error.localizedDescription))
         }
-        tasks.append(task!)
-        task!.resume()
-        return task!
     }
     
     @discardableResult
-    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T: HTTPDownloadRequest & HTTPRequestLifecycleAware {
+    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPDownloadRequest {
+        return Task {
+            await execute(request: request)
+        }
+    }
+    
+    @discardableResult
+    public func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T: HTTPDownloadRequest & HTTPRequestLifecycleAware {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
         logRequestInfo(for: urlRequest)
-        var task: URLSessionTask?
         request.willExecute(request: urlRequest)
-        task = urlSession.downloadTask(with: urlRequest) { [weak self] (url, response, error) in
+        do {
+            let (url, urlResponse) = try await urlSession.download(for: urlRequest)
             
-            if let index = self?.tasks.firstIndex(of: task!) {
-                self?.tasks.remove(at: index)
-            }
-            
-            if let response = response {
-                print(response)
-            }
-            
-            guard let response = response as? HTTPURLResponse else {
+            guard let response = urlResponse as? HTTPURLResponse else {
+                let error = HTTPServiceError.serverError("")
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(.serverError(error?.localizedDescription ?? "")))
-                return
+                return .failure(error)
             }
             
             guard !response.isFailure else {
+                let error = response.httpServiceError(with: "") ?? .requestFailed("")
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
-                return
+                return .failure(error)
             }
             
-            guard let url = url else {
+            guard !url.absoluteString.isEmpty else {
                 let error = HTTPServiceError.downloadFailed("Failing URL: \(response.url?.absoluteString ?? "")")
                 request.didComplete(request: urlRequest, with: error)
-                handler(.failure(error))
-                return
+                return .failure(error)
             }
             
-            handler(.success(request.didComplete(request: urlRequest, receiving: url) ?? url))
+            return .success(request.didComplete(request: urlRequest, receiving: url) ?? url)
+        } catch {
+            return .failure(.requestFailed(error.localizedDescription))
         }
-        tasks.append(task!)
-        task!.resume()
-        return task!
     }
     
     @discardableResult
-    public func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T: HTTPUploadRequest {
+    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPDownloadRequest & HTTPRequestLifecycleAware {
+        return Task {
+            await execute(request: request)
+        }
+    }
+    
+    @discardableResult
+    public func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T: HTTPUploadRequest {
         let urlRequest = request.buildURLRequest(resolvingAgainst: baseUrl, with: headers, and: authorization)
         logRequestInfo(for: urlRequest)
-        var task: URLSessionTask?
-        task = urlSession.uploadTask(with: urlRequest, from: urlRequest.httpBody) { [weak self] (data, response, error) in
-            
-            if let index = self?.tasks.firstIndex(of: task!) {
-                self?.tasks.remove(at: index)
+        do {
+            guard let body = urlRequest.httpBody else {
+                return .failure(.badRequest("Missing body data"))
             }
             
-            if let response = response {
-                print(response)
-            }
+            let (data, urlResponse) = try await urlSession.upload(for: urlRequest, from: body)
             
-            guard let response = response as? HTTPURLResponse else {
-                handler(.failure(.serverError(error?.localizedDescription ?? "")))
-                return
+            guard let response = urlResponse as? HTTPURLResponse else {
+                return .failure(.serverError(""))
             }
             
             guard !response.isFailure else {
-                handler(.failure(response.httpServiceError(with: error?.localizedDescription) ?? .serverError("")))
-                return
+                return .failure(response.httpServiceError(with: "") ?? .requestFailed(""))
             }
             
-            guard let data = data, data.count > 0 else {
-                handler(.failure(.emptyResponseData(response.url?.absoluteString ?? "")))
-                return
+            guard data.count > 0 else {
+                return .failure(.emptyResponseData(response.url?.absoluteString ?? ""))
             }
             
-            do {
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .formatted(.iso8601Full)
-                let obj = try decoder.decode(T.ResultType.self, from: data)
-                handler(.success(obj))
-            } catch let e {
-                handler(.failure(.jsonDecodingError(e.localizedDescription)))
-            }
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .formatted(.iso8601Full)
+            let obj = try decoder.decode(T.ResultType.self, from: data)
+            return .success(obj)
+        } catch let decodingError as DecodingError  {
+            return .failure(.jsonDecodingError(decodingError.localizedDescription))
+        } catch {
+            return .failure(.requestFailed(error.localizedDescription))
         }
-        tasks.append(task!)
-        task!.resume()
-        return task!
     }
 }
