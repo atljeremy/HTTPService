@@ -485,4 +485,11 @@ extension HTTPService {
             return .failure(.requestFailed(error.localizedDescription))
         }
     }
+    
+    @discardableResult
+    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPUploadRequest {
+        return Task {
+            await execute(request: request)
+        }
+    }
 }

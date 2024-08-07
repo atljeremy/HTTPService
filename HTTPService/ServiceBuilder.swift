@@ -9,28 +9,28 @@
 import Foundation
 
 public class ServiceBuilder<T: HTTPService> {
-    public static func purgeCache() {
+    public static func purgeCache() async {
         let key = String(describing: T.self)
-        ServiceCache.shared.delete(key: key)
+        await ServiceCache.shared.delete(key: key)
     }
     
-    public static func build(ignoringCache ignoreCache: Bool = false) -> T? {
+    public static func build(ignoringCache ignoreCache: Bool = false) async -> T? {
         let key = String(describing: T.self)
-        let cachedService: T? = ServiceCache.shared.get(key: key)
+        let cachedService: T? = await ServiceCache.shared.get(key: key)
         guard ignoreCache || cachedService == nil else {
             return cachedService!
         }
         
         let service = T.Builder.build()
         if let service = service {
-            ServiceCache.shared.set(service: service, for: key)
+            await ServiceCache.shared.set(service: service, for: key)
         }
         
         return service as? T
     }
 }
 
-fileprivate struct ServiceCache {
+fileprivate actor ServiceCache {
     static var shared = ServiceCache()
     private var cache = [String: Any]()
     
@@ -38,11 +38,11 @@ fileprivate struct ServiceCache {
         return cache[key] as? T
     }
     
-    mutating func set<T: HTTPService>(service: T, for key: String) {
+    func set<T: HTTPService>(service: T, for key: String) {
         cache[key] = service
     }
     
-    mutating func delete(key: String) {
+    func delete(key: String) {
         cache.removeValue(forKey: key)
     }
 }

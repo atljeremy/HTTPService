@@ -12,19 +12,47 @@ import HTTPService
 class ServiceBuilderTests: XCTestCase {
 
     func testReturnsCachedService() {
-        let ghService1 = ServiceBuilder<GitHubService>.build()
-        let ghService2 = ServiceBuilder<GitHubService>.build()
-        XCTAssertEqual(ghService1, ghService2)
+        let expectation = expectation(description: "Async")
+        
+        Task {
+            let ghService1 = await ServiceBuilder<GitHubService>.build()
+            let ghService2 = await ServiceBuilder<GitHubService>.build()
+            XCTAssertEqual(ghService1, ghService2)
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 5)
+    }
+    
+    func testIgnoreingCacheDoesntReturnCachedService() {
+        let expectation = expectation(description: "Async")
+        
+        Task {
+            let ghService1 = await ServiceBuilder<GitHubService>.build()
+            let ghService2 = await ServiceBuilder<GitHubService>.build(ignoringCache: true)
+            XCTAssertNotEqual(ghService1, ghService2)
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 5)
     }
     
     func testPurgeRemovesCachedService() {
-        let ghService1 = ServiceBuilder<GitHubService>.build()
-        XCTAssertNotNil(ghService1)
+        let expectation = expectation(description: "Async")
         
-        ServiceBuilder<GitHubService>.purgeCache()
+        Task {
+            let ghService1 = await ServiceBuilder<GitHubService>.build()
+            XCTAssertNotNil(ghService1)
+            
+            await ServiceBuilder<GitHubService>.purgeCache()
+            
+            let ghService2 = await ServiceBuilder<GitHubService>.build()
+            XCTAssertNotEqual(ghService1, ghService2)
+            
+            expectation.fulfill()
+        }
         
-        let ghService2 = ServiceBuilder<GitHubService>.build()
-        XCTAssertNotEqual(ghService1, ghService2)
+        waitForExpectations(timeout: 5)
     }
 
 }

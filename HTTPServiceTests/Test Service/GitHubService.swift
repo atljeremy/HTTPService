@@ -37,16 +37,14 @@ extension GitHubService: HTTPServiceBuildable {
 
 extension GitHubService {
     @discardableResult
-    func execute<T>(request: T, handler: @escaping (HTTPResult<T.ResultType>) -> Void) -> URLSessionTask where T : HTTPRequest {
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPRequest {
         do {
             let data = try JSONSerialization.data(withJSONObject: ["id": 123, "name": "PR Name"], options: .init(rawValue: 0))
             let pr = try JSONDecoder().decode(T.ResultType.self, from: data)
-            handler(.success(pr))
+            return .success(pr)
         } catch _ {
-            handler(.failure(.emptyResponseData("")))
+            return .failure(.emptyResponseData(""))
         }
-        
-        return URLSessionDataTask()
     }
 }
 
