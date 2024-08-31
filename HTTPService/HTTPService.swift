@@ -9,62 +9,61 @@
 import Foundation
 import Combine
 
-/// A simple typealias that represents HTTP Headers
+/// A typealias representing HTTP headers as a dictionary where the key is a `String` representing the header field
+/// and the value is a `String` representing the header value.
+///
+/// Example:
+/// ```swift
+/// let headers: HTTPHeaders = ["Content-Type": "application/json"]
+/// ```
 public typealias HTTPHeaders = [String: String]
 
-/// A simple typealias that is meant to help express the purpose/intent of the URL
+/// A typealias representing a base URL for HTTP requests.
+///
+/// This typealias is used to express the purpose or intent of a `URL`, making it clear that the `URL` represents a base URL.
+///
+/// Example:
+/// ```swift
+/// let baseUrl: BaseURL = URL(string: "https://api.example.com")!
+/// ```
 public typealias BaseURL = URL
 
+/// A typealias representing the result of an HTTP operation, which can either be a success with an optional result of type `T?`,
+/// or a failure with an `HTTPServiceError`.
+///
+/// This typealias simplifies handling the outcome of HTTP requests.
+///
+/// Example:
+/// ```swift
+/// func handleResult(result: HTTPResult<Data>) {
+///     switch result {
+///     case .success(let data):
+///         // Handle successful response
+///     case .failure(let error):
+///         // Handle error
+///     }
+/// }
+/// ```
 public typealias HTTPResult<T> = Result<T?, HTTPServiceError>
 
-public protocol HTTPService: AnyObject {
-    
-    associatedtype Builder: HTTPServiceBuildable
-    associatedtype Authorization: HTTPAuthorization
-    
-    var urlSession: URLSession { get }
-    var baseUrl: BaseURL { get }
-    var headers: HTTPHeaders? { get }
-    var authorization: Authorization? { get }
-    
-    init(authorization: Authorization?)
-    
-    @discardableResult
-    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPRequest
-    
-    @discardableResult
-    func executeWithCancelation<T>(request: T) -> Task<Result<T.ResultType?, HTTPServiceError>, Never> where T : HTTPRequest
-    
-    @discardableResult
-    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPPagedRequest
-    
-    @discardableResult
-    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPDataRequest
-    
-    @discardableResult
-    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPRequestChainable
-    
-    @discardableResult
-    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPDownloadRequestChainable
-    
-    @discardableResult
-    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPRequest & HTTPRequestLifecycleAware
-    
-    @discardableResult
-    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPDownloadRequest
-    
-    @discardableResult
-    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPDownloadRequest & HTTPRequestLifecycleAware
-    
-    @discardableResult
-    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T: HTTPUploadRequest
-}
-
+/// An extension to `HTTPURLResponse` that provides additional functionality for checking failure status
+/// and converting HTTP status codes to `HTTPServiceError`.
 extension HTTPURLResponse {
+    
+    /// A Boolean value indicating whether the response status code represents a failure.
+    ///
+    /// This property returns `true` if the status code is greater than or equal to 400, indicating a client or server error.
     var isFailure: Bool {
         return statusCode >= 400
     }
     
+    /// Converts the response status code to a corresponding `HTTPServiceError`.
+    ///
+    /// This method checks the response status code and returns an appropriate `HTTPServiceError` if the status code indicates a failure.
+    /// If the status code does not represent a failure, this method returns `nil`.
+    ///
+    /// - Parameter message: An optional message to include with the error.
+    /// - Returns: An `HTTPServiceError` corresponding to the response status code, or `nil` if the status code is not a failure.
     func httpServiceError(with message: String? = nil) -> HTTPServiceError? {
         guard isFailure else { return nil }
         
@@ -78,6 +77,169 @@ extension HTTPURLResponse {
         default: return .requestFailed(message ?? "")
         }
     }
+}
+
+/// A protocol that defines the requirements for an HTTP-based service.
+///
+/// Types that conform to `HTTPService` must implement various methods to execute different types of HTTP requests,
+/// such as `HTTPRequest`, `HTTPPagedRequest`, and `HTTPDownloadRequest`. This protocol provides a flexible foundation
+/// for building services that interact with HTTP APIs.
+///
+/// ### Associated Types:
+/// - `Builder`: A type conforming to `HTTPServiceBuildable`, responsible for building instances of the service.
+/// - `Authorization`: A type conforming to `HTTPAuthorization`, which handles the authorization logic for the service.
+///
+/// - SeeAlso: `HTTPServiceBuildable`, `HTTPAuthorization`
+public protocol HTTPService: AnyObject {
+    
+    /// The associated builder type, which must conform to `HTTPServiceBuildable`.
+    associatedtype Builder: HTTPServiceBuildable
+    
+    /// The associated authorization type, which must conform to `HTTPAuthorization`.
+    associatedtype Authorization: HTTPAuthorization
+    
+    /// The `URLSession` used to execute HTTP requests.
+    var urlSession: URLSession { get }
+    
+    /// The base URL for the service, used as the starting point for constructing requests.
+    var baseUrl: BaseURL { get }
+    
+    /// Optional headers to be included in all requests made by the service.
+    var headers: HTTPHeaders? { get }
+    
+    /// Optional authorization handler used to manage authorization logic for the service.
+    var authorization: Authorization? { get }
+    
+    /// Initializes a new instance of the service with the specified authorization handler.
+    ///
+    /// - Parameter authorization: The authorization handler used by the service.
+    init(authorization: Authorization?)
+    
+    /// Executes a given HTTP request asynchronously and returns the result.
+    ///
+    /// - Parameter request: The HTTP request to execute.
+    /// - Returns: A `HTTPResult` containing the result of the request or an error if the request fails.
+    @discardableResult
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPRequest
+    
+    /// Executes a given HTTP request asynchronously and returns a `Task` that can be used to cancel the request.
+    ///
+    /// - Parameter request: The HTTP request to execute.
+    /// - Returns: A `Task` that returns a `Result` containing the result of the request or an error if the request fails.
+    @discardableResult
+    func executeWithCancelation<T>(request: T) -> Task<Result<T.ResultType?, HTTPServiceError>, Never> where T : HTTPRequest
+    
+    /// Executes a given paged HTTP request asynchronously and returns the result.
+    ///
+    /// - Parameter request: The paged HTTP request to execute.
+    /// - Returns: A `HTTPResult` containing the result of the request or an error if the request fails.
+    @discardableResult
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPPagedRequest
+
+    /// Executes a given paged HTTP request asynchronously and returns a `Task` that can be used to cancel the request.
+    ///
+    /// - Parameter request: The paged HTTP request to execute.
+    /// - Returns: A `Task` that returns a `HTTPResult` containing the result of the request or an error if the request fails.
+    @discardableResult
+    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPPagedRequest
+    
+    /// Executes a given data request asynchronously and returns the result.
+    ///
+    /// - Parameter request: The data request to execute.
+    /// - Returns: A `HTTPResult` containing the result of the request or an error if the request fails.
+    @discardableResult
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPDataRequest
+
+    /// Executes a given data request asynchronously and returns a `Task` that can be used to cancel the request.
+    ///
+    /// - Parameter request: The data request to execute.
+    /// - Returns: A `Task` that returns a `HTTPResult` containing the result of the request or an error if the request fails.
+    @discardableResult
+    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPDataRequest
+    
+    /// Executes a given chainable HTTP request asynchronously and returns the result.
+    ///
+    /// - Parameter request: The chainable HTTP request to execute.
+    /// - Returns: A `HTTPResult` containing the result of the request or an error if the request fails.
+    @discardableResult
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPRequestChainable
+
+    /// Executes a given chainable HTTP request asynchronously and returns a `Task` that can be used to cancel the request.
+    ///
+    /// - Parameter request: The chainable HTTP request to execute.
+    /// - Returns: A `Task` that returns a `HTTPResult` containing the result of the request or an error if the request fails.
+    @discardableResult
+    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPRequestChainable
+    
+    /// Executes a given chainable HTTP download request asynchronously and returns the result.
+    ///
+    /// - Parameter request: The chainable HTTP download request to execute.
+    /// - Returns: A `HTTPResult` containing the result of the request or an error if the request fails.
+    @discardableResult
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPDownloadRequestChainable
+
+    /// Executes a given chainable HTTP download request asynchronously and returns a `Task` that can be used to cancel the request.
+    ///
+    /// - Parameter request: The chainable HTTP download request to execute.
+    /// - Returns: A `Task` that returns a `HTTPResult` containing the result of the request or an error if the request fails.
+    @discardableResult
+    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPDownloadRequestChainable 
+    
+    /// Executes a given HTTP request that is also lifecycle aware asynchronously and returns the result.
+    ///
+    /// - Parameter request: The HTTP request to execute.
+    /// - Returns: A `HTTPResult` containing the result of the request or an error if the request fails.
+    @discardableResult
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPRequest & HTTPRequestLifecycleAware
+
+    /// Executes a given HTTP request that is also lifecycle aware asynchronously and returns a `Task` that can be used to cancel the request.
+    ///
+    /// - Parameter request: The HTTP request to execute.
+    /// - Returns: A `Task` that returns a `HTTPResult` containing the result of the request or an error if the request fails.
+    @discardableResult
+    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPRequest & HTTPRequestLifecycleAware
+    
+    /// Executes a given HTTP download request asynchronously and returns the result.
+    ///
+    /// - Parameter request: The HTTP download request to execute.
+    /// - Returns: A `HTTPResult` containing the result of the request or an error if the request fails.
+    @discardableResult
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPDownloadRequest
+
+    /// Executes a given HTTP download request asynchronously and returns a `Task` that can be used to cancel the request.
+    ///
+    /// - Parameter request: The HTTP download request to execute.
+    /// - Returns: A `Task` that returns a `HTTPResult` containing the result of the request or an error if the request fails.
+    @discardableResult
+    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPDownloadRequest
+
+    /// Executes a given HTTP download request that is also lifecycle aware asynchronously and returns the result.
+    ///
+    /// - Parameter request: The HTTP download request to execute.
+    /// - Returns: A `HTTPResult` containing the result of the request or an error if the request fails.
+    @discardableResult
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPDownloadRequest & HTTPRequestLifecycleAware
+
+    /// Executes a given HTTP download request that is also lifecycle aware asynchronously and returns a `Task` that can be used to cancel the request.
+    ///
+    /// - Parameter request: The HTTP download request to execute.
+    /// - Returns: A `Task` that returns a `HTTPResult` containing the result of the request or an error if the request fails.
+    @discardableResult
+    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPDownloadRequest & HTTPRequestLifecycleAware
+
+    /// Executes a given HTTP upload request asynchronously and returns the result.
+    ///
+    /// - Parameter request: The HTTP upload request to execute.
+    /// - Returns: A `HTTPResult` containing the result of the request or an error if the request fails.
+    @discardableResult
+    func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T: HTTPUploadRequest
+
+    /// Executes a given HTTP upload request and returns a `Task` that can be used to cancel the request.
+    ///
+    /// - Parameter request: The HTTP download request to execute.
+    /// - Returns: A `Task` that returns a `HTTPResult` containing the result of the request or an error if the request fails.
+    @discardableResult
+    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPUploadRequest
 }
 
 extension HTTPService {

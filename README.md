@@ -43,12 +43,16 @@ extension GitHubService: HTTPServiceBuildable {
 
 Your service is now ready to be created. If the service has already been created previously, you'll get back the cached version. If it hasn't been created previously, it'll be created, cached, and returned.
 ```swift
-let gitHubService = ServiceBuilder<GitHubService>.build()
+let gitHubService = await ServiceBuilder<GitHubService>.build()
 ```
 
 ### Clearing ServiceBuilder's cache
 
-If you ever need to clear the cache, simply call `ServiceBuilder<GitHubService>.purgeCache()`. If there is a cached version of this service, it'll be removed.
+If you ever need to clear the cache, simply call:
+```swift
+await ServiceBuilder<GitHubService>.purgeCache()
+```
+If there is a cached version of this service, it'll be removed.
 
 ### Creating Requests
 
@@ -137,15 +141,58 @@ class GitHubCreatePRRequest: HTTPRequest {
 
 ### Executing Requests
 
-You're now ready to send a request!
+To send a request, use the execute method on your service:
 ```swift
-let getPRsRequest = GitHubGetPRsRequest(owner: "atljeremy", repo: 'httpservice')
-gitHubService?.execute(request: getPRsRequest) { (result) in
-    switch result {
-    case let .success(prs):
-        // Do something with prs
-    case let .failure(error):
-        // Handle failure
+let getPRsRequest = GitHubGetPRsRequest(owner: "atljeremy", repo: "httpservice")
+let result = await gitHubService?.execute(request: getPRsRequest)
+
+switch result {
+case let .success(prs):
+    // Do something with prs
+case let .failure(error):
+    // Handle failure
+}
+
+```
+
+### Handling Pagination
+
+If your service involves paginated responses, you can use HTTPPagedRequest and HTTPPagedResult protocols for easier handling of paginated data:
+```swift
+public struct GitHubPagedPRs: HTTPPagedResult {
+    typealias ObjectsCollectionType = [GitHubPR]
+    var links: PagedLinks?
+    var perPage: Int?
+    var total: Int?
+    var objects: [GitHubPR]?
+}
+
+class GitHubGetPagedPRsRequest: HTTPPagedRequest {
+    typealias ResultType = GitHubPagedPRs
+    typealias BodyType = HTTPRequestNoBody
+    
+    var endpoint: String {
+        return "repos/\(owner)/\(repo)/pulls"
+    }
+    var method: HTTPMethod = .get
+    var params: [String: Any]?
+    var body: HTTPRequestNoBody?
+    var headers: [String: String]?
+    var includeServiceLevelHeaders: Bool = true
+    var includeServiceLevelAuthorization: Bool = true
+    
+    let owner: String
+    let repo: String
+    
+    required init(owner: String, repo: String) {
+        self.owner = owner
+        self.repo = repo
+    }
+    
+    required init(id: String?) {
+        fatalError("Use init(owner:repo:) instead")
     }
 }
 ```
+
+This allows you to easily retrieve and navigate through paginated results from your API.
