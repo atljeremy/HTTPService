@@ -141,7 +141,7 @@ public protocol HTTPService: AnyObject {
     /// - Parameter request: The paged HTTP request to execute.
     /// - Returns: A `Task` that returns a `HTTPResult` containing the result of the request or an error if the request fails.
     @discardableResult
-    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPPagedRequest
+    func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPPagedRequest
     
     /// Executes a given data request asynchronously and returns the result.
     ///
@@ -155,7 +155,7 @@ public protocol HTTPService: AnyObject {
     /// - Parameter request: The data request to execute.
     /// - Returns: A `Task` that returns a `HTTPResult` containing the result of the request or an error if the request fails.
     @discardableResult
-    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPDataRequest
+    func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPDataRequest
     
     /// Executes a given chainable HTTP request asynchronously and returns the result.
     ///
@@ -169,7 +169,7 @@ public protocol HTTPService: AnyObject {
     /// - Parameter request: The chainable HTTP request to execute.
     /// - Returns: A `Task` that returns a `HTTPResult` containing the result of the request or an error if the request fails.
     @discardableResult
-    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPRequestChainable
+    func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPRequestChainable
     
     /// Executes a given chainable HTTP download request asynchronously and returns the result.
     ///
@@ -183,7 +183,7 @@ public protocol HTTPService: AnyObject {
     /// - Parameter request: The chainable HTTP download request to execute.
     /// - Returns: A `Task` that returns a `HTTPResult` containing the result of the request or an error if the request fails.
     @discardableResult
-    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPDownloadRequestChainable 
+    func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPDownloadRequestChainable
     
     /// Executes a given HTTP request that is also lifecycle aware asynchronously and returns the result.
     ///
@@ -197,7 +197,7 @@ public protocol HTTPService: AnyObject {
     /// - Parameter request: The HTTP request to execute.
     /// - Returns: A `Task` that returns a `HTTPResult` containing the result of the request or an error if the request fails.
     @discardableResult
-    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPRequest & HTTPRequestLifecycleAware
+    func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPRequest & HTTPRequestLifecycleAware
     
     /// Executes a given HTTP download request asynchronously and returns the result.
     ///
@@ -211,7 +211,7 @@ public protocol HTTPService: AnyObject {
     /// - Parameter request: The HTTP download request to execute.
     /// - Returns: A `Task` that returns a `HTTPResult` containing the result of the request or an error if the request fails.
     @discardableResult
-    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPDownloadRequest
+    func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPDownloadRequest
 
     /// Executes a given HTTP download request that is also lifecycle aware asynchronously and returns the result.
     ///
@@ -225,7 +225,7 @@ public protocol HTTPService: AnyObject {
     /// - Parameter request: The HTTP download request to execute.
     /// - Returns: A `Task` that returns a `HTTPResult` containing the result of the request or an error if the request fails.
     @discardableResult
-    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPDownloadRequest & HTTPRequestLifecycleAware
+    func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPDownloadRequest & HTTPRequestLifecycleAware
 
     /// Executes a given HTTP upload request asynchronously and returns the result.
     ///
@@ -239,7 +239,7 @@ public protocol HTTPService: AnyObject {
     /// - Parameter request: The HTTP download request to execute.
     /// - Returns: A `Task` that returns a `HTTPResult` containing the result of the request or an error if the request fails.
     @discardableResult
-    public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPUploadRequest
+    func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPUploadRequest
 }
 
 extension HTTPService {

@@ -1,10 +1,11 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.7
 import PackageDescription
 
 let package = Package(
     name: "HTTPService",
     platforms: [
-        .iOS(.v13)
+        .iOS(.v13),
+        .macOS(.v13)
     ],
     products: [
         .library(
@@ -16,12 +17,14 @@ let package = Package(
     targets: [
         .target(
             name: "HTTPService",
-            path: "HTTPService"
+            path: "HTTPService",
+            exclude: ["Info.plist"]
         ),
         .testTarget(
             name: "HTTPServiceTests",
             dependencies: ["HTTPService"],
-            path: "Tests"
+            path: "HTTPServiceTests",
+            exclude: ["Info.plist"]
         )
     ]
 )
