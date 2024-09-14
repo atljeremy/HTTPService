@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "HTTPService",
     platforms: [
-        .iOS(.v13),
+        .iOS(.v15),
         .macOS(.v13)
     ],
     products: [
