@@ -16,11 +16,12 @@ let package = Package(
     targets: [
         .target(
             name: "HTTPService",
-            dependencies: []
+            path: "HTTPService"
         ),
         .testTarget(
             name: "HTTPServiceTests",
-            dependencies: ["HTTPService"]
+            dependencies: ["HTTPService"],
+            path: "Tests"
         )
     ]
 )
