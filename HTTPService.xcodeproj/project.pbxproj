@@ -44,8 +44,6 @@
 		1971904822F6555900B3BDC5 /* HTTPRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPRequest.swift; sourceTree = "<group>"; };
 		1971904A22F655EE00B3BDC5 /* ServiceBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceBuilder.swift; sourceTree = "<group>"; };
 		198095DA2340178B00AFCE86 /* DateFormatter+iso8601.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+iso8601.swift"; sourceTree = "<group>"; };
-		1988FC6522FA0AE6000F70B3 /* HTTPService_macOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTTPService_macOS.h; sourceTree = "<group>"; };
-		1988FC6622FA0AE6000F70B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1988FC7222FA0AE7000F70B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1988FC8C22FB839B000F70B3 /* ServiceBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceBuilderTests.swift; sourceTree = "<group>"; };
 		1988FC9022FB83CE000F70B3 /* GitHubService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubService.swift; sourceTree = "<group>"; };
@@ -124,15 +122,6 @@
 			name = Extensions;
 			sourceTree = "<group>";
 		};
-		1988FC6422FA0AE6000F70B3 /* HTTPService macOS */ = {
-			isa = PBXGroup;
-			children = (
-				1988FC6522FA0AE6000F70B3 /* HTTPService_macOS.h */,
-				1988FC6622FA0AE6000F70B3 /* Info.plist */,
-			);
-			path = "HTTPService macOS";
-			sourceTree = "<group>";
-		};
 		1988FC6F22FA0AE7000F70B3 /* HTTPService macOSTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -162,7 +151,6 @@
 			children = (
 				3F4376661AD1A14100FFC40C /* HTTPService */,
 				3F4376731AD1A14100FFC40C /* HTTPServiceTests */,
-				1988FC6422FA0AE6000F70B3 /* HTTPService macOS */,
 				1988FC6F22FA0AE7000F70B3 /* HTTPService macOSTests */,
 				3F4376651AD1A14100FFC40C /* Products */,
 			);
