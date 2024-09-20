@@ -240,6 +240,30 @@ public protocol HTTPService: AnyObject {
     /// - Returns: A `Task` that returns a `HTTPResult` containing the result of the request or an error if the request fails.
     @discardableResult
     func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPUploadRequest
+    
+    /// Executes a batch of HTTP requests and returns their results as an array of `HTTPResult`.
+    /// This method is intended for batching multiple requests and processing them asynchronously.
+    ///
+    /// - Parameter requests: An array of HTTP requests conforming to `HTTPRequest`.
+    /// - Returns: An array of `HTTPResult` objects corresponding to each request's result type.
+    /// - Throws: An error if any of the requests fail.
+    func execute<T>(_ requests: [T]) async throws -> [HTTPResult<T.ResultType>] where T : HTTPRequest
+
+    /// Executes a batch of HTTP data requests and returns their results as an array of `HTTPResult`.
+    /// This method is used for batching multiple HTTP requests that deal with raw data processing.
+    ///
+    /// - Parameter requests: An array of HTTP data requests conforming to `HTTPDataRequest`.
+    /// - Returns: An array of `HTTPResult` objects corresponding to each request's result type.
+    /// - Throws: An error if any of the requests fail.
+    func execute<T>(_ requests: [T]) async throws -> [HTTPResult<T.ResultType>] where T : HTTPDataRequest
+
+    /// Executes a batch of chainable HTTP requests and returns their results as an array of `HTTPResult`.
+    /// This method supports batching multiple requests where each request can be chained to another.
+    ///
+    /// - Parameter requests: An array of HTTP requests conforming to `HTTPRequestChainable`.
+    /// - Returns: An array of `HTTPResult` objects corresponding to each request's result type.
+    /// - Throws: An error if any of the requests fail.
+    func execute<T>(_ requests: [T]) async throws -> [HTTPResult<T.ResultType>] where T : HTTPRequestChainable
 }
 
 extension HTTPService {
@@ -652,6 +676,91 @@ extension HTTPService {
     public func executeWithCancelation<T>(request: T) -> Task<HTTPResult<T.ResultType>, Never> where T : HTTPUploadRequest {
         return Task {
             await execute(request: request)
+        }
+    }
+}
+
+// MARK: Batching
+
+extension HTTPService {
+    func execute<T>(_ requests: [T]) async throws -> [HTTPResult<T.ResultType>] where T : HTTPRequest {
+        do {
+            return try await withThrowingTaskGroup(of: HTTPResult<T.ResultType>.self) { [weak self] group in
+                guard let self = self else {
+                    return [.failure(.requestFailed("Service was deallocated"))]
+                }
+                
+                var results: [HTTPResult<T.ResultType>] = []
+                
+                for request in requests {
+                    group.addTask { [weak self] in
+                        guard let self = self else { return .failure(.requestFailed("Service was deallocated")) }
+                        return await self.execute(request: request)
+                    }
+                }
+                
+                for try await result in group {
+                    results.append(result)
+                }
+                
+                return results
+            }
+        } catch {
+            return [.failure(.requestFailed(error.localizedDescription))]
+        }
+    }
+    
+    func execute<T>(_ requests: [T]) async throws -> [HTTPResult<T.ResultType>] where T : HTTPDataRequest {
+        do {
+            return try await withThrowingTaskGroup(of: HTTPResult<T.ResultType>.self) { [weak self] group in
+                guard let self = self else {
+                    return [.failure(.requestFailed("Service was deallocated"))]
+                }
+                
+                var results: [HTTPResult<T.ResultType>] = []
+                
+                for request in requests {
+                    group.addTask { [weak self] in
+                        guard let self = self else { return .failure(.requestFailed("Service was deallocated")) }
+                        return await self.execute(request: request)
+                    }
+                }
+                
+                for try await result in group {
+                    results.append(result)
+                }
+                
+                return results
+            }
+        } catch {
+            return [.failure(.requestFailed(error.localizedDescription))]
+        }
+    }
+    
+    func execute<T>(_ requests: [T]) async throws -> [HTTPResult<T.ResultType>] where T : HTTPRequestChainable {
+        do {
+            return try await withThrowingTaskGroup(of: HTTPResult<T.ResultType>.self) { [weak self] group in
+                guard let self = self else {
+                    return [.failure(.requestFailed("Service was deallocated"))]
+                }
+                
+                var results: [HTTPResult<T.ResultType>] = []
+                
+                for request in requests {
+                    group.addTask { [weak self] in
+                        guard let self = self else { return .failure(.requestFailed("Service was deallocated")) }
+                        return await self.execute(request: request)
+                    }
+                }
+                
+                for try await result in group {
+                    results.append(result)
+                }
+                
+                return results
+            }
+        } catch {
+            return [.failure(.requestFailed(error.localizedDescription))]
         }
     }
 }
