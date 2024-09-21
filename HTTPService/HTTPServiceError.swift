@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum HTTPServiceError: Error {
+public enum NetworkServiceError: Error {
     /// Used as a catchall for any error codes not defined below
     case requestFailed(String)
     /// Used when response data is expected but not received

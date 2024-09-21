@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// A generic builder for creating and managing instances of type `T` that conform to `HTTPService`.
+/// A generic builder for creating and managing instances of type `T` that conform to `NetworkService`.
 ///
 /// `ServiceBuilder` provides methods for building instances of `T`, optionally using a cached version,
 /// and for purging the cached instance from the service cache. This class is designed to streamline the
@@ -21,10 +21,10 @@ import Foundation
 /// await ServiceBuilder<MyService>.purgeCache()
 /// ```
 ///
-/// - Note: The `ServiceBuilder` class is only available for types that conform to `HTTPService`.
+/// - Note: The `ServiceBuilder` class is only available for types that conform to `NetworkService`.
 ///
-/// - SeeAlso: `HTTPService`, `ServiceCache`
-public class ServiceBuilder<T: HTTPService> {
+/// - SeeAlso: `NetworkService`, `ServiceCache`
+public class ServiceBuilder<T: NetworkService> {
 
     /// Purges the cached instance of type `T` from the service cache.
     ///
@@ -65,7 +65,7 @@ public class ServiceBuilder<T: HTTPService> {
 
 /// A thread-safe, actor-based cache for storing and retrieving instances of services.
 ///
-/// `ServiceCache` is designed to cache instances of services that conform to the `HTTPService` protocol.
+/// `ServiceCache` is designed to cache instances of services that conform to the `NetworkService` protocol.
 /// This cache is managed as a singleton, providing a shared instance that can be used across the application.
 /// The actor-based approach ensures that access to the cache is safe and synchronized in concurrent environments.
 fileprivate actor ServiceCache {
@@ -83,7 +83,7 @@ fileprivate actor ServiceCache {
     ///
     /// - Parameter key: A unique string identifier used to look up the cached service.
     /// - Returns: An optional instance of type `T` if it exists in the cache; otherwise, `nil`.
-    func get<T: HTTPService>(key: String) -> T? {
+    func get<T: NetworkService>(key: String) -> T? {
         return cache[key] as? T
     }
     
@@ -94,7 +94,7 @@ fileprivate actor ServiceCache {
     /// - Parameters:
     ///   - service: The service instance to be cached.
     ///   - key: A unique string identifier used to store the service in the cache.
-    func set<T: HTTPService>(service: T, for key: String) {
+    func set<T: NetworkService>(service: T, for key: String) {
         cache[key] = service
     }
     

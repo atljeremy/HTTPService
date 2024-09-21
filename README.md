@@ -2,13 +2,13 @@
 A super simple networking library which utilizes a service builder to construct and cache services.
 
 ## Usage
-NOTE: These instructions are for v3.0+ only. Prior versions are no longer supported.
+NOTE: These instructions are for v4.2.0+ only. Prior versions are no longer supported.
 
 ### Creating a Service
 
-Start by creating a class that will represent a service and have it conform to the HTTPService protocol.
+Start by creating a class that will represent a service and have it conform to the `NetworkService` protocol.
 ```swift
-public class GitHubService: HTTPService {
+public class GitHubService: NetworkService {
     typealias Builder = GitHubService
     typealias Authorization = HTTPTokenAuthorization
     
@@ -25,9 +25,9 @@ public class GitHubService: HTTPService {
 }
 ```
 
-Now, in order for `ServiceBuilder` to be able to build this service, we'll conform to the `HTTPServiceBuildable` protocol.
+Now, in order for `ServiceBuilder` to be able to build this service, we'll conform to the `NetworkServiceBuildable` protocol.
 ```swift
-extension GitHubService: HTTPServiceBuildable {
+extension GitHubService: NetworkServiceBuildable {
     typealias Service = GitHubService
 
     static func build<T>() -> GitHubService? {
@@ -65,7 +65,7 @@ class GitHubGetPRsRequest: HTTPRequest {
     typealias ResultType = [GitHubPR]
     typealias BodyType = HTTPRequestNoBody // Only needed for HTTPMethod.post, HTTPMethod.put, or HTTPMethod.patch requests
     
-    // HTTPService required attributes
+    // NetworkService required attributes
     var endpoint: String {
         return "repos/\(owner)/\(repo)/pulls"
     }
@@ -80,7 +80,7 @@ class GitHubGetPRsRequest: HTTPRequest {
     let owner: String
     let repo: String
     
-    // HTTPService required init
+    // NetworkService required init
     required init(id: String?) {
         fatalError("Use init(owner:repo) instead)")
     }
@@ -196,3 +196,41 @@ class GitHubGetPagedPRsRequest: HTTPPagedRequest {
 ```
 
 This allows you to easily retrieve and navigate through paginated results from your API.
+
+### Request Batching
+
+If you need to send mutliple requests at once, use `HTTPBatchRequest` to send them in an efficient mannor and get back the result of each request.
+
+Start by creating your `HTTPBatchRequest`:
+```swift
+struct GetPullRequests: HTTPBatchRequest {
+    typealias Request = GitHubGetPullRequest
+
+    var requests: [GitHubGetPullRequest]
+    
+    init(requests: [GitHubGetPullRequest]) {
+        self.requests = requests
+    }
+}
+```
+
+Then create an instance of your batch request, passing it the necessary requests, and call `execute(batch:)` on your `NetworkService`:
+```swift
+let batchRequest = GetPullRequests(requests: [
+    GitHubGetPullRequest(id: "123"),
+    GitHubGetPullRequest(id: "456")
+])
+
+let service = await ServiceBuilder<GitHubService>.build()!
+let results: [HTTPResult] = await service.execute(batch: batchRequest)
+
+// Do something with the `results`
+results.forEach { result in
+    switch result {
+    case let .success(pr):
+        print(pr)
+    case .failure(error):
+        print(error)
+    }
+}
+```

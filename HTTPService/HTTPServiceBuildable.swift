@@ -6,21 +6,21 @@
 //  Copyright © 2019 Jeremy Fox. All rights reserved.
 //
 
-/// A protocol that extends `ServiceBuildable` for building services that conform to `HTTPService`.
+/// A protocol that extends `ServiceBuildable` for building services that conform to `NetworkService`.
 ///
-/// `HTTPServiceBuildable` inherits from `ServiceBuildable` and adds the constraint that the associated `Service` type must conform to the `HTTPService` protocol.
-/// This protocol is intended for use with builders that create HTTP-based services, ensuring that the services adhere to the `HTTPService` protocol.
+/// `NetworkServiceBuildable` inherits from `ServiceBuildable` and adds the constraint that the associated `Service` type must conform to the `NetworkService` protocol.
+/// This protocol is intended for use with builders that create HTTP-based services, ensuring that the services adhere to the `NetworkService` protocol.
 ///
 /// ### Example Conformance:
 /// ```swift
-/// struct MyHTTPServiceBuilder: HTTPServiceBuildable {
-///     static func build() -> MyHTTPService? {
-///         // Implementation to build and return an instance of MyHTTPService
+/// struct MyServiceBuilder: NetworkServiceBuildable {
+///     static func build() -> MyService? {
+///         // Implementation to build and return an instance of MyService
 ///     }
 /// }
 /// ```
 ///
-/// - Note: The associated `Service` type must conform to `HTTPService`.
+/// - Note: The associated `Service` type must conform to `NetworkService`.
 ///
-/// - SeeAlso: `ServiceBuildable`, `HTTPService`
-public protocol HTTPServiceBuildable: ServiceBuildable where Service: HTTPService {}
+/// - SeeAlso: `ServiceBuildable`, `NetworkService`
+public protocol NetworkServiceBuildable: ServiceBuildable where Service: NetworkService {}

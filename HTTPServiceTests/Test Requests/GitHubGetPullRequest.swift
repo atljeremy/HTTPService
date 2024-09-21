@@ -14,7 +14,9 @@ struct GitHubGetPullRequest: HTTPRequest {
     typealias ResultType = PullRequest
     typealias BodyType = HTTPRequestNoBody
     
-    var endpoint = "/something"
+    var endpoint: String {
+        "/something/\(prId!)"
+    }
     var method: HTTPMethod = .get
     var params: [String : Any]?
     var body: HTTPRequestNoBody?
@@ -27,4 +29,14 @@ struct GitHubGetPullRequest: HTTPRequest {
     init(id: String?) {
         prId = id
     }
+}
+
+struct GetPullRequests: HTTPBatchRequest {
+    var requests: [GitHubGetPullRequest]
+    
+    init(requests: [GitHubGetPullRequest]) {
+        self.requests = requests
+    }
+    
+    typealias Request = GitHubGetPullRequest
 }

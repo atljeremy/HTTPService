@@ -51,6 +51,48 @@ public protocol HTTPRequest {
     init(id: String?)
 }
 
+public protocol HTTPBatchRequest {
+    associatedtype Request: HTTPRequest
+    
+    var requests: [Request] { get }
+    
+    init(requests: [Request])
+}
+
+struct Req: HTTPRequest {
+    typealias ResultType = String
+    
+    typealias BodyType = HTTPRequestNoBody
+    
+    var endpoint: String = ""
+    
+    var method: HTTPMethod = .get
+    
+    var params: [String : Any]? = nil
+    
+    var body: HTTPRequestNoBody? = nil
+    
+    var headers: [String : String]? = nil
+    
+    var includeServiceLevelHeaders: Bool = true
+    
+    var includeServiceLevelAuthorization: Bool = true
+    
+    init(id: String?) {
+        
+    }
+}
+
+struct BatchReq: HTTPBatchRequest {
+    typealias Request = Req
+    
+    var requests: [Req]
+    
+    init(requests: [Req]) {
+        self.requests = requests
+    }
+}
+
 /// Represents a response with no content, typically used for HTTP 204 (No Content) responses.
 public struct HTTPResponseNoContent: Decodable {}
 
@@ -174,7 +216,7 @@ extension HTTPRequest {
             request.addValue(auth.value, forHTTPHeaderField: "Authorization")
         }
         
-        // Add the additional HTTP Headers passed in (most likely from the HTTPService)
+        // Add the additional HTTP Headers passed in (most likely from the NetworkService)
         if includeServiceLevelHeaders {
             // Add the service level headers
             additionalHeaders?.forEach { (key, value) in

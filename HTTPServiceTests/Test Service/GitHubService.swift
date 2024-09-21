@@ -9,7 +9,8 @@
 import Foundation
 import HTTPService
 
-final class GitHubService: HTTPService {
+final class GitHubService: NetworkService {
+
     typealias Builder = GitHubService
     typealias Authorization = HTTPTokenAuthorization
     
@@ -26,7 +27,7 @@ final class GitHubService: HTTPService {
     }
 }
 
-extension GitHubService: HTTPServiceBuildable {
+extension GitHubService: NetworkServiceBuildable {
     typealias Service = GitHubService
     
     static func build() -> GitHubService? {
@@ -39,7 +40,16 @@ extension GitHubService {
     @discardableResult
     func execute<T>(request: T) async -> HTTPResult<T.ResultType> where T : HTTPRequest {
         do {
-            let data = try JSONSerialization.data(withJSONObject: ["id": 123, "name": "PR Name"], options: .init(rawValue: 0))
+            var prJson: [String: Any] = [:]
+            switch request.endpoint {
+            case let endpoint where endpoint.contains("123"):
+                prJson = ["id": 123, "name": "PR Name"]
+            case let endpoint where endpoint.contains("456"):
+                prJson = ["id": 456, "name": "PR Name"]
+            default:
+                break
+            }
+            let data = try JSONSerialization.data(withJSONObject: prJson, options: .init(rawValue: 0))
             let pr = try JSONDecoder().decode(T.ResultType.self, from: data)
             return .success(pr)
         } catch _ {

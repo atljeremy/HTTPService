@@ -29,7 +29,7 @@ public typealias HTTPHeaders = [String: String]
 public typealias BaseURL = URL
 
 /// A typealias representing the result of an HTTP operation, which can either be a success with an optional result of type `T?`,
-/// or a failure with an `HTTPServiceError`.
+/// or a failure with an `NetworkServiceError`.
 ///
 /// This typealias simplifies handling the outcome of HTTP requests.
 ///
@@ -44,10 +44,10 @@ public typealias BaseURL = URL
 ///     }
 /// }
 /// ```
-public typealias HTTPResult<T> = Result<T?, HTTPServiceError>
+public typealias HTTPResult<T> = Result<T?, NetworkServiceError>
 
 /// An extension to `HTTPURLResponse` that provides additional functionality for checking failure status
-/// and converting HTTP status codes to `HTTPServiceError`.
+/// and converting HTTP status codes to `NetworkServiceError`.
 extension HTTPURLResponse {
     
     /// A Boolean value indicating whether the response status code represents a failure.
@@ -57,14 +57,14 @@ extension HTTPURLResponse {
         return statusCode >= 400
     }
     
-    /// Converts the response status code to a corresponding `HTTPServiceError`.
+    /// Converts the response status code to a corresponding `NetworkServiceError`.
     ///
-    /// This method checks the response status code and returns an appropriate `HTTPServiceError` if the status code indicates a failure.
+    /// This method checks the response status code and returns an appropriate `NetworkServiceError` if the status code indicates a failure.
     /// If the status code does not represent a failure, this method returns `nil`.
     ///
     /// - Parameter message: An optional message to include with the error.
-    /// - Returns: An `HTTPServiceError` corresponding to the response status code, or `nil` if the status code is not a failure.
-    func httpServiceError(with message: String? = nil) -> HTTPServiceError? {
+    /// - Returns: An `NetworkServiceError` corresponding to the response status code, or `nil` if the status code is not a failure.
+    func networkServiceError(with message: String? = nil) -> NetworkServiceError? {
         guard isFailure else { return nil }
         
         switch statusCode {
@@ -81,7 +81,7 @@ extension HTTPURLResponse {
 
 /// A protocol that defines the requirements for an HTTP-based service.
 ///
-/// Types that conform to `HTTPService` must implement various methods to execute different types of HTTP requests,
+/// Types that conform to `NetworkService` must implement various methods to execute different types of HTTP requests,
 /// such as `HTTPRequest`, `HTTPPagedRequest`, and `HTTPDownloadRequest`. This protocol provides a flexible foundation
 /// for building services that interact with HTTP APIs.
 ///
@@ -90,10 +90,10 @@ extension HTTPURLResponse {
 /// - `Authorization`: A type conforming to `HTTPAuthorization`, which handles the authorization logic for the service.
 ///
 /// - SeeAlso: `HTTPServiceBuildable`, `HTTPAuthorization`
-public protocol HTTPService: AnyObject {
+public protocol NetworkService: AnyObject {
     
-    /// The associated builder type, which must conform to `HTTPServiceBuildable`.
-    associatedtype Builder: HTTPServiceBuildable
+    /// The associated builder type, which must conform to `NetworkServiceBuildable`.
+    associatedtype Builder: NetworkServiceBuildable
     
     /// The associated authorization type, which must conform to `HTTPAuthorization`.
     associatedtype Authorization: HTTPAuthorization
@@ -127,7 +127,7 @@ public protocol HTTPService: AnyObject {
     /// - Parameter request: The HTTP request to execute.
     /// - Returns: A `Task` that returns a `Result` containing the result of the request or an error if the request fails.
     @discardableResult
-    func executeWithCancelation<T>(request: T) -> Task<Result<T.ResultType?, HTTPServiceError>, Never> where T : HTTPRequest
+    func executeWithCancelation<T>(request: T) -> Task<Result<T.ResultType?, NetworkServiceError>, Never> where T : HTTPRequest
     
     /// Executes a given paged HTTP request asynchronously and returns the result.
     ///
@@ -247,26 +247,11 @@ public protocol HTTPService: AnyObject {
     /// - Parameter requests: An array of HTTP requests conforming to `HTTPRequest`.
     /// - Returns: An array of `HTTPResult` objects corresponding to each request's result type.
     /// - Throws: An error if any of the requests fail.
-    func execute<T>(_ requests: [T]) async throws -> [HTTPResult<T.ResultType>] where T : HTTPRequest
-
-    /// Executes a batch of HTTP data requests and returns their results as an array of `HTTPResult`.
-    /// This method is used for batching multiple HTTP requests that deal with raw data processing.
-    ///
-    /// - Parameter requests: An array of HTTP data requests conforming to `HTTPDataRequest`.
-    /// - Returns: An array of `HTTPResult` objects corresponding to each request's result type.
-    /// - Throws: An error if any of the requests fail.
-    func execute<T>(_ requests: [T]) async throws -> [HTTPResult<T.ResultType>] where T : HTTPDataRequest
-
-    /// Executes a batch of chainable HTTP requests and returns their results as an array of `HTTPResult`.
-    /// This method supports batching multiple requests where each request can be chained to another.
-    ///
-    /// - Parameter requests: An array of HTTP requests conforming to `HTTPRequestChainable`.
-    /// - Returns: An array of `HTTPResult` objects corresponding to each request's result type.
-    /// - Throws: An error if any of the requests fail.
-    func execute<T>(_ requests: [T]) async throws -> [HTTPResult<T.ResultType>] where T : HTTPRequestChainable
+    @discardableResult
+    func execute<T: HTTPBatchRequest>(batch request: T) async -> [HTTPResult<T.Request.ResultType>]
 }
 
-extension HTTPService {
+extension NetworkService {
     private func logRequestInfo(for request: URLRequest) {
         var info = """
         
@@ -295,7 +280,7 @@ extension HTTPService {
             }
             
             guard !response.isFailure else {
-                return .failure(response.httpServiceError(with: "") ?? .requestFailed(""))
+                return .failure(response.networkServiceError(with: "") ?? .requestFailed(""))
             }
             
             guard !(T.ResultType.self is HTTPResponseNoContent.Type) else {
@@ -336,7 +321,7 @@ extension HTTPService {
             }
             
             guard !response.isFailure else {
-                return .failure(response.httpServiceError(with: "") ?? .requestFailed(""))
+                return .failure(response.networkServiceError(with: "") ?? .requestFailed(""))
             }
             
             guard !(T.ResultType.self is HTTPResponseNoContent.Type) else {
@@ -386,7 +371,7 @@ extension HTTPService {
             }
             
             guard !response.isFailure else {
-                return .failure(response.httpServiceError(with: "") ?? .requestFailed(""))
+                return .failure(response.networkServiceError(with: "") ?? .requestFailed(""))
             }
             
             guard data.count > 0 else {
@@ -415,19 +400,19 @@ extension HTTPService {
             let (data, urlResponse) = try await urlSession.data(for: urlRequest)
             
             guard let response = urlResponse as? HTTPURLResponse else {
-                let error = HTTPServiceError.serverError("")
+                let error = NetworkServiceError.serverError("")
                 request.didComplete(request: urlRequest, with: error)
                 return .failure(error)
             }
             
             guard !response.isFailure else {
-                let error = response.httpServiceError(with: "") ?? .requestFailed("")
+                let error = response.networkServiceError(with: "") ?? .requestFailed("")
                 request.didComplete(request: urlRequest, with: error)
                 return .failure(error)
             }
             
             guard data.count > 0 else {
-                let error = HTTPServiceError.emptyResponseData(response.url?.absoluteString ?? "")
+                let error = NetworkServiceError.emptyResponseData(response.url?.absoluteString ?? "")
                 request.didComplete(request: urlRequest, with: error)
                 return .failure(error)
             }
@@ -473,19 +458,19 @@ extension HTTPService {
             let (data, urlResponse) = try await urlSession.data(for: urlRequest)
             
             guard let response = urlResponse as? HTTPURLResponse else {
-                let error = HTTPServiceError.serverError("")
+                let error = NetworkServiceError.serverError("")
                 request.didComplete(request: urlRequest, with: error)
                 return .failure(error)
             }
             
             guard !response.isFailure else {
-                let error = response.httpServiceError(with: "") ?? .requestFailed("")
+                let error = response.networkServiceError(with: "") ?? .requestFailed("")
                 request.didComplete(request: urlRequest, with: error)
                 return .failure(error)
             }
             
             guard data.count > 0 else {
-                let error = HTTPServiceError.emptyResponseData(response.url?.absoluteString ?? "")
+                let error = NetworkServiceError.emptyResponseData(response.url?.absoluteString ?? "")
                 request.didComplete(request: urlRequest, with: error)
                 return .failure(error)
             }
@@ -531,19 +516,19 @@ extension HTTPService {
             let (data, urlResponse) = try await urlSession.data(for: urlRequest)
             
             guard let response = urlResponse as? HTTPURLResponse else {
-                let error = HTTPServiceError.serverError("")
+                let error = NetworkServiceError.serverError("")
                 request.didComplete(request: urlRequest, with: error)
                 return .failure(error)
             }
             
             guard !response.isFailure else {
-                let error = response.httpServiceError(with: "") ?? .requestFailed("")
+                let error = response.networkServiceError(with: "") ?? .requestFailed("")
                 request.didComplete(request: urlRequest, with: error)
                 return .failure(error)
             }
             
             guard data.count > 0 else {
-                let error = HTTPServiceError.emptyResponseData(response.url?.absoluteString ?? "")
+                let error = NetworkServiceError.emptyResponseData(response.url?.absoluteString ?? "")
                 request.didComplete(request: urlRequest, with: error)
                 return .failure(error)
             }
@@ -579,7 +564,7 @@ extension HTTPService {
             }
             
             guard !response.isFailure else {
-                return .failure(response.httpServiceError(with: "") ?? .requestFailed(""))
+                return .failure(response.networkServiceError(with: "") ?? .requestFailed(""))
             }
             
             guard !url.absoluteString.isEmpty else {
@@ -608,19 +593,19 @@ extension HTTPService {
             let (url, urlResponse) = try await urlSession.download(for: urlRequest)
             
             guard let response = urlResponse as? HTTPURLResponse else {
-                let error = HTTPServiceError.serverError("")
+                let error = NetworkServiceError.serverError("")
                 request.didComplete(request: urlRequest, with: error)
                 return .failure(error)
             }
             
             guard !response.isFailure else {
-                let error = response.httpServiceError(with: "") ?? .requestFailed("")
+                let error = response.networkServiceError(with: "") ?? .requestFailed("")
                 request.didComplete(request: urlRequest, with: error)
                 return .failure(error)
             }
             
             guard !url.absoluteString.isEmpty else {
-                let error = HTTPServiceError.downloadFailed("Failing URL: \(response.url?.absoluteString ?? "")")
+                let error = NetworkServiceError.downloadFailed("Failing URL: \(response.url?.absoluteString ?? "")")
                 request.didComplete(request: urlRequest, with: error)
                 return .failure(error)
             }
@@ -654,7 +639,7 @@ extension HTTPService {
             }
             
             guard !response.isFailure else {
-                return .failure(response.httpServiceError(with: "") ?? .requestFailed(""))
+                return .failure(response.networkServiceError(with: "") ?? .requestFailed(""))
             }
             
             guard data.count > 0 else {
@@ -682,44 +667,19 @@ extension HTTPService {
 
 // MARK: Batching
 
-extension HTTPService {
-    func execute<T>(_ requests: [T]) async throws -> [HTTPResult<T.ResultType>] where T : HTTPRequest {
-        do {
-            return try await withThrowingTaskGroup(of: HTTPResult<T.ResultType>.self) { [weak self] group in
-                guard let self = self else {
-                    return [.failure(.requestFailed("Service was deallocated"))]
-                }
-                
-                var results: [HTTPResult<T.ResultType>] = []
-                
-                for request in requests {
-                    group.addTask { [weak self] in
-                        guard let self = self else { return .failure(.requestFailed("Service was deallocated")) }
-                        return await self.execute(request: request)
-                    }
-                }
-                
-                for try await result in group {
-                    results.append(result)
-                }
-                
-                return results
-            }
-        } catch {
-            return [.failure(.requestFailed(error.localizedDescription))]
-        }
-    }
+extension NetworkService {
     
-    func execute<T>(_ requests: [T]) async throws -> [HTTPResult<T.ResultType>] where T : HTTPDataRequest {
+    @discardableResult
+    public func execute<T: HTTPBatchRequest>(batch request: T) async -> [HTTPResult<T.Request.ResultType>] {
         do {
-            return try await withThrowingTaskGroup(of: HTTPResult<T.ResultType>.self) { [weak self] group in
+            return try await withThrowingTaskGroup(of: HTTPResult<T.Request.ResultType>.self) { [weak self] group in
                 guard let self = self else {
-                    return [.failure(.requestFailed("Service was deallocated"))]
+                    throw NetworkServiceError.requestFailed("Service was deallocated")
                 }
                 
-                var results: [HTTPResult<T.ResultType>] = []
+                var results: [HTTPResult<T.Request.ResultType>] = []
                 
-                for request in requests {
+                for request in request.requests {
                     group.addTask { [weak self] in
                         guard let self = self else { return .failure(.requestFailed("Service was deallocated")) }
                         return await self.execute(request: request)
@@ -736,31 +696,5 @@ extension HTTPService {
             return [.failure(.requestFailed(error.localizedDescription))]
         }
     }
-    
-    func execute<T>(_ requests: [T]) async throws -> [HTTPResult<T.ResultType>] where T : HTTPRequestChainable {
-        do {
-            return try await withThrowingTaskGroup(of: HTTPResult<T.ResultType>.self) { [weak self] group in
-                guard let self = self else {
-                    return [.failure(.requestFailed("Service was deallocated"))]
-                }
-                
-                var results: [HTTPResult<T.ResultType>] = []
-                
-                for request in requests {
-                    group.addTask { [weak self] in
-                        guard let self = self else { return .failure(.requestFailed("Service was deallocated")) }
-                        return await self.execute(request: request)
-                    }
-                }
-                
-                for try await result in group {
-                    results.append(result)
-                }
-                
-                return results
-            }
-        } catch {
-            return [.failure(.requestFailed(error.localizedDescription))]
-        }
-    }
+
 }

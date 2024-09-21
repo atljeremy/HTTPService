@@ -10,6 +10,7 @@ let package = Package(
     products: [
         .library(
             name: "HTTPService",
+            type: .dynamic,
             targets: ["HTTPService"]
         )
     ],
@@ -18,7 +19,10 @@ let package = Package(
         .target(
             name: "HTTPService",
             path: "HTTPService",
-            exclude: ["Info.plist"]
+            exclude: ["Info.plist"],
+            swiftSettings: [
+                .unsafeFlags(["-enable-library-evolution"])
+            ]
         ),
         .testTarget(
             name: "HTTPServiceTests",
