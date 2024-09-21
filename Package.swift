@@ -19,10 +19,7 @@ let package = Package(
         .target(
             name: "HTTPService",
             path: "HTTPService",
-            exclude: ["Info.plist"],
-            swiftSettings: [
-                .unsafeFlags(["-enable-library-evolution"])
-            ]
+            exclude: ["Info.plist"]
         ),
         .testTarget(
             name: "HTTPServiceTests",
